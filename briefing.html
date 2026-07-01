@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Briefing | Bourbon Films</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#080808;--s:#101010;--s2:#161616;--w:#E8E4DE;--m:#6B6560;--b:rgba(232,228,222,.1);--g:#F5A020;--o:#E85C1A;--e:#8B2800;--grad:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800)}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--w);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(8,8,8,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--b)}
+.nav-logo img{height:32px;width:auto;object-fit:contain;display:block}
+.nav-back{color:var(--m);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:7px;transition:color .2s}
+.nav-back:hover{color:var(--w)}
+.nav-back:hover svg{transform:translateX(-3px)}
+.nav-back svg{transition:transform .2s}
+#prog-line{position:fixed;top:0;left:0;z-index:200;height:2px;background:var(--grad);width:0%;transition:width .5s cubic-bezier(.16,1,.3,1)}
+#form-area{max-width:720px;margin:0 auto;padding:60px 40px 180px}
+.form-hero{margin-bottom:60px}
+.form-hero-ey{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.form-hero-ey::before{content:'';width:20px;height:1px;background:var(--g)}
+.form-hero h1{font-family:'Outfit',sans-serif;font-size:clamp(30px,4.5vw,56px);font-weight:800;line-height:.95;letter-spacing:-.02em;margin-bottom:14px}
+.gt{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.form-hero p{font-size:16px;color:rgba(232,228,222,.48);line-height:1.65;max-width:480px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.q-card{opacity:0;transform:translateY(18px);pointer-events:auto;animation:none}
+.q-card.visible{opacity:1;transform:translateY(0);pointer-events:auto;animation:fadeUp .45s cubic-bezier(.16,1,.3,1) forwards}
+.q-card.answered{opacity:.42;cursor:pointer}
+.q-card.answered:hover{opacity:.75}
+.q-card+.q-card{margin-top:52px}
+.q-num{font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.q-num::before{content:'';width:14px;height:1px;background:var(--g)}
+.q-text{display:block;font-family:'Outfit',sans-serif;font-size:clamp(19px,2.8vw,28px);font-weight:700;line-height:1.2;margin-bottom:7px;color:var(--w)}
+.q-hint{font-size:13px;color:var(--m);margin-bottom:16px;line-height:1.55;font-style:italic}
+.q-note{display:flex;gap:10px;padding:11px 15px;background:rgba(245,160,32,.06);border-left:2px solid rgba(245,160,32,.3);font-size:13px;color:rgba(232,228,222,.58);line-height:1.55;margin-bottom:14px}
+.q-note strong{color:var(--g)}
+.q-answered-val{display:none;font-size:14px;color:rgba(232,228,222,.45);margin-top:5px;font-style:italic}
+.q-card.answered .q-answered-val{display:block}
+.q-card.answered .q-input{display:none}
+input[type=text],input[type=tel],input[type=date],input[type=url],input[type=email],textarea{width:100%;padding:13px 15px;background:var(--s2);border:1px solid var(--b);color:var(--w);font-family:'DM Sans',sans-serif;font-size:16px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus{border-color:rgba(245,160,32,.5);box-shadow:0 0 0 3px rgba(245,160,32,.07)}
+input.err,textarea.err{border-color:var(--o)}
+input::placeholder,textarea::placeholder{color:var(--m);opacity:.6}
+textarea{resize:vertical;min-height:100px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 15px;border:1px solid var(--b);background:var(--s);cursor:pointer;transition:all .18s;font-size:15px;color:rgba(232,228,222,.7);line-height:1.4}
+.opt:hover{border-color:rgba(245,160,32,.35);color:var(--w)}
+.opt.selected{border-color:rgba(245,160,32,.55);background:rgba(245,160,32,.06);color:var(--w)}
+.opt-label{flex:1}
+.opt-note{display:block;font-size:11px;color:var(--m);margin-top:2px;font-style:italic}
+.q-btn{margin-top:12px;padding:13px 28px;background:var(--grad);color:#000;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:9px;transition:opacity .2s,box-shadow .2s,transform .2s;opacity:.35;pointer-events:none}
+.q-btn.ready{opacity:1;pointer-events:auto}
+.q-btn.ready:hover{opacity:.85;box-shadow:0 8px 24px rgba(232,92,26,.3);transform:translateY(-1px)}
+.q-btn svg{transition:transform .2s}
+.q-btn.ready:hover svg{transform:translateX(3px)}
+#submit-area{display:none;margin-top:60px;padding:44px;border:1px solid var(--b);background:var(--s);text-align:center;animation:fin .6s ease}
+@keyframes fin{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+#submit-area h3{font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;margin-bottom:8px}
+#submit-area p{color:rgba(232,228,222,.45);font-size:15px;margin-bottom:28px}
+.btn-submit{padding:17px 44px;background:var(--grad);color:#000;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:11px}
+.btn-submit:hover{opacity:.85;box-shadow:0 12px 36px rgba(232,92,26,.38);transform:translateY(-2px)}
+.spinner{display:none;width:17px;height:17px;border:2px solid rgba(0,0,0,.22);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.submitting .spinner{display:inline-block}
+.submitting .btn-text{display:none}
+#receipt{display:none;max-width:720px;margin:0 auto;padding:60px 40px 120px}
+.rec-top{text-align:center;padding:44px 0;border-bottom:2px solid rgba(245,160,32,.2);margin-bottom:40px}
+.rec-check{font-size:40px;margin-bottom:12px}
+.rec-title{font-family:'Outfit',sans-serif;font-size:36px;font-weight:800;margin-bottom:6px}
+.rec-sub{color:rgba(232,228,222,.42);font-size:16px}
+.rec-sect{margin-bottom:26px;padding-bottom:26px;border-bottom:1px solid var(--b)}
+.rec-sect:last-of-type{border-bottom:none}
+.rec-sect-title{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--g);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(245,160,32,.12)}
+.rec-row{display:flex;gap:14px;margin-bottom:7px;font-size:14px}
+.rec-row dt{color:var(--m);min-width:140px;flex-shrink:0}
+.rec-row dd{color:var(--w);line-height:1.5}
+.rec-actions{display:flex;gap:10px;margin-top:40px;flex-wrap:wrap}
+.btn-wpp{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;background:var(--grad);color:#000;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-wpp:hover{opacity:.84;box-shadow:0 8px 28px rgba(232,92,26,.3)}
+.btn-pdf{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border:1px solid var(--b);color:var(--w);background:transparent;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-pdf:hover{border-color:rgba(232,228,222,.3)}
+.save-chip{position:fixed;bottom:20px;right:20px;display:flex;align-items:center;gap:6px;padding:5px 11px;background:rgba(8,8,8,.9);border:1px solid rgba(76,175,80,.25);font-size:11px;color:rgba(232,228,222,.45);opacity:0;transition:opacity .3s;pointer-events:none}
+.save-chip.show{opacity:1}
+.save-dot{width:5px;height:5px;border-radius:50%;background:#4CAF50}
+@media print{
+body{background:#0A0A0A!important;color:#E8E4DE!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;margin:0;font-family:'DM Sans',Helvetica,Arial,sans-serif}
+nav,#prog-line,#gate-screen,#form-area,.save-chip,.rec-actions,#submit-area,#wpp-send-section,.rec-check,.rec-sub{display:none!important}
+#receipt{display:block!important;background:#0A0A0A;color:#E8E4DE;padding:0;max-width:100%}
+.rec-body-wrap{padding:24px 36px}
+.rec-sect{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(232,228,222,.07);page-break-inside:avoid}
+.rec-sect:last-of-type{border-bottom:none}
+.rec-sect-title{font-size:7.5pt;letter-spacing:.22em;text-transform:uppercase;color:#F5A020;font-weight:700;margin:0 0 10px;padding-bottom:5px;border-bottom:1px solid rgba(245,160,32,.18)}
+.rec-row{display:grid;grid-template-columns:155px 1fr;gap:6px 12px;margin-bottom:5px;font-size:9.5pt;align-items:start}
+.rec-row dt{color:rgba(232,228,222,.42);font-weight:500;padding-top:1px}
+.rec-row dd{color:#E8E4DE;word-break:break-word;margin:0}
+.rec-footer{padding:14px 36px;border-top:1px solid rgba(232,228,222,.08);font-size:8pt;color:rgba(232,228,222,.2);display:flex;justify-content:space-between}
+.rec-top{background:linear-gradient(135deg,#111 0%,#0A0A0A 100%);border-bottom:2px solid #F5A020;padding:28px 36px;display:flex;align-items:center;gap:18px;margin-bottom:0}
+.rec-top img{height:34px;width:auto}
+.rec-top-text h1{font-family:'Outfit',sans-serif;font-size:18pt;font-weight:800;color:#fff;margin:0;letter-spacing:-.02em}
+.rec-top-text p{font-size:9pt;color:rgba(232,228,222,.4);margin:4px 0 0;letter-spacing:.12em;text-transform:uppercase}
+.rec-body-wrap{padding:28px 36px}
+.rec-sect{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid rgba(232,228,222,.08);page-break-inside:avoid}
+.rec-sect-title{font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:#F5A020;margin:0 0 12px;font-weight:700;padding-bottom:6px;border-bottom:1px solid rgba(245,160,32,.2)}
+.rec-row{display:flex;gap:16px;margin-bottom:7px;font-size:10pt}
+.rec-row dt{color:rgba(232,228,222,.45);min-width:150px;flex-shrink:0;font-weight:500}
+.rec-row dd{color:#E8E4DE;word-break:break-word}
+.rec-footer{padding:16px 36px;border-top:1px solid rgba(232,228,222,.08);margin-top:8px;font-size:8.5pt;color:rgba(232,228,222,.25);display:flex;justify-content:space-between;align-items:center}
+.rec-check,.rec-sub,.rec-actions{display:none}
+}
+@media(max-width:640px){nav{padding:12px 20px}#form-area{padding:40px 20px 160px}.q-text{font-size:20px}.rec-row{flex-direction:column;gap:3px}.rec-row dt{min-width:auto}.rec-actions{flex-direction:column}.btn-wpp,.btn-pdf{justify-content:center}#submit-area{padding:28px 20px}}
+
+.q-skip{margin-top:8px;margin-left:8px;padding:13px 20px;background:transparent;border:1px solid rgba(232,228,222,.18);color:rgba(232,228,222,.38);font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.q-skip:hover{border-color:rgba(232,228,222,.35);color:rgba(232,228,222,.65)}
+.q-btn-row{display:flex;align-items:center;flex-wrap:wrap;gap:0}
+
+/* hero cascade animation */
+.hero-anim{opacity:0;transform:translateY(22px)}
+.form-area-visible .hero-anim{animation:fadeUp .55s cubic-bezier(.16,1,.3,1) forwards}</style>
+</head>
+<body>
+
+<div id="prog-line"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><img src="data:image/png;base64,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" alt="bourbon" style="height:32px;width:auto"></a>
+  <a href="index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Voltar ao site
+  </a>
+</nav>
+
+
+<div id="gate-screen" style="min-height:calc(100vh - 57px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;text-align:center">
+  <p style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#F5A020;margin-bottom:16px;display:flex;align-items:center;gap:10px"><span style="display:inline-block;width:20px;height:1px;background:#F5A020"></span>Bourbon Films</p>
+  <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(28px,4vw,52px);font-weight:800;line-height:.96;letter-spacing:-.02em;margin-bottom:14px">Antes de come&ccedil;ar,<br><span style="background:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);-webkit-background-clip:text;-webkit-text-fill-color:transparent">precisamos te identificar.</span></h1>
+  <p style="font-size:15px;color:rgba(232,228,222,.45);max-width:480px;line-height:1.65;margin-bottom:48px">Nosso briefing é exclusivo. Para acessar, informe ao menos uma das opções abaixo.</p>
+  <div style="width:100%;max-width:500px;text-align:left">
+    <div class="field" style="margin-bottom:20px">
+      <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:rgba(232,228,222,.7)">E-mail</label>
+      <input type="email" id="gate-email" placeholder="seu@email.com" style="width:100%;padding:13px 15px;background:#161616;border:1px solid rgba(232,228,222,.1);color:#E8E4DE;font-family:'DM Sans',sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s" onfocus="this.style.borderColor='rgba(245,160,32,.5)'" onblur="this.style.borderColor='rgba(232,228,222,.1)'">
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin:20px 0;color:rgba(232,228,222,.25);font-size:12px;letter-spacing:.1em;text-transform:uppercase">
+      <span style="flex:1;height:1px;background:rgba(232,228,222,.1)"></span>e/ou<span style="flex:1;height:1px;background:rgba(232,228,222,.1)"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div>
+        <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:rgba(232,228,222,.7)">WhatsApp</label>
+        <input type="tel" id="gate-phone" placeholder="(83) 99999-9999" inputmode="numeric" style="width:100%;padding:13px 15px;background:#161616;border:1px solid rgba(232,228,222,.1);color:#E8E4DE;font-family:'DM Sans',sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s"  onfocus="this.style.borderColor='rgba(245,160,32,.5)'" onblur="this.style.borderColor='rgba(232,228,222,.1)'">
+      </div>
+      <div>
+        <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:rgba(232,228,222,.7)">CPF</label>
+        <input type="text" id="gate-cpf" placeholder="000.000.000-00" inputmode="numeric" style="width:100%;padding:13px 15px;background:#161616;border:1px solid rgba(232,228,222,.1);color:#E8E4DE;font-family:'DM Sans',sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s"  onfocus="this.style.borderColor='rgba(245,160,32,.5)'" onblur="this.style.borderColor='rgba(232,228,222,.1)'">
+      </div>
+    </div>
+    <div id="gate-error" style="display:none;padding:12px 16px;background:rgba(232,92,26,.1);border-left:2px solid #E85C1A;color:rgba(232,228,222,.8);font-size:13px;margin-bottom:20px"></div>
+    <div style="padding:18px;border:1px solid rgba(245,160,32,.2);background:rgba(245,160,32,.03);margin-bottom:28px">
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;font-size:14px;color:rgba(232,228,222,.72);line-height:1.55">
+        <input type="checkbox" id="gate-auth" style="flex-shrink:0;margin-top:2px;accent-color:#F5A020;width:16px;height:16px;cursor:pointer">
+        <span>Autorizo a Bourbon Films a utilizar estas informa&ccedil;&otilde;es para fins de contato e elabora&ccedil;&atilde;o de proposta. <span style="color:#F5A020">*</span></span>
+      </label>
+    </div>
+    <button id="gate-submit-btn" style="width:100%;padding:17px 32px;background:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);color:#000;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity .2s">
+      Come&ccedil;ar briefing &rarr;
+    </button>
+  </div>
+  <p style="font-size:11px;color:rgba(232,228,222,.2);margin-top:28px">Seus dados s&atilde;o utilizados exclusivamente pela Bourbon Films.</p>
+</div>
+
+<div id="form-area" style="display:none">
+  <div class="form-hero">
+    <p class="form-hero-ey hero-anim" style="animation-delay:.1s">Bourbon Films</p>
+    <h1 class="hero-anim" style="animation-delay:.25s">Vamos criar juntos.<br><span class="gt">Tudo come&ccedil;a aqui.</span></h1>
+    <p class="hero-anim" style="animation-delay:.5s"><strong>Sim, preencher briefing &eacute; chato. A gente sabe.</strong> Mas &eacute; exatamente aqui que uma produ&ccedil;&atilde;o mediana se separa de uma que voc&ecirc; vai querer mostrar pra todo mundo.</p>
+  </div>
+
+  <div id="questions-container"></div>
+
+  <div id="submit-area">
+    <h3>Pronto para enviar?</h3>
+    <p>Voc&ecirc; respondeu tudo que precis&aacute;vamos saber por agora. A Bourbon entra em contato em breve.</p>
+    <button class="btn-submit" id="main-submit" onclick="submitBriefing()">
+      <span class="spinner"></span>
+      <span class="btn-text">
+        Enviar briefing
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </span>
+    </button>
+  </div>
+</div>
+
+<div id="receipt" style="display:none">
+  <div class="rec-top"><img src="data:image/png;base64,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" alt="Bourbon" style="height:30px"><div class="rec-top-text">
+    <div class="rec-check">&#10003;</div>
+    <h1 class="rec-title">Recebemos.</h1>
+    <p class="rec-sub">Em breve a Bourbon entra em contato.</p>
+  </div>
+  <div id="rec-body"></div>
+  <div class="rec-actions">
+          <div id="wpp-send-section" style="margin-bottom:28px;border:1px solid rgba(37,211,102,.2);background:rgba(37,211,102,.04);padding:20px">
+            <p style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(37,211,102,.7);margin-bottom:12px">Enviar via WhatsApp</p>
+            <p style="font-size:13px;color:rgba(232,228,222,.5);margin-bottom:14px;line-height:1.5">Clique no botão abaixo para abrir o WhatsApp com o briefing pronto para enviar.</p>
+            <pre id="wpp-preview" style="font-family:monospace;font-size:11px;color:rgba(232,228,222,.4);white-space:pre-wrap;max-height:180px;overflow:auto;background:rgba(0,0,0,.3);padding:12px;margin-bottom:16px;line-height:1.5;border:1px solid rgba(232,228,222,.06)"></pre>
+          </div>
+    <button class="btn-wpp" id="btn-wpp">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+      Abrir no WhatsApp
+    </button>
+    <button class="btn-pdf" onclick="downloadPDF()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Baixar PDF
+    </button>
+    <a href="index.html" class="btn-pdf" style="text-decoration:none">&larr; Voltar ao site</a>
+  </div>
+</div>
+
+<div class="save-chip" id="save-chip"><span class="save-dot"></span> Salvo</div>
+
+
+<script>
+
+
+
+// Gate script , independente do script principal
+function maskPhone(el) {
+  var v = (el.value || '').replace(/\D/g,'').slice(0,11);
+  if (v.length > 6) v = '('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  else if (v.length > 2) v = '('+v.slice(0,2)+') '+v.slice(2);
+  else if (v.length > 0) v = '('+v;
+  el.value = v;
+}
+function maskCPFField(el) {
+  var v = (el.value || '').replace(/\D/g,'').slice(0,11);
+  if (v.length > 9) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6,9)+'-'+v.slice(9);
+  else if (v.length > 6) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+  else if (v.length > 3) v = v.slice(0,3)+'.'+v.slice(3);
+  el.value = v;
+}
+function validarCPFGate(cpf) {
+  cpf = cpf.replace(/\D/g,'');
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+  var s=0, r;
+  for(var i=0;i<9;i++) s+=parseInt(cpf[i])*(10-i);
+  r=11-(s%11); if(r>=10) r=0; if(r!==parseInt(cpf[9])) return false;
+  s=0;
+  for(var i=0;i<10;i++) s+=parseInt(cpf[i])*(11-i);
+  r=11-(s%11); if(r>=10) r=0; return r===parseInt(cpf[10]);
+}
+function showGateError(msg) {
+  var el = document.getElementById('gate-error');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+function gateSubmit() {
+  var email = (document.getElementById('gate-email').value||'').trim();
+  var phone = (document.getElementById('gate-phone').value||'').trim();
+  var cpf   = (document.getElementById('gate-cpf').value||'').trim();
+  var auth  = document.getElementById('gate-auth').checked;
+  var err   = document.getElementById('gate-error');
+  if (err) err.style.display = 'none';
+
+  if (!email && !phone && !cpf) { showGateError('Informe ao menos um: e-mail, WhatsApp ou CPF.'); return; }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showGateError('E-mail inv\u00e1lido.'); return; }
+  if (cpf && cpf.replace(/\D/g,'').length > 0 && !validarCPFGate(cpf)) { showGateError('CPF inv\u00e1lido.'); return; }
+  if (!auth) { showGateError('Autorize o contato para continuar.'); return; }
+
+  // Store in window for main script
+  window._gateData = { email: email, phone: phone, cpf: cpf };
+
+  // Send to Web3Forms
+  try {
+    var fd = new FormData();
+    fd.append('access_key','YOUR_ACCESS_KEY');
+    fd.append('subject','Acesso Briefing | '+(email||phone||cpf));
+    fd.append('from_name','Bourbon Films Briefing');
+    fd.append('message','Email: '+email+'\nWhatsApp: '+phone+'\nCPF: '+cpf+'\n'+new Date().toLocaleString('pt-BR'));
+    fetch('https://api.web3forms.com/submit',{method:'POST',body:fd});
+  } catch(e) {}
+
+  document.getElementById('gate-screen').style.display = 'none';
+  var fa=document.getElementById('form-area');
+  fa.style.display = 'block';
+  setTimeout(function(){fa.classList.add('form-area-visible');},20);
+
+  // Call main script if ready, else wait
+  if (typeof revealNext === 'function') {
+    if (window._gateData) {
+      if (typeof answers !== 'undefined') {
+        answers['_gate_email'] = email;
+        answers['_gate_phone'] = phone;
+        answers['_gate_cpf']   = cpf;
+      }
+    }
+    setTimeout(function(){revealNext();},2500);
+  } else {
+    // Main script not ready yet , retry
+    var attempts = 0;
+    var wait = setInterval(function() {
+      attempts++;
+      if (typeof revealNext === 'function') {
+        clearInterval(wait);
+        if (typeof answers !== 'undefined') {
+          answers['_gate_email'] = email;
+          answers['_gate_phone'] = phone;
+          answers['_gate_cpf']   = cpf;
+        }
+        setTimeout(function(){revealNext();},2500);
+      } else if (attempts > 50) {
+        clearInterval(wait);
+        alert('Erro ao carregar o formul\u00e1rio. Recarregue a p\u00e1gina.');
+      }
+    }, 100);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var ph = document.getElementById('gate-phone');
+  if (ph) ph.addEventListener('input', function() { maskPhone(this); });
+
+  var cpf = document.getElementById('gate-cpf');
+  if (cpf) cpf.addEventListener('input', function() { maskCPFField(this); });
+
+  var btn = document.getElementById('gate-submit-btn');
+  if (btn) btn.addEventListener('click', gateSubmit);
+
+  // Also allow Enter key on gate fields
+  ['gate-email','gate-phone','gate-cpf'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') gateSubmit();
+    });
+  });
+});
+
+
+
+</script>
+<script>var BOURBON_ICON_B64=BOURBON_ICON_B64;
+
+
+var answers  = {};
+var shown    = [];
+var qCount   = 0;
+var SAVE_KEY = 'bourbon_brief_v5';
+
+function has(id,val){var v=answers[id];if(!v&&v!==0)return false;if(Array.isArray(v))return v.indexOf(val)>=0;return v===val;}
+function answered(id){var v=answers[id];if(v===null||v===undefined)return false;if(v==='__skip__')return true;if(Array.isArray(v))return v.length>0;return String(v).trim().length>0;}
+function isRet(){return has('ja_cliente','sim');}
+function isNew(){return has('ja_cliente','nao');}
+function isRec(){return has('tipo_escopo','recorrente');}
+
+const QUESTIONS = [
+  /* ── Q01-03: Identificação ──────────────────────────────────────────────── */
+  { id:'nome', num:'01', q:'Como prefere ser chamado?', hint:'Pode ser o primeiro nome.', type:'text', placeholder:'Seu nome', required:true },
+  { id:'empresa', num:'02', q:'Você representa alguma empresa ou marca?', hint:'Nome fantasia, razão social ou "trabalho por conta própria".', type:'text', placeholder:'Nome da empresa ou marca', required:true, condition:()=>answered('nome') },
+  { id:'whatsapp', num:'03', q:'Qual seu WhatsApp?', hint:'Nosso canal principal de retorno.', type:'tel', placeholder:'(XX) XXXXX-XXXX', required:true, condition:()=>answered('empresa') },
+
+  /* ── Q04: Escopo ────────────────────────────────────────────────────────── */
+  { id:'tipo_escopo', num:'04', q:'O que você está procurando?', hint:'Esta resposta define o caminho do seu briefing.', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('whatsapp'),
+    options:[
+      {v:'pontual',   l:'Um trabalho pontual',                  note:'Entrega específica: vídeo, cobertura, documentário...'},
+      {v:'recorrente',l:'Produção de conteúdo recorrente',      note:'Parceria contínua: mensal, semanal, diária...'},
+      {v:'nao-sei',   l:'Ainda não sei ao certo',               note:'Quero entender as opções'},
+    ]},
+
+  /* ── Q05: Já é cliente? (pontual) ──────────────────────────────────────── */
+  { id:'ja_cliente', num:'05', q:'Já trabalhou com a Bourbon antes?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>has('tipo_escopo','pontual')||has('tipo_escopo','nao-sei'),
+    options:[{v:'nao',l:'Não, é meu primeiro contato'},{v:'sim',l:'Sim, já somos parceiros'}]},
+
+  /* ════════════════════════════════════════════════════════════════════════
+     ROTA: PONTUAL + NOVO CLIENTE
+  ════════════════════════════════════════════════════════════════════════ */
+
+  /* Q06: Nível audiovisual */
+  { id:'new_nivel', num:'06', q:'Como você se relaciona com o mundo audiovisual?', hint:'Isso nos ajuda a calibrar o nível de detalhe das próximas perguntas.', type:'radio', required:true, autoAdvance:true,
+    condition:()=>has('ja_cliente','nao'),
+    options:[
+      {v:'leigo',        l:'Sou leigo , nunca produzi conteúdo antes',         note:'Vamos guiar você em cada passo'},
+      {v:'alguma-exp',   l:'Tenho alguma experiência',                          note:'Já produzi alguns conteúdos'},
+      {v:'profissional', l:'Entendo bem do ramo',                               note:'Posso me aprofundar nos detalhes técnicos'},
+    ]},
+
+  /* Q07: Tipo de trabalho */
+  { id:'new_tipo', num:'07', q:'Que tipo de trabalho você precisa?', hint:'Marque tudo que fizer sentido. As próximas perguntas se adaptam à sua escolha.', type:'checkbox', required:true,
+    condition:()=>answered('new_nivel'),
+    options:[
+      {v:'video-comercial',  l:'Vídeo comercial',              note:'Campanha, produto, institucional'},
+      {v:'cobertura-evento', l:'Cobertura de evento',          note:'Corporativo, cultural, esportivo'},
+      {v:'documentario',     l:'Documentário',                  note:'Narrativa longa, projetos de impacto'},
+      {v:'comunicacao-pol',  l:'Comunicação política',          note:'Campanhas, posicionamento'},
+      {v:'redes-sociais',    l:'Conteúdo para redes sociais',  note:'Reels, TikTok, feed'},
+      {v:'pos-producao',     l:'Pós-produção / edição',         note:'Tenho material, preciso de edição'},
+      {v:'ia-generativa',    l:'Vídeo com IA generativa',       note:'Produção com inteligência artificial'},
+      {v:'outro',            l:'Outro'},
+    ]},
+
+  /* Q08: Descrição geral */
+  { id:'new_descricao', num:'08', q:'Fale sobre o projeto.', hint:'O que é? Para quem é? Qual o objetivo principal?', type:'textarea', placeholder:'Pode ser informal. Quanto mais detalhe, melhor.', required:true, condition:()=>answered('new_tipo') },
+
+  /* ── VÍDEO COMERCIAL ──────────────────────────────────────────────────── */
+  { id:'new_roteiro', num:'09a', q:'Você já tem roteiro ou ideia definida para o vídeo?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&(has('new_tipo','video-comercial')||has('new_tipo','documentario')||has('new_tipo','comunicacao-pol')),
+    options:[
+      {v:'sim-completo', l:'Sim, tenho roteiro completo'},
+      {v:'sim-parcial',  l:'Tenho roteiro parcial / storyline'},
+      {v:'tenho-ideia',  l:'Tenho uma ideia, mas não um roteiro'},
+      {v:'do-zero',      l:'Parto do zero , preciso de direção criativa'},
+    ]},
+  { id:'new_roteiro_link', num:'09b', q:'Cole o link do roteiro ou documento:', hint:'Google Docs, Notion, PDF... qualquer link de acesso.', type:'url', placeholder:'https://', required:false,
+    condition:()=>has('new_roteiro','sim-completo')||has('new_roteiro','sim-parcial') },
+  { id:'new_ideia_texto', num:'09c', q:'Nos conte a ideia:', hint:'Mesmo que seja algo simples. Cada detalhe ajuda.', type:'textarea', placeholder:'O que você tem em mente...', required:true,
+    condition:()=>has('new_roteiro','tenho-ideia')||has('new_roteiro','do-zero') },
+
+  { id:'new_produto', num:'10a', q:'O vídeo envolve filmagem de produto?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&has('new_tipo','video-comercial'),
+    options:[{v:'sim',l:'Sim'},{v:'nao',l:'Não'},{v:'a-definir',l:'Ainda a definir'}]},
+  { id:'new_estudio', num:'10b', q:'Precisará de estúdio para a filmagem?', hint:'A Bourbon dispõe do próprio estúdio de filmagem.', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&has('new_tipo','video-comercial'),
+    options:[
+      {v:'bourbon-estudio', l:'Sim, utilizaremos o estúdio da Bourbon', note:'Incluído na proposta'},
+      {v:'cliente-tem',     l:'Sim, mas utilizaremos outro espaço'},
+      {v:'externo',         l:'Não, será em locação externa'},
+      {v:'nao',             l:'Não precisará de estúdio'},
+      {v:'a-definir',       l:'A definir'},
+    ]},
+  { id:'new_ensaio_foto', num:'10c', q:'Haverá ensaio fotográfico?', hint:'Além do vídeo, será produzido material fotográfico?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&(has('new_tipo','video-comercial')||has('new_tipo','redes-sociais')),
+    options:[
+      {v:'sim-produto', l:'Sim, ensaio de produto'},
+      {v:'sim-elenco',  l:'Sim, ensaio com elenco'},
+      {v:'sim-ambos',   l:'Sim, produto e elenco'},
+      {v:'nao',         l:'Não'},
+      {v:'a-definir',   l:'A definir'},
+    ]},
+  { id:'new_ator', num:'11', q:'O vídeo precisará de ator, atriz ou apresentador(a)?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&(has('new_tipo','video-comercial')||has('new_tipo','comunicacao-pol')),
+    options:[
+      {v:'bourbon-indica',  l:'Sim , vocês indicam',           note:'Custo incluído na proposta'},
+      {v:'cliente-tem',     l:'Sim , nós já temos alguém'},
+      {v:'nao',             l:'Não'},
+      {v:'a-definir',       l:'Ainda a definir'},
+    ]},
+
+  { id:'new_narracao', num:'12', q:'Terá narração em off?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&(has('new_tipo','video-comercial')||has('new_tipo','documentario')),
+    options:[
+      {v:'sim-bourbon',    l:'Sim , vocês providenciam o locutor'},
+      {v:'sim-cliente',    l:'Sim , nós temos o narrador'},
+      {v:'nao',            l:'Não'},
+      {v:'a-definir',      l:'Ainda a definir'},
+    ]},
+
+  { id:'new_animacao', num:'13', q:'O projeto terá animação, motion graphics ou lettering?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&(has('new_tipo','video-comercial')||has('new_tipo','redes-sociais')||has('new_tipo','ia-generativa')),
+    options:[
+      {v:'sim-total',  l:'Sim, será 100% animado'},
+      {v:'sim-parcial',l:'Sim, parcialmente (como complemento)'},
+      {v:'nao',        l:'Não'},
+      {v:'a-definir',  l:'Ainda a definir'},
+    ]},
+
+  
+
+  /* ── COBERTURA DE EVENTO ─────────────────────────────────────────────── */
+  { id:'new_evento_local', num:'09e', q:'Onde e quando será o evento?', hint:'Cidade, endereço aproximado e data.', type:'textarea', placeholder:'Ex: Campina Grande/PB , Centro de Convenções , 15 de agosto', required:true,
+    condition:()=>answered('new_descricao')&&has('new_tipo','cobertura-evento') },
+  { id:'new_evento_duracao', num:'10e', q:'Qual a duração do evento?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_evento_local'),
+    options:[{v:'ate2h',l:'Até 2 horas'},{v:'meio-dia',l:'Meio período'},{v:'dia-inteiro',l:'Dia inteiro'},{v:'multiplos-dias',l:'Múltiplos dias'},{v:'a-definir',l:'A definir'}]},
+  { id:'new_evento_entrevistas', num:'11e', q:'O vídeo terá entrevistas?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_evento_duracao'),
+    options:[{v:'sim',l:'Sim, com pessoas definidas'},{v:'sim-abert',l:'Sim, em aberto (espontâneas)'},{v:'nao',l:'Não'}]},
+  { id:'new_evento_entrega', num:'12e', q:'Qual o tipo de entrega?', type:'checkbox', required:true,
+    condition:()=>answered('new_evento_duracao'),
+    options:[{v:'highlight',l:'Vídeo highlight (curto)'},{v:'completo',l:'Cobertura completa'},{v:'stories',l:'Conteúdo para stories/reels'},{v:'ambos',l:'Ambos'}]},
+
+  /* ── DOCUMENTÁRIO ───────────────────────────────────────────────────── */
+  { id:'new_doc_personagens', num:'09d', q:'Os personagens/entrevistados já estão definidos?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&has('new_tipo','documentario'),
+    options:[{v:'sim',l:'Sim, todos definidos'},{v:'parcial',l:'Parcialmente'},{v:'nao',l:'Ainda não'},{v:'a-definir',l:'A definir'}]},
+  { id:'new_doc_exibicao', num:'10d', q:'Qual o destino de exibição?', type:'checkbox', required:true,
+    condition:()=>answered('new_doc_personagens'),
+    options:[{v:'festival',l:'Festival de cinema'},{v:'streaming',l:'Plataforma de streaming'},{v:'youtube',l:'YouTube'},{v:'privado',l:'Exibição privada / institucional'},{v:'tv',l:'TV'},{v:'a-definir',l:'A definir'}]},
+
+  /* ── PÓS-PRODUÇÃO ───────────────────────────────────────────────────── */
+  { id:'new_pos_servicos', num:'09p', q:'O que você precisa da pós-produção?', type:'checkbox', required:true,
+    condition:()=>answered('new_descricao')&&has('new_tipo','pos-producao'),
+    options:[
+      {v:'corte',    l:'Corte e montagem'},
+      {v:'color',    l:'Correção de cor'},
+      {v:'motion',   l:'Motion graphics / animação'},
+      {v:'som',      l:'Sonorização / trilha'},
+      {v:'narracao', l:'Locução / narração'},
+      {v:'legenda',  l:'Legenda / closed caption'},
+      {v:'todos',    l:'Pacote completo'},
+    ]},
+  { id:'new_pos_entrega', num:'10p', q:'Como vai entregar o material bruto?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_pos_servicos'),
+    options:[{v:'hd-externo',l:'HD externo físico'},{v:'link-nuvem',l:'Link na nuvem (Drive, Dropbox...)'},{v:'ja-entregou',l:'Material já entregue anteriormente'}]},
+
+  /* ── VÍDEO IA ───────────────────────────────────────────────────────── */
+  { id:'new_ia_tipo', num:'09i', q:'Qual o objetivo do vídeo com IA?', type:'checkbox', required:true,
+    condition:()=>answered('new_descricao')&&has('new_tipo','ia-generativa'),
+    options:[{v:'avatar',l:'Avatar / apresentador virtual'},{v:'edicao-ia',l:'Edição e efeitos com IA'},{v:'voz-ia',l:'Voz gerada por IA'},{v:'video-ia-total',l:'Vídeo 100% gerado por IA'},{v:'a-definir',l:'A definir'}]},
+
+  /* ── PERGUNTAS TÉCNICAS (para experientes/profissionais) ──────────────── */
+  { id:'new_cameras', num:'15t', q:'Quantas câmeras serão necessárias?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&(has('new_nivel','alguma-exp')||has('new_nivel','profissional'))&&!has('new_tipo','pos-producao')&&!has('new_tipo','ia-generativa'),
+    options:[{v:'1',l:'1 câmera'},{v:'2',l:'2 câmeras'},{v:'3+',l:'3 ou mais'},{v:'drone',l:'Inclui drone'},{v:'a-definir',l:'A definir'}]},
+  { id:'new_noturna', num:'16t', q:'Haverá filmagem noturna?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&(has('new_nivel','alguma-exp')||has('new_nivel','profissional'))&&!has('new_tipo','pos-producao')&&!has('new_tipo','ia-generativa'),
+    options:[{v:'sim',l:'Sim'},{v:'nao',l:'Não'},{v:'a-definir',l:'A definir'}]},
+
+  /* ── DATA DE GRAVAÇÃO (universal pontual novo) ─────────────────────── */
+  { id:'new_data_grav', num:'17', q:'Já tem data de gravação definida?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_descricao')&&!has('new_tipo','pos-producao')&&!has('new_tipo','ia-generativa'),
+    options:[{v:'sim',l:'Sim, já está definida'},{v:'nao',l:'Ainda não'},{v:'evento',l:'Depende do evento'}]},
+  { id:'new_data_grav_data', num:'17b', q:'Qual a data de gravação?', type:'date', required:false,
+    condition:()=>has('new_data_grav','sim') },
+
+  /* ── PLATAFORMAS + DURAÇÃO + FORMATO ──────────────────────────────── */
+  { id:'new_plataformas', num:'18', q:'Onde esse conteúdo vai circular?', type:'checkbox', required:true,
+    condition:()=>answered('new_descricao'),
+    options:[{v:'instagram',l:'Instagram'},{v:'youtube',l:'YouTube'},{v:'tiktok',l:'TikTok'},{v:'linkedin',l:'LinkedIn'},{v:'tv-ooh',l:'TV / OOH'},{v:'interno',l:'Uso interno'},{v:'multiplas',l:'Múltiplas plataformas'},{v:'a-definir',l:'A definir'}]},
+  { id:'new_qtd', num:'19', q:'Quantos vídeos / peças estão sendo solicitados?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_plataformas'),
+    options:[{v:'1',l:'1 vídeo'},{v:'2-3',l:'2 a 3'},{v:'4-5',l:'4 a 5'},{v:'pacote',l:'Pacote (detalho abaixo)'},{v:'a-definir',l:'A definir'}]},
+  { id:'new_duracao', num:'20', q:'Qual a duração estimada de cada vídeo?', hint:'Se houver múltiplas peças com durações diferentes, use o vídeo mais longo como referência.', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_qtd'),
+    options:[{v:'ate-15s',l:'Até 15 segundos'},{v:'30s',l:'30 segundos'},{v:'1min',l:'1 minuto'},{v:'2-3min',l:'2 a 3 minutos'},{v:'5min+',l:'5 minutos ou mais'},{v:'a-definir',l:'A definir'}]},
+  { id:'new_formato', num:'21', q:'Qual o formato de entrega?', type:'checkbox', required:true,
+    condition:()=>answered('new_duracao'),
+    options:[{v:'16x9',l:'Horizontal 16:9',note:'YouTube, TV'},{v:'9x16',l:'Vertical 9:16',note:'Reels, TikTok, Stories'},{v:'1x1',l:'Quadrado 1:1',note:'Feed Instagram'},{v:'multiplo',l:'Múltiplos formatos'},{v:'a-definir',l:'A definir'}]},
+
+  /* ── VEICULAÇÃO + PATROCÍNIO ─────────────────────────────────────── */
+  { id:'new_veiculacao', num:'22', q:'Qual o tempo de vida desse material?', hint:'Ajuda a planejar o nível de produção e a estratégia de entrega.', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_formato'),
+    options:[
+      {v:'permanente',  l:'Permanente , ficará no ar indefinidamente'},
+      {v:'ate-3m',      l:'Campanha curta , até 3 meses'},
+      {v:'ate-1a',      l:'Campanha média , até 1 ano'},
+      {v:'mais-1a',     l:'Campanha longa , mais de 1 ano'},
+      {v:'evento',      l:'Pontual , pós-evento / descartável'},
+      {v:'a-definir',   l:'Ainda a definir'},
+    ]},
+  { id:'new_patrocinio', num:'23', q:'O conteúdo será impulsionado / patrocinado nas redes?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('new_veiculacao'),
+    options:[
+      {v:'sim-ate3m',   l:'Sim , até 3 meses de impulsionamento'},
+      {v:'sim-ate1a',   l:'Sim , até 1 ano'},
+      {v:'sim-mais1a',  l:'Sim , mais de 1 ano'},
+      {v:'nao',         l:'Não'},
+      {v:'a-definir',   l:'Ainda a definir'},
+    ]},
+
+  /* ── REFERÊNCIAS + OBS ───────────────────────────────────────────── */
+  { id:'new_referencias', num:'24', q:'Tem alguma referência visual ou de estilo?', hint:'Links do YouTube, Vimeo, Instagram... cada link em uma caixa.', type:'links', required:false, condition:()=>answered('new_formato') },
+  { id:'new_obs', num:'25', q:'Tem algo mais que queira nos contar?', type:'textarea', placeholder:'Contexto adicional, restrições, preferências...', required:false, condition:()=>answered('new_formato') },
+
+  /* ════════════════════════════════════════════════════════════════════════
+     ROTA: PONTUAL + CLIENTE EXISTENTE
+  ════════════════════════════════════════════════════════════════════════ */
+  { id:'ret_descricao', num:'06', q:'O que você precisa desta vez?', hint:'Me conta o contexto. Pode ser direto ao ponto.', type:'textarea', placeholder:'O que mudou, o que vem por aí...', required:true, condition:()=>has('ja_cliente','sim') },
+  { id:'ret_tipo', num:'07', q:'Que tipo de trabalho é?', type:'checkbox', required:true,
+    condition:()=>answered('ret_descricao'),
+    options:[
+      {v:'video-comercial',  l:'Vídeo comercial'},
+      {v:'cobertura-evento', l:'Cobertura de evento'},
+      {v:'documentario',     l:'Documentário'},
+      {v:'comunicacao-pol',  l:'Comunicação política'},
+      {v:'redes-sociais',    l:'Conteúdo para redes'},
+      {v:'pos-producao',     l:'Pós-produção / edição'},
+      {v:'recorrencia',      l:'Recorrência / pacote de conteúdo'},
+      {v:'outro',            l:'Outro'},
+    ]},
+  { id:'ret_duracao', num:'08', q:'Qual a duração estimada?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('ret_tipo')&&!has('ret_tipo','pos-producao'),
+    options:[{v:'ate-15s',l:'Até 15s'},{v:'30s',l:'30s'},{v:'1min',l:'1 min'},{v:'2-3min',l:'2-3 min'},{v:'5min+',l:'5 min+'},{v:'a-definir',l:'A definir'}]},
+  { id:'ret_qtd', num:'09', q:'Quantas peças?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('ret_descricao'),
+    options:[{v:'1',l:'1'},{v:'2-3',l:'2 a 3'},{v:'4-5',l:'4 a 5'},{v:'pacote',l:'Pacote'},{v:'a-definir',l:'A definir'}]},
+  { id:'ret_formato', num:'10', q:'Formato de entrega?', type:'checkbox', required:true,
+    condition:()=>answered('ret_qtd'),
+    options:[{v:'16x9',l:'16:9'},{v:'9x16',l:'9:16'},{v:'1x1',l:'1:1'},{v:'multiplo',l:'Múltiplos'},{v:'a-definir',l:'A definir'}]},
+  { id:'ret_data', num:'11', q:'Tem data de entrega em mente?', type:'date', required:false, condition:()=>answered('ret_descricao') },
+  { id:'ret_referencias', num:'12', q:'Tem alguma referência ou inspiração?', hint:'Cada link em uma caixa.', type:'links', required:false, condition:()=>answered('ret_descricao') },
+  { id:'ret_obs', num:'13', q:'Mais alguma coisa?', type:'textarea', placeholder:'À vontade.', required:false, condition:()=>answered('ret_descricao') },
+
+  /* ════════════════════════════════════════════════════════════════════════
+     ROTA: RECORRENTE
+  ════════════════════════════════════════════════════════════════════════ */
+  { id:'rec_sobre', num:'05', q:'Me conta sobre a empresa ou marca.', hint:'Segmento, público-alvo, tom de voz, diferenciais.', type:'textarea', placeholder:'Sem pressa. Quanto mais a gente souber, melhor o resultado.', required:true, condition:()=>has('tipo_escopo','recorrente') },
+  { id:'rec_plataformas', num:'06', q:'Para quais plataformas o conteúdo será produzido?', type:'checkbox', required:true,
+    condition:()=>answered('rec_sobre'),
+    options:[{v:'instagram',l:'Instagram'},{v:'tiktok',l:'TikTok'},{v:'youtube',l:'YouTube'},{v:'linkedin',l:'LinkedIn'},{v:'kwai',l:'Kwai'},{v:'multiplas',l:'Múltiplas'}]},
+  { id:'rec_frequencia', num:'07', q:'Qual a frequência de produção que você imagina?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('rec_plataformas'),
+    options:[{v:'diaria',l:'Diário',note:'7+ conteúdos/semana'},{v:'3x-semana',l:'3x por semana'},{v:'semanal',l:'Semanal'},{v:'quinzenal',l:'Quinzenal'},{v:'mensal',l:'Mensal'},{v:'a-definir',l:'Ainda a definir'}]},
+  { id:'rec_qtd_mes', num:'08', q:'Quantos conteúdos por mês aproximadamente?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('rec_frequencia'),
+    options:[{v:'ate-4',l:'Até 4/mês'},{v:'5-8',l:'5 a 8/mês'},{v:'9-15',l:'9 a 15/mês'},{v:'16-20',l:'16 a 20/mês'},{v:'20+',l:'20+/mês'},{v:'a-definir',l:'A definir'}]},
+  { id:'rec_duracao', num:'09', q:'Qual a duração média por conteúdo?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('rec_qtd_mes'),
+    options:[{v:'reels-curtos',l:'Reels curtos (até 30s)'},{v:'reels-medios',l:'Reels médios (30s a 1min)'},{v:'longo',l:'Conteúdo longo (+1min)'},{v:'variado',l:'Variado / depende'}]},
+  { id:'rec_formato', num:'10', q:'Formato predominante?', type:'checkbox', required:true,
+    condition:()=>answered('rec_duracao'),
+    options:[{v:'9x16',l:'9:16 (Stories / Reels / TikTok)'},{v:'16x9',l:'16:9 (YouTube)'},{v:'1x1',l:'1:1 (Feed)'},{v:'variado',l:'Variado'}]},
+  { id:'rec_tom', num:'11', q:'Como descreveria o tom de voz da marca?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('rec_formato'),
+    options:[{v:'informal',l:'Informal e descontraído'},{v:'profissional',l:'Profissional e direto'},{v:'editorial',l:'Editorial / inspiracional'},{v:'politico',l:'Político / institucional'},{v:'a-definir',l:'Ainda estamos construindo isso'}]},
+  { id:'rec_tem_roteiro', num:'12', q:'Vocês têm roteiros ou pautas dos conteúdos, ou deixam por nossa conta?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('rec_tom'),
+    options:[{v:'cliente-faz',l:'Temos roteiros / pautas próprias'},{v:'bourbon-faz',l:'Deixamos por conta de vocês'},{v:'conjunto',l:'Desenvolvemos juntos'},{v:'a-definir',l:'A definir'}]},
+  { id:'rec_referencias', num:'13', q:'Tem alguma referência de conteúdo que admira?', hint:'Perfis, canais, campanhas. Cada link numa caixa.', type:'links', required:false, condition:()=>answered('rec_tem_roteiro') },
+  { id:'rec_obs', num:'14', q:'Mais alguma coisa que a gente deve saber?', type:'textarea', placeholder:'Contextos, restrições, preferências...', required:false, condition:()=>answered('rec_tem_roteiro') },
+
+  /* ════════════════════════════════════════════════════════════════════════
+     FECHAMENTO COMUM
+  ════════════════════════════════════════════════════════════════════════ */
+    /* ════════ PERGUNTAS DE PROTEÇÃO E LOGÍSTICA (todas as rotas) ════════ */
+  { id:'neg_decisor', q:'Quem será o responsável pelas aprovações do projeto?', hint:'Nome e cargo de quem dará a palavra final.', type:'text', placeholder:'Ex: Ana Paula, Diretora de Marketing', required:true,
+    condition:function(){
+      if(isRec())return answered('rec_tom');
+      if(has('ja_cliente','sim'))return answered('ret_descricao');
+      if(has('ja_cliente','nao'))return answered('new_formato');
+      return false;
+    }},
+  { id:'neg_revisoes', q:'Quantas rodadas de revisão de edição você estima precisar?', hint:'Isso impacta diretamente o prazo e o valor da proposta.', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('neg_decisor'),
+    options:[
+      {v:'1',l:'1 rodada',note:'Já tenho tudo muito definido'},
+      {v:'2',l:'2 rodadas'},
+      {v:'3',l:'3 rodadas'},
+      {v:'a-combinar',l:'A combinar junto com a equipe'},
+    ]},
+  { id:'neg_nf', q:'Precisará de emissão de nota fiscal?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('neg_revisoes'),
+    options:[
+      {v:'sim-cnpj',l:'Sim, para CNPJ'},
+      {v:'sim-cpf', l:'Sim, para CPF'},
+      {v:'nao',     l:'Não será necessário'},
+      {v:'a-definir',l:'A definir'},
+    ]},
+  { id:'neg_faturamento', q:'Qual o prazo de faturamento esperado?', hint:'Em quanto tempo após a entrega o pagamento será realizado?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('neg_nf'),
+    options:[
+      {v:'entrada-50',  l:'50% na entrada, 50% na entrega'},
+      {v:'30-dias',     l:'30 dias'},
+      {v:'60-dias',     l:'60 dias'},
+      {v:'a-combinar',  l:'A combinar'},
+    ]},
+  { id:'prod_dias_captacao', q:'Quantos dias de captação você estima?', hint:'Dias de gravação em campo ou estúdio.', type:'radio', required:true, autoAdvance:true,
+    condition:function(){
+      if(has('ja_cliente','nao'))return answered('neg_faturamento')&&!has('new_tipo','pos-producao')&&!has('new_tipo','ia-generativa');
+      if(has('ja_cliente','sim'))return answered('neg_faturamento')&&!has('ret_tipo','pos-producao');
+      return false;
+    },
+    options:[
+      {v:'meio-dia',  l:'Meio dia'},
+      {v:'1',         l:'1 dia'},
+      {v:'2',         l:'2 dias'},
+      {v:'3+',        l:'3 dias ou mais'},
+      {v:'a-definir', l:'Ainda a definir'},
+    ]},
+  { id:'prod_duracao_rec', q:'Qual a duração média estimada de cada gravação?', hint:'Isso nos ajuda a planejar a equipe e os equipamentos.', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('prod_dias_captacao'),
+    options:[
+      {v:'2h',          l:'Até 2 horas'},
+      {v:'4h',          l:'Meio período (4h)'},
+      {v:'dia-inteiro', l:'Dia inteiro'},
+      {v:'a-definir',   l:'A definir'},
+    ]},
+  { id:'prod_alimentacao', q:'Precisaremos nos preocupar com alimentação durante as gravações?', hint:'Para a equipe técnica e elenco, quando aplicável.', type:'radio', required:true, autoAdvance:true,
+    condition:()=>answered('prod_duracao_rec'),
+    options:[
+      {v:'sim-cliente',  l:'Sim, o cliente providencia'},
+      {v:'sim-incluir',  l:'Sim, incluam na proposta'},
+      {v:'nao',          l:'Não será necessário'},
+      {v:'a-definir',    l:'A definir'},
+    ]},
+
+{ id:'pref_contato', q:'Como prefere receber nosso retorno?', type:'radio', required:true, autoAdvance:true,
+    condition:()=>{
+      if(isRec())return answered('rec_tom')||answered('rec_obs');
+      if(has('ja_cliente','sim'))return answered('ret_descricao');
+      if(has('ja_cliente','nao'))return answered('new_formato');
+      return false;
+    },
+    options:[{v:'whatsapp',l:'WhatsApp'},{v:'email',l:'E-mail'},{v:'videochamada',l:'Videochamada'},{v:'ligacao',l:'Ligação telefônica'},{v:'reuniao',l:'Reunião presencial'},{v:'qualquer',l:'Qualquer canal, vocês decidem'}]},
+  { id:'confirmacao', type:'confirm', required:false, condition:()=>answered('pref_contato') },
+];
+
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(answers));}catch(e){}}
+function restoreState(){try{var s=JSON.parse(localStorage.getItem(SAVE_KEY));if(s&&typeof s==='object')Object.assign(answers,s);}catch(e){}}
+
+function updateProgress(){
+  try{
+    var t=QUESTIONS.filter(function(q){try{return!q.condition||q.condition();}catch(e){return false;}}).length;
+    var d=Object.keys(answers).filter(function(k){return k.charAt(0)!=='_'&&answered(k);}).length;
+    var p=t>0?Math.min(Math.round(d/t*100),100):0;
+    var l=document.getElementById('prog-line');if(l)l.style.width=p+'%';
+  }catch(e){}
+}
+
+/* ── RENDER LINKS TYPE ── */
+function renderLinks(id,card){
+  var wrap=document.createElement('div');wrap.className='links-wrap';wrap.id='links-wrap-'+id;
+  var addLink=function(){
+    var row=document.createElement('div');row.className='link-row';row.style.cssText='display:flex;gap:8px;margin-bottom:8px';
+    var inp=document.createElement('input');
+    inp.type='url';inp.placeholder='https://...';
+    inp.style.cssText="flex:1;padding:13px 15px;background:#161616;border:1px solid rgba(232,228,222,.1);color:#E8E4DE;font-family:'DM Sans',sans-serif;font-size:14px;outline:none";
+    var rm=document.createElement('button');
+    rm.type='button';rm.textContent='✕';
+    rm.style.cssText="padding:0 14px;background:transparent;border:1px solid rgba(232,228,222,.1);color:rgba(232,228,222,.4);cursor:pointer;font-size:16px";
+    rm.onclick=function(e){e.stopPropagation();if(wrap.querySelectorAll('.link-row').length>1)row.remove();syncLinks(id,wrap);};
+    inp.oninput=function(){
+      syncLinks(id,wrap);
+      var rows=wrap.querySelectorAll('.link-row');
+      var last=rows[rows.length-1].querySelector('input');
+      if(last&&last.value.trim()&&last===inp)addLink();
+    };
+    row.appendChild(inp);row.appendChild(rm);wrap.appendChild(row);
+    return inp;
+  };
+  addLink();
+  var si=document.createElement('p');si.style.cssText='font-size:12px;color:rgba(232,228,222,.3);margin-top:6px';
+  si.textContent='Um link por linha. Nova caixa abre automaticamente ao preencher.';
+  wrap.appendChild(si);
+  card.appendChild(wrap);
+}
+
+function syncLinks(id,wrap){
+  var vals=[];
+  wrap.querySelectorAll('.link-row input').forEach(function(i){if(i.value.trim())vals.push(i.value.trim());});
+  answers[id]=vals.length?vals:undefined;
+  if(answers[id])saveState();
+}
+
+/* ── RENDER QUESTION ── */
+function renderQuestion(q){
+  var container=document.getElementById('questions-container');if(!container)return;
+  qCount++;
+  var card=document.createElement('div');card.className='q-card visible';card.id='qcard-'+q.id;
+
+  if(q.type==='confirm'){
+    var w=document.createElement('div');w.className='q-input';
+    var inner=document.createElement('div');inner.style.cssText='padding:20px;border:1px solid rgba(245,160,32,.2);background:rgba(245,160,32,.03)';
+    var lbl=document.createElement('label');lbl.style.cssText='display:flex;align-items:flex-start;gap:12px;cursor:pointer;font-size:14px;color:rgba(232,228,222,.72);line-height:1.6';
+    var chk=document.createElement('input');chk.type='checkbox';chk.id='conf-check';
+    chk.style.cssText='flex-shrink:0;margin-top:2px;accent-color:#F5A020;width:16px;height:16px;cursor:pointer';
+    chk.onchange=function(){handleConfirm(chk);};
+    var sp=document.createElement('span');sp.textContent='Confirmo que as informações prestadas são verdadeiras e autorizo a Bourbon Films a utilizá-las exclusivamente para elaboração de proposta comercial.';
+    lbl.appendChild(chk);lbl.appendChild(sp);inner.appendChild(lbl);w.appendChild(inner);card.appendChild(w);
+    var av=document.createElement('div');av.className='q-answered-val';card.appendChild(av);
+    container.appendChild(card);card.scrollIntoView();return;
+  }
+
+  if(q.num){var n=document.createElement('p');n.className='q-num';n.textContent=String(qCount).padStart(2,'0');card.appendChild(n);}
+  var qt=document.createElement('p');qt.className='q-text';qt.textContent=q.q||'';card.appendChild(qt);
+  if(q.hint){var h=document.createElement('p');h.className='q-hint';h.textContent=q.hint;card.appendChild(h);}
+
+  var idiv=document.createElement('div');idiv.className='q-input';
+  var inp=null;
+
+  if(q.type==='links'){
+    renderLinks(q.id,idiv);
+    var br3=document.createElement('div');br3.className='q-btn-row';br3.style.marginTop='12px';
+    var sb3=document.createElement('button');sb3.type='button';sb3.className='q-btn ready';sb3.id='btn-'+q.id;sb3.textContent='Continuar →';
+    (function(id){sb3.onclick=function(e){if(e)e.stopPropagation();
+      var v=answers[id];if(!v||!v.length)answers[id]=[];
+      markAnswered(id,Array.isArray(answers[id])&&answers[id].length?answers[id].length+' link(s)':'(pulado)');revealNext();
+    };})(q.id);
+    br3.appendChild(sb3);
+    if(q.required===false){var sk3=document.createElement('button');sk3.type='button';sk3.className='q-skip';sk3.textContent='Pular →';
+      (function(id){sk3.onclick=function(e){if(e)e.stopPropagation();skipQuestion(id);};})(q.id);br3.appendChild(sk3);}
+    idiv.appendChild(br3);
+  } else if(q.type==='radio'||q.type==='checkbox'){
+    var od=document.createElement('div');od.className='opts';
+    (q.options||[]).forEach(function(o){
+      var d=document.createElement('div');d.className='opt';
+      var s2=document.createElement('span');s2.className='opt-label';s2.textContent=o.l;
+      if(o.note){var sn=document.createElement('span');sn.className='opt-note';sn.textContent=o.note;s2.appendChild(sn);}
+      d.appendChild(s2);
+      (function(qid,val,type,auto){d.onclick=function(e){if(e)e.stopPropagation();handleOpt(qid,val,type,auto,d);};})(q.id,o.v,q.type,!!q.autoAdvance);
+      od.appendChild(d);
+    });
+    idiv.appendChild(od);
+    if(q.type==='checkbox'){
+      var br=document.createElement('div');br.className='q-btn-row';
+      var cb=document.createElement('button');cb.type='button';cb.className='q-btn';cb.id='btn-'+q.id;cb.textContent='Continuar →';
+      (function(id){cb.onclick=function(e){if(e)e.stopPropagation();submitCheckbox(id);};})(q.id);
+      br.appendChild(cb);idiv.appendChild(br);
+    }
+  } else {
+    if(q.type==='textarea'){inp=document.createElement('textarea');inp.rows=4;}
+    else{inp=document.createElement('input');inp.type=(q.type==='tel'||q.type==='url'||q.type==='date')?q.type:'text';if(q.type==='tel')inp.inputMode='numeric';}
+    inp.id='inp-'+q.id;inp.placeholder=q.placeholder||'';
+    if(q.id==='whatsapp'&&answers['_gate_phone'])inp.value=answers['_gate_phone'];
+    (function(id,tp){
+      inp.oninput=function(){if(tp==='tel')formatPhone(inp,id);else handleInput(id,inp.value);};
+      if(tp!=='textarea'){inp.onkeydown=function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();e.stopPropagation();var btn=document.getElementById('btn-'+id);if(btn&&btn.classList.contains('ready'))submitText(id);}};}
+    })(q.id,q.type);
+    idiv.appendChild(inp);
+    var br2=document.createElement('div');br2.className='q-btn-row';
+    var sb=document.createElement('button');sb.type='button';sb.id='btn-'+q.id;
+    sb.className=(q.required===false||(inp.value&&inp.value.trim()))?'q-btn ready':'q-btn';sb.textContent='Continuar →';
+    (function(id){sb.onclick=function(e){if(e)e.stopPropagation();submitText(id);};})(q.id);
+    br2.appendChild(sb);
+    if(q.required===false){var sk=document.createElement('button');sk.type='button';sk.className='q-skip';sk.textContent='Pular →';
+      (function(id){sk.onclick=function(e){if(e)e.stopPropagation();skipQuestion(id);};})(q.id);br2.appendChild(sk);}
+    idiv.appendChild(br2);
+  }
+
+  card.appendChild(idiv);
+  var avd=document.createElement('div');avd.className='q-answered-val';card.appendChild(avd);
+  container.appendChild(card);
+  try{card.scrollIntoView();}catch(e){}
+  if(inp&&q.type!=='date'){try{setTimeout(function(){inp.focus();},80);}catch(e2){}}
+}
+
+function revealNext(){
+  updateProgress();
+  for(var i=0;i<QUESTIONS.length;i++){
+    var q=QUESTIONS[i];
+    if(shown.indexOf(q.id)>=0)continue;
+    try{if(q.condition&&!q.condition())continue;}catch(e){continue;}
+    shown.push(q.id);
+    renderQuestion(q);return;
+  }
+  checkCompletion();
+}
+
+function checkCompletion(){
+  var req=QUESTIONS.filter(function(q){return q.required!==false&&shown.indexOf(q.id)>=0&&q.type!=='confirm';});
+  var done=req.every(function(q){return answered(q.id);});
+  var sa=document.getElementById('submit-area');
+  if(sa)sa.style.display=(done&&answers['confirmacao']==='sim')?'block':'none';
+}
+
+function submitText(id){
+  var inp=document.getElementById('inp-'+id);if(!inp)return;
+  var val=inp.value.trim();
+  var q=null;try{q=QUESTIONS.find(function(x){return x.id===id;});}catch(e){}
+  if(q&&q.required!==false&&!val){inp.style.borderColor='#E85C1A';inp.focus();return;}
+  answers[id]=val||'';saveState();
+  markAnswered(id,val||'(em branco)');revealNext();
+}
+
+function skipQuestion(id){answers[id]='__skip__';saveState();markAnswered(id,'(pulado)');revealNext();}
+
+function handleOpt(qid,val,type,autoAdv,optEl){
+  if(type==='radio'){
+    var card=document.getElementById('qcard-'+qid);
+    if(card)card.querySelectorAll('.opt').forEach(function(d){d.classList.remove('selected');});
+    optEl.classList.add('selected');answers[qid]=val;saveState();
+    if(autoAdv){var lbl=optEl.querySelector('.opt-label');var txt=lbl?lbl.childNodes[0].textContent:val;
+      setTimeout(function(){markAnswered(qid,txt);revealNext();},280);}
+  } else {
+    optEl.classList.toggle('selected');
+    if(!Array.isArray(answers[qid]))answers[qid]=[];
+    var idx=answers[qid].indexOf(val);
+    if(optEl.classList.contains('selected')){if(idx<0)answers[qid].push(val);}else{if(idx>=0)answers[qid].splice(idx,1);}
+    var btn=document.getElementById('btn-'+qid);if(btn)btn.classList.toggle('ready',answers[qid].length>0);saveState();
+  }
+}
+
+function submitCheckbox(id){
+  if(!answers[id]||answers[id].length===0)return;
+  var card=document.getElementById('qcard-'+id);
+  var labs=card?Array.from(card.querySelectorAll('.opt.selected')):[];
+  var txt=labs.map(function(d){var l=d.querySelector('.opt-label');return l?l.childNodes[0].textContent:'';}).filter(Boolean).join(', ');
+  markAnswered(id,txt||'selecionado');revealNext();
+}
+
+function handleConfirm(el){
+  if(el.checked){answers['confirmacao']='sim';saveState();}else{delete answers['confirmacao'];}
+  checkCompletion();
+  var card=document.getElementById('qcard-confirmacao');
+  if(card&&el.checked){var av=card.querySelector('.q-answered-val');if(av)av.textContent='Confirmado.';card.classList.add('answered');}
+}
+
+function markAnswered(id,txt){
+  var card=document.getElementById('qcard-'+id);if(!card)return;
+  var av=card.querySelector('.q-answered-val');if(av)av.textContent=txt;
+  card.classList.add('answered');
+  (function(qid){card.onclick=function(e){
+    if(e&&e.target&&(e.target.tagName==='BUTTON'||e.target.tagName==='INPUT'))return;
+    editAnswer(qid);
+  };})(id);
+}
+
+function editAnswer(id){
+  var pos=shown.indexOf(id);
+  if(pos>=0){var rem=shown.splice(pos+1);rem.forEach(function(rid){var rc=document.getElementById('qcard-'+rid);if(rc)rc.remove();delete answers[rid];});}
+  var card=document.getElementById('qcard-'+id);if(!card)return;
+  card.classList.remove('answered');card.onclick=null;
+  delete answers[id];saveState();
+  var sa=document.getElementById('submit-area');if(sa)sa.style.display='none';
+  card.querySelectorAll('.opt').forEach(function(d){d.classList.remove('selected');});
+  var btn=document.getElementById('btn-'+id);if(btn)btn.classList.remove('ready');
+  try{card.scrollIntoView();}catch(e){}
+}
+
+function handleInput(id,val){
+  var btn=document.getElementById('btn-'+id);if(!btn)return;
+  var q=null;try{q=QUESTIONS.find(function(x){return x.id===id;});}catch(e){}
+  btn.classList.toggle('ready',!!(val&&val.trim())||(q&&q.required===false));
+}
+
+function formatPhone(el,qid){
+  var v=(el.value||'').replace(/\D/g,'').slice(0,11);
+  if(v.length>6)v='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  else if(v.length>2)v='('+v.slice(0,2)+') '+v.slice(2);
+  else if(v.length>0)v='('+v;
+  el.value=v;handleInput(qid,v);
+}
+
+function buildReceipt(){
+  var vv=function(id){
+    var v=answers[id];
+    if(v===null||v===undefined||v==='__skip__')return '';
+    if(Array.isArray(v))return v.filter(function(x){return x&&x!=='__skip__';}).join(', ');
+    return String(v);
+  };
+  var row=function(label,val){
+    if(!val||val==='__skip__')return '';
+    return '<div class="rec-row"><dt>'+label+'</dt><dd>'+val+'</dd></div>';
+  };
+  var sec=function(title,rows){
+    var content=rows.filter(Boolean).join('');
+    return content?'<div class="rec-sect"><p class="rec-sect-title">'+title+'</p>'+content+'</div>':'';
+  };
+  var linksSec=function(id,label){
+    var v=answers[id];
+    if(!Array.isArray(v)||!v.length)return '';
+    var rows=v.map(function(u,i){
+      return '<div class="rec-row"><dt>'+label+' '+(i+1)+'</dt><dd><a href="'+u+'" style="color:#F5A020;word-break:break-all">'+u+'</a></dd></div>';
+    }).join('');
+    return rows?'<div class="rec-sect"><p class="rec-sect-title">Refer\u00eancias</p>'+rows+'</div>':'';
+  };
+
+  var html='';
+
+  /* ── CABEÇALHO ── */
+  html+='<div style="display:flex;align-items:center;gap:20px;border-bottom:3px solid #F5A020;padding-bottom:24px;margin-bottom:32px">';
+  html+='<img src=BOURBON_ICON_B64 style="height:40px;flex-shrink:0">';;
+  html+='<div>';
+  html+='<div style="font-family:Outfit,sans-serif;font-size:20pt;font-weight:800;color:#fff;letter-spacing:-.03em;line-height:1">BOURBON FILMS</div>';
+  html+='<div style="font-size:8pt;color:rgba(232,228,222,.35);letter-spacing:.25em;text-transform:uppercase;margin-top:5px">Briefing de Projeto , Documento Confidencial</div>';
+  html+='</div></div>';
+
+  /* ── IDENTIFICAÇÃO ── */
+  html+=sec('Identificação do Solicitante',[
+    row('Nome / Como ser chamado',vv('nome')),
+    row('Empresa / Marca',vv('empresa')),
+    row('WhatsApp',vv('whatsapp')),
+    row('E-mail',vv('_gate_email')||''),
+    row('Escopo solicitado',vv('tipo_escopo')),
+  ]);
+
+  /* ══════════════ ROTA: PONTUAL + NOVO CLIENTE ══════════════ */
+  if(has('ja_cliente','nao')){
+    html+=sec('Perfil e Contexto',[
+      row('Tipo de trabalho',vv('new_tipo')),
+      row('Nível de conhecimento audiovisual',vv('new_nivel')),
+      row('Descrição do projeto',vv('new_descricao')),
+    ]);
+
+    if(vv('new_roteiro')||vv('new_roteiro_link')||vv('new_ideia_texto')){
+      html+=sec('Roteiro e Narrativa',[
+        row('Status do roteiro',vv('new_roteiro')),
+        row('Link do roteiro',vv('new_roteiro_link')?'<a href="'+vv('new_roteiro_link')+'" style="color:#F5A020">'+vv('new_roteiro_link')+'</a>':''),
+        row('Ideia / conceito inicial',vv('new_ideia_texto')),
+      ]);
+    }
+
+    if(has('new_tipo','video-comercial')||has('new_tipo','comunicacao-pol')||has('new_tipo','documentario')){
+      html+=sec('Cast e Locução',[
+        row('Ator / Atriz / Apresentador',vv('new_ator')),
+        row('Narração em off',vv('new_narracao')),
+      ]);
+    }
+
+    if(has('new_tipo','video-comercial')){
+      html+=sec('Produto e Estúdio',[
+        row('Vídeo de produto',vv('new_produto')),
+        row('Necessidade de estúdio',vv('new_estudio')),
+        row('Estúdio',vv('new_estudio')),
+      row('Ensaio fotográfico',vv('new_ensaio_foto')),
+      ]);
+    }
+
+    if(has('new_tipo','video-comercial')||has('new_tipo','redes-sociais')||has('new_tipo','ia-generativa')){
+      html+=sec('Animação e Pós',[
+        row('Animação / Motion / Lettering',vv('new_animacao')),
+      ]);
+    }
+
+    if(has('new_tipo','cobertura-evento')){
+      html+=sec('Detalhes do Evento',[
+        row('Local e data do evento',vv('new_evento_local')),
+        row('Duração do evento',vv('new_evento_duracao')),
+        row('Entrevistas',vv('new_evento_entrevistas')),
+        row('Tipo de entrega',vv('new_evento_entrega')),
+      ]);
+    }
+
+    if(has('new_tipo','documentario')){
+      html+=sec('Documentário',[
+        row('Personagens / entrevistados',vv('new_doc_personagens')),
+        row('Destino de exibição',vv('new_doc_exibicao')),
+      ]);
+    }
+
+    if(has('new_tipo','pos-producao')){
+      html+=sec('Pós-Produção',[
+        row('Serviços solicitados',vv('new_pos_servicos')),
+        row('Entrega do material bruto',vv('new_pos_entrega')),
+      ]);
+    }
+
+    if(has('new_tipo','ia-generativa')){
+      html+=sec('Inteligência Artificial',[
+        row('Tipo de IA desejada',vv('new_ia_tipo')),
+      ]);
+    }
+
+    if(has('new_nivel','alguma-exp')||has('new_nivel','profissional')){
+      html+=sec('Produção Técnica',[
+        row('Câmeras necessárias',vv('new_cameras')),
+        row('Filmagem noturna',vv('new_noturna')),
+      ]);
+    }
+
+    var dataGravRow=vv('new_data_grav');
+    if(vv('new_data_grav_data'))dataGravRow+=' , '+vv('new_data_grav_data');
+    html+=sec('Logística de Gravação',[
+      row('Status da data de gravação',dataGravRow),
+    ]);
+
+    html+=sec('Distribuição e Plataformas',[
+      row('Plataformas de veiculação',vv('new_plataformas')),
+      row('Quantidade de peças',vv('new_qtd')),
+      row('Duração estimada (maior peça)',vv('new_duracao')),
+      row('Formato(s) de entrega',vv('new_formato')),
+    ]);
+
+    html+=sec('Estratégia de Veiculação',[
+      row('Tempo de vida do material',vv('new_veiculacao')),
+      row('Impulsionamento / Patrocínio',vv('new_patrocinio')),
+    ]);
+
+    html+=linksSec('new_referencias','Referência');
+    html+=sec('Observações Finais',[row('Informações adicionais',vv('new_obs'))]);
+
+  /* ══════════════ ROTA: PONTUAL + CLIENTE EXISTENTE ══════════════ */
+  }else if(has('ja_cliente','sim')){
+    html+=sec('Descrição do Projeto',[
+      row('Tipo de trabalho',vv('ret_tipo')),
+      row('Descrição / contexto',vv('ret_descricao')),
+      row('Quantidade de peças',vv('ret_qtd')),
+      row('Duração estimada (maior peça)',vv('ret_duracao')),
+      row('Formato(s) de entrega',vv('ret_formato')),
+      row('Data de entrega desejada',vv('ret_data')),
+    ]);
+    html+=linksSec('ret_referencias','Referência');
+    html+=sec('Observações',[row('Informações adicionais',vv('ret_obs'))]);
+
+  /* ══════════════ ROTA: RECORRENTE ══════════════ */
+  }else if(isRec()){
+    html+=sec('Sobre a Marca',[
+      row('Contexto da empresa / marca',vv('rec_sobre')),
+      row('Tom de voz',vv('rec_tom')),
+    ]);
+    html+=sec('Produção de Conteúdo',[
+      row('Plataformas',vv('rec_plataformas')),
+      row('Frequência desejada',vv('rec_frequencia')),
+      row('Quantidade por mês',vv('rec_qtd_mes')),
+      row('Duração média por conteúdo',vv('rec_duracao')),
+      row('Formato(s) predominante(s)',vv('rec_formato')),
+      row('Roteiros / pautas',vv('rec_tem_roteiro')),
+    ]);
+    html+=linksSec('rec_referencias','Referência');
+    html+=sec('Observações',[row('Informações adicionais',vv('rec_obs'))]);
+  }
+
+  /* ── CONTATO ── */
+  html+=sec('Informações de Contrato e Faturamento',[
+    row('Responsável pelas aprovações',vv('neg_decisor')),
+    row('Rodadas de revisão',vv('neg_revisoes')),
+    row('Emissão de nota fiscal',vv('neg_nf')),
+    row('Prazo de faturamento',vv('neg_faturamento')),
+  ]);
+  html+=sec('Logística de Produção',[
+    row('Dias de captação estimados',vv('prod_dias_captacao')),
+    row('Duração média por gravação',vv('prod_duracao_rec')),
+    row('Alimentação nas gravações',vv('prod_alimentacao')),
+  ]);
+  html+=sec('Preferência de Contato',[
+    row('Canal preferido para retorno',vv('pref_contato')),
+  ]);
+
+  /* ── RODAPÉ ── */
+  html+='<div style="margin-top:32px;padding-top:16px;border-top:1px solid rgba(232,228,222,.1);display:flex;justify-content:space-between;align-items:center;font-size:8pt;color:rgba(232,228,222,.2)">';
+  html+='<span>bourbonfilms.com.br &nbsp;|&nbsp; @bourbonfilm</span>';
+  html+='<span>83 99868-3878</span>';
+  html+='</div>';
+
+  return html;
+}
+
+function buildWpp(){
+  var vv=function(id){var v=answers[id];if(Array.isArray(v))return v.filter(function(x){return x!=='__skip__';}).join(', ');return(v==='__skip__'||!v)?'-':v;};
+  var L=['*BRIEFING | BOURBON FILMS*',''];
+  L.push('*Cliente:* '+vv('nome')+' | '+vv('empresa'));
+  L.push('*WhatsApp:* '+vv('whatsapp'));
+  L.push('*Escopo:* '+vv('tipo_escopo'),'','━━━━━━━━━━━━━━━━━━━━');
+  if(isRec()){
+    L.push('*RECORRÊNCIA*');
+    L.push('*Sobre:* '+vv('rec_sobre').slice(0,200));
+    L.push('*Plataformas:* '+vv('rec_plataformas'));
+    L.push('*Frequência:* '+vv('rec_frequencia')+' | *Qtd/mês:* '+vv('rec_qtd_mes'));
+    L.push('*Tom:* '+vv('rec_tom'));
+    if(Array.isArray(answers.rec_referencias)&&answers.rec_referencias.length)L.push('*Referências:* '+answers.rec_referencias.join(' | '));
+  } else if(isNew()){
+    L.push('*PROJETO NOVO*');
+    L.push('*Tipo:* '+vv('new_tipo'));
+    L.push('*Descrição:* '+vv('new_descricao').slice(0,300));
+    L.push('*Plataformas:* '+vv('new_plataformas'));
+    L.push('*Duração:* '+vv('new_duracao')+' | *Qtd:* '+vv('new_qtd')+' | *Formato:* '+vv('new_formato'));
+    if(vv('new_data')!=='-')L.push('*Data:* '+vv('new_data'));
+    if(Array.isArray(answers.new_referencias)&&answers.new_referencias.length)L.push('*Referências:* '+answers.new_referencias.join(' | '));
+  } else {
+    L.push('*RETORNO DE CLIENTE*');
+    L.push('*Descrição:* '+vv('ret_descricao').slice(0,300));
+    L.push('*Duração:* '+vv('ret_duracao')+' | *Qtd:* '+vv('ret_qtd'));
+    if(Array.isArray(answers.ret_referencias)&&answers.ret_referencias.length)L.push('*Referências:* '+answers.ret_referencias.join(' | '));
+  }
+  L.push('','━━━━━━━━━━━━━━━━━━━━');
+  L.push('*LOGISTICA E CONTRATO*');
+  L.push('*Aprovador:* '+vv('neg_decisor'));
+  L.push('*Revisoes:* '+vv('neg_revisoes')+' | *NF:* '+vv('neg_nf')+' | *Fatur.:* '+vv('neg_faturamento'));
+  if(vv('prod_dias_captacao'))L.push('*Dias captacao:* '+vv('prod_dias_captacao')+' | *Duracao/rec:* '+vv('prod_duracao_rec'));
+  if(vv('prod_alimentacao'))L.push('*Alimentacao:* '+vv('prod_alimentacao'));
+  L.push('','*Retorno preferido:* '+vv('pref_contato'));
+  L.push('','_bourbonfilms.com.br/briefing_');
+  return L.join('\n');
+}
+
+function submitBriefing(){
+  var btn=document.getElementById('main-submit');if(btn){btn.classList.add('submitting');btn.disabled=true;}
+  var fd=new FormData();
+  fd.append('access_key','YOUR_ACCESS_KEY');
+  fd.append('subject','Briefing Bourbon | '+(answers.nome||'')+' | '+(answers.empresa||''));
+  fd.append('from_name','Bourbon Films');
+  fd.append('message',JSON.stringify(answers,null,2));
+  try{fetch('https://api.web3forms.com/submit',{method:'POST',body:fd});}catch(e){}
+  document.getElementById('form-area').style.display='none';
+  var rec=document.getElementById('receipt');rec.style.display='block';
+  var rb=document.getElementById('rec-body');if(rb)rb.innerHTML=buildReceipt().replace('ICON_PLACEHOLDER',BOURBON_ICON_B64);
+  var wppText=buildWpp();
+  var wppPreview=document.getElementById('wpp-preview');
+  if(wppPreview){wppPreview.textContent=wppText;}
+  document.getElementById('btn-wpp').onclick=function(){window.open('https://wa.me/5583998683878?text='+encodeURIComponent(wppText),'_blank');};
+  try{localStorage.removeItem(SAVE_KEY);}catch(e){}
+  window.scrollTo(0,0);
+}
+
+function copyWpp(){
+  var t=(document.getElementById('wpp-preview')||{}).textContent||buildWpp();
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){
+    var b=document.querySelector('[onclick="copyWpp()"]');
+    if(b){var o=b.innerHTML;b.innerHTML='✓ Copiado!';b.style.color='#4ade80';setTimeout(function(){b.innerHTML=o;b.style.color='';},2000);}
+  });}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
+}
+function downloadPDF(){
+  var rec=document.getElementById('receipt');
+  var fa=document.getElementById('form-area');
+  var rb=document.getElementById('rec-body');
+  if(rb&&(!rb.innerHTML||rb.innerHTML.trim()===''))rb.innerHTML=buildReceipt().replace('ICON_PLACEHOLDER',BOURBON_ICON_B64);
+  if(fa)fa.style.display='none';
+  if(rec)rec.style.display='block';
+  document.title='Briefing_Bourbon_'+(answers.nome||'Films');
+  setTimeout(function(){window.print();document.title='Briefing | Bourbon Films';if(rec)rec.style.display='none';if(fa)fa.style.display='block';},250);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  restoreState();
+  /* Always start at gate screen */
+  var g=document.getElementById('gate-screen');
+  var f=document.getElementById('form-area');
+  var r=document.getElementById('receipt');
+  if(g)g.style.display='flex';
+  if(f)f.style.display='none';
+  if(r)r.style.display='none';
+});
+
+</script>
+</body>
+</html>
