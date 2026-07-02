@@ -177,7 +177,7 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
   .quote-strip{padding:56px 24px}
   .port-footer{flex-direction:column;gap:18px;align-items:flex-start}
 }
-#bastidores{display:none!important}
+#bastidores{display:none!important;height:0;margin:0;padding:0;overflow:hidden}
 .marquee-logo img{height:32px!important;width:auto!important;max-width:120px!important;object-fit:contain!important}
 .marquee-logo{height:60px}
 .wpp-float{position:fixed;bottom:28px;right:28px;width:56px;height:56px;background:#25D366;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:9000;box-shadow:0 4px 20px rgba(37,211,102,.4);transition:transform .2s;text-decoration:none}
@@ -186,6 +186,85 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
 
 .marquee-logo img{height:28px!important;width:auto!important;max-width:100px!important;min-width:0!important;object-fit:contain!important;filter:brightness(0) invert(1)}
 .marquee-logo{width:160px!important;height:56px!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0 24px!important}
+#preloader img{position:relative;z-index:10001}
+.nav-logo-img{height:28px;width:auto;display:block}
+.social-bar{display:flex;gap:12px;align-items:center;justify-content:center;padding:32px 0 8px}
+.social-btn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid rgba(232,228,222,.15);color:rgba(232,228,222,.55);text-decoration:none;transition:border-color .2s,color .2s;border-radius:0}
+.social-btn:hover{border-color:#F5A020;color:#F5A020}
+.social-btn svg{width:18px;height:18px}
+
+/* ── TECH GLASS AESTHETIC ── */
+:root{--glass:rgba(255,255,255,.04);--glass-border:rgba(255,255,255,.07);--glow:#F5A020}
+
+/* Body: animated grid background */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(245,160,32,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(245,160,32,.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  animation:grid-shift 20s linear infinite}
+@keyframes grid-shift{0%{background-position:0 0}100%{background-position:60px 60px}}
+
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 0%,rgba(245,160,32,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 100%,rgba(232,92,26,.05) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(139,40,0,.04) 0%,transparent 70%)}
+
+/* Ensure sections are above bg */
+nav,section,footer,.wpp-float{position:relative;z-index:1}
+#preloader{z-index:10000}
+
+/* Glass cards for services */
+.srv{
+  background:var(--glass)!important;
+  border:1px solid var(--glass-border)!important;
+  backdrop-filter:blur(12px)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+  transition:background .3s,border-color .3s,transform .3s!important}
+.srv:hover{
+  background:rgba(245,160,32,.06)!important;
+  border-color:rgba(245,160,32,.2)!important;
+  transform:translateY(-4px)!important}
+
+/* Glass depoimentos cards */
+.dep-card{
+  background:var(--glass)!important;
+  border:1px solid var(--glass-border)!important;
+  backdrop-filter:blur(16px)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+  transition:border-color .3s,transform .3s!important}
+.dep-card:hover{
+  border-color:rgba(245,160,32,.2)!important;
+  transform:translateY(-3px)!important}
+
+/* Glass nav */
+nav{
+  background:rgba(8,8,8,.7)!important;
+  backdrop-filter:blur(20px)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  border-bottom:1px solid var(--glass-border)!important}
+
+/* Floating orbs */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:.12;animation:orb-float 15s ease-in-out infinite}
+.orb-1{width:500px;height:500px;background:#F5A020;top:-200px;left:-200px;animation-delay:0s}
+.orb-2{width:400px;height:400px;background:#E85C1A;bottom:-100px;right:-100px;animation-delay:-7s}
+.orb-3{width:300px;height:300px;background:#8B2800;top:50%;left:50%;animation-delay:-3s;transform:translate(-50%,-50%)}
+@keyframes orb-float{0%,100%{transform:translate(0,0)}33%{transform:translate(30px,-40px)}66%{transform:translate(-20px,20px)}}
+
+/* Glowing stat numbers */
+.stat-n{text-shadow:0 0 40px rgba(245,160,32,.3)!important}
+
+/* Scanline texture on hero */
+.hero-overlay::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);pointer-events:none}
+
+/* Social buttons glass */
+.social-btn{background:var(--glass)!important;backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important}
+
+/* Footer glass */
+footer{background:rgba(6,6,6,.85)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border-top:1px solid var(--glass-border)!important}
+
+.quote-strip{display:none}
 </style>
   <script>
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
@@ -198,6 +277,7 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
 <div class="cursor-ring" id="ring"></div>
 
 <!-- PRELOADER -->
+<div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
 <div id="preloader">
   <img src="data:image/png;base64,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" class="pre-icon" style="height:56px;width:auto;opacity:.9" alt="">
   <p class="pre-name">bourbon films</p>
@@ -215,7 +295,8 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
     <li><a href="#servicos">Servi&ccedil;os</a></li>
     <li><a href="#clientes">Clientes</a></li><li><a href="#depoimentos">Depoimentos</a></li>
   </ul>
-  <a href="https://wa.me/5583998683878?text=Ol%C3%A1%2C%20vim%20pelo%20site" class="nav-cta" target="_blank">Falar conosco</a>
+  <a href="briefing.html" class="btn-briefing" style="padding:10px 20px;border:1px solid rgba(245,160,32,.4);color:#F5A020;font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .2s;white-space:nowrap" onmouseover="this.style.background='rgba(245,160,32,.1)'" onmouseout="this.style.background='transparent'">Faça seu briefing</a>
+    <a href="https://wa.me/5583998683878?text=Ol%C3%A1%2C%20vim%20pelo%20site" class="nav-cta" target="_blank">Falar conosco</a>
 </nav>
 
 <!-- HERO -->
@@ -228,7 +309,7 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-eyebrow">Bourbon Films. Campina Grande, PB.</div>
-    <h1 class="hero-title"><span class="line"><span>O tempo apaga</span></span><span class="line"><span>quase tudo.</span></span></h1>
+    <h1 class="hero-title"><span class="line"><span>O tempo apaga</span></span><span class="line"><span>quase tudo,</span></span></h1>
     <p class="hero-sub">&Eacute; por isso que escolhemos produzir apenas o que merece permanecer.</p>
     <a href="https://wa.me/5583998683878?text=Ol%C3%A1%2C%20vim%20pelo%20site" class="hero-cta" target="_blank">
       Iniciar projeto
@@ -282,10 +363,6 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
   </div>
 </section>
 
-<!-- QUOTE -->
-<div class="quote-strip rev">
-  <blockquote style="font-size:clamp(20px,3vw,36px);line-height:1.3;font-style:normal;font-family:'Outfit',sans-serif;font-weight:700;border:none;padding:0;margin:0">&ldquo;Feito, para n&oacute;s, significa apenas uma coisa.<br>Est&aacute; pronto para representar quem confiou em nosso trabalho.&rdquo;</blockquote>
-</div>
 
 <!-- BASTIDORES -->
 <section id="bastidores">
@@ -386,19 +463,10 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
 </div>
 
 <!-- CTA -->
-<section id="cta" class="rev">
-  <h2 class="cta-title">Daqui a alguns anos,<br><span class="grad-text">sua marca ainda ter&aacute; orgulho?</span></h2>
-  <p class="cta-sub">Todo filme encontra um p&uacute;blico. Toda marca encontra seu mercado. Mas ambos encontram, inevitavelmente, o tempo.<br><br>Se essa pergunta tamb&eacute;m importa para voc&ecirc;, teremos prazer em construir o pr&oacute;ximo projeto ao seu lado.</p>
-  <a href="https://wa.me/5583998683878?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20quero%20fazer%20um%20projeto" class="btn-cta" target="_blank">
-    Vamos conversar.
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
-  </a>
-</section>
-
-<!-- FOOTER -->
 <section id="depoimentos">
   <div class="eyebrow rev">O que dizem</div>
   <h2 class="big-title rev">Quem j&aacute; trabalhou<br>com a gente</h2>
+  <p style="margin-top:16px;color:rgba(232,228,222,.45);font-size:14px">Avalia&ccedil;&otilde;es reais do Google. <a href="https://share.google/6uOWLfDi5QnaY6pTI" target="_blank" rel="noopener" style="color:#F5A020;text-decoration:none;border-bottom:1px solid rgba(245,160,32,.3)">Confira o perfil da Bourbon no Google &#8599;</a></p>
   <div class="dep-grid">
 
     <div class="dep-card rev"><div class="dep-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="dep-text">"Foi uma excelente experi&ecirc;ncia trabalhar com a equipe da Bourbon Films. Al&eacute;m de atenderem integralmente &agrave; demanda, superaram nossas expectativas ao entregar imagens adicionais e um v&iacute;deo editado extra, sem qualquer solicita&ccedil;&atilde;o pr&eacute;via."</p><div class="dep-author">Equipe S&eacute;rgio Matos</div><div class="dep-role">Sal&atilde;o do Artesanato</div></div>
@@ -427,9 +495,34 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
 
   </div>
 </section>
+<section id="cta" class="rev">
+  <h2 class="cta-title">Daqui a alguns anos,<br><span class="grad-text">sua marca ainda ter&aacute; orgulho?</span></h2>
+  <p class="cta-sub">Todo filme encontra um p&uacute;blico. Toda marca encontra seu mercado. Mas ambos encontram, inevitavelmente, o tempo.<br><br>Se essa pergunta tamb&eacute;m importa para voc&ecirc;, teremos prazer em construir o pr&oacute;ximo projeto ao seu lado.</p>
+  <a href="https://wa.me/5583998683878?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20quero%20fazer%20um%20projeto" class="btn-cta" target="_blank">
+    Vamos conversar.
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+  </a>
+</section>
+
+<!-- FOOTER -->
+
+<div class="social-bar rev">
+  <a href="https://instagram.com/bourbonfilm" class="social-btn" target="_blank" aria-label="Instagram">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+  </a>
+  <a href="https://wa.me/5583998683878" class="social-btn" target="_blank" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+  <a href="https://youtube.com/@bourbonfilms" class="social-btn" target="_blank" aria-label="YouTube">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+  </a>
+  <a href="https://linkedin.com/company/bourbon-films" class="social-btn" target="_blank" aria-label="LinkedIn">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+  </a>
+</div>
 <footer>
   <div class="foot-logo">
-    <img src="data:image/jpeg;base64,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" alt="Bourbon Films">
+    <img src="data:image/png;base64,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" alt="Bourbon Films">
     <p class="foot-text">Produtora audiovisual de Campina Grande, PB. Dire&ccedil;&atilde;o e produ&ccedil;&atilde;o para cinema e publicidade desde 2015.</p>
   </div>
   <div class="foot-col">
@@ -468,7 +561,7 @@ document.querySelectorAll('a,button').forEach(el=>{
 });
 
 // PRELOADER
-window.addEventListener('load',()=>setTimeout(()=>document.getElementById('preloader').classList.add('done'),1000));
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('preloader').classList.add('done'),2200));
 
 // NAV
 const nav=document.getElementById('nav');
