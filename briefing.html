@@ -270,7 +270,7 @@ function gateSubmit() {
   // Send to Web3Forms
   try {
     var fd = new FormData();
-    fd.append('access_key','YOUR_ACCESS_KEY');
+    fd.append('access_key','cecf6141-9abc-4182-aa50-fb7625cc188e');
     fd.append('subject','Acesso Briefing | '+(email||phone||cpf));
     fd.append('from_name','Bourbon Films Briefing');
     fd.append('message','Email: '+email+'\nWhatsApp: '+phone+'\nCPF: '+cpf+'\n'+new Date().toLocaleString('pt-BR'));
@@ -1153,7 +1153,7 @@ function buildWpp(){
 function submitBriefing(){
   var btn=document.getElementById('main-submit');if(btn){btn.classList.add('submitting');btn.disabled=true;}
   var fd=new FormData();
-  fd.append('access_key','YOUR_ACCESS_KEY');
+  fd.append('access_key','cecf6141-9abc-4182-aa50-fb7625cc188e');
   fd.append('subject','Briefing Bourbon | '+(answers.nome||'')+' | '+(answers.empresa||''));
   fd.append('from_name','Bourbon Films');
   fd.append('message',JSON.stringify(answers,null,2));
