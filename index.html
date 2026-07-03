@@ -48,8 +48,8 @@ nav.scrolled{background:rgba(8,8,8,.93);backdrop-filter:blur(14px);padding:14px 
 .hero-content{position:relative;z-index:3;padding:0 56px 80px;max-width:980px}
 .hero-eyebrow{display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(232,228,222,.55);margin-bottom:24px;opacity:0;transform:translateY(18px);animation:fup .8s .3s forwards}
 .hero-eyebrow::before{content:'';width:28px;height:1px;background:rgba(232,228,222,.35)}
-h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);font-weight:800;line-height:.92;letter-spacing:-.022em;margin-bottom:28px}
-.hero-title .line{display:block;overflow:hidden}
+h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);font-weight:800;line-height:1.02;letter-spacing:-.022em;margin-bottom:28px}
+.hero-title .line{display:block;overflow:hidden;padding-bottom:.12em;margin-bottom:-.12em}
 .hero-title .line span{display:inline-block;opacity:0;transform:translateY(105%);animation:lup .85s cubic-bezier(.16,1,.3,1) forwards}
 .hero-title .line:nth-child(1) span{animation-delay:.5s}
 .hero-title .line:nth-child(2) span{animation-delay:.68s}
@@ -117,7 +117,7 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 
 /* SERVICES */
 #servicos{padding:100px 56px}
-.srv-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(232,228,222,.05);outline:1px solid rgba(232,228,222,.05)}
+.srv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:rgba(232,228,222,.05);outline:1px solid rgba(232,228,222,.05)}
 .srv{background:var(--ink);padding:52px 48px;position:relative;overflow:hidden;transition:background .3s}
 .srv:hover{background:#0d0d0d}
 .srv-bar{position:absolute;bottom:0;left:0;height:2px;width:0;background:var(--grad);transition:width .5s ease}
@@ -163,11 +163,11 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
   nav,nav.scrolled{padding:18px 24px}
   .nav-links,.nav-cta{display:none}
   .hero-content{padding:0 24px 60px}
-  #stats{grid-template-columns:repeat(2,1fr)}
+  #stats{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
   .stat{padding:36px 24px;border-bottom:1px solid rgba(232,228,222,.05)}
   #sobre{padding:72px 24px;grid-template-columns:1fr;gap:44px}
   #bastidores{padding:72px 24px}
-  .bastidores-grid{grid-template-columns:repeat(2,1fr)}
+  .bastidores-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
   #portfolio,#servicos,#cta{padding:72px 24px}
   .srv-grid{grid-template-columns:1fr}
   footer{padding:56px 24px 32px;grid-template-columns:1fr;gap:40px}
@@ -305,9 +305,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   <div class="grain"></div>
     <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow">Bourbon Films. Campina Grande, PB.</div>
+    <div class="hero-eyebrow">Produtora paraibana. Atua&ccedil;&atilde;o em todo o Brasil.</div>
     <h1 class="hero-title"><span class="line"><span>O tempo apaga</span></span><span class="line"><span>quase tudo,</span></span></h1>
-    <p class="hero-sub">&Eacute; por isso que escolhemos produzir apenas o que merece permanecer.</p>
+    <p class="hero-sub">&eacute; por isso que escolhemos produzir apenas o que merece permanecer.</p>
     <a href="https://wa.me/5583998683878?text=Ol%C3%A1%2C%20vim%20pelo%20site" class="hero-cta" target="_blank">
       Iniciar projeto
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -338,7 +338,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 <!-- SOBRE -->
 <section id="sobre">
   <div class="rev">
-    <div class="eyebrow">Por que existimos</div><h2 class="big-title">Uma hist&oacute;ria<br>bem contada<br>n&atilde;o termina.</h2><p class="sobre-body">A Bourbon Films nasceu da obsess&atilde;o por contar hist&oacute;rias bem.<br><br>Porque uma hist&oacute;ria bem contada n&atilde;o termina quando o v&iacute;deo acaba. Ela permanece. Representa pessoas. Representa empresas. Representa reputa&ccedil;&otilde;es.<br><br>&Eacute; por isso que cada projeto come&ccedil;a muito antes da c&acirc;mera. Come&ccedil;a com a responsabilidade de compreender exatamente o que aquela hist&oacute;ria ir&aacute; representar nos pr&oacute;ximos anos.</p>
+    <div class="eyebrow">Por que existimos</div><h2 class="big-title">Perman&ecirc;ncia.</h2><p class="sobre-body">A Bourbon Films nasceu da obsess&atilde;o por contar hist&oacute;rias bem.<br><br>Porque uma hist&oacute;ria bem contada n&atilde;o termina quando o v&iacute;deo acaba. Ela permanece. Representa pessoas. Representa empresas. Representa reputa&ccedil;&otilde;es.<br><br>&Eacute; por isso que cada projeto come&ccedil;a muito antes da c&acirc;mera. Come&ccedil;a com a responsabilidade de compreender exatamente o que aquela hist&oacute;ria ir&aacute; representar nos pr&oacute;ximos anos.</p>
   </div>
   <div class="sobre-aside rev">
     <div>
@@ -403,7 +403,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 
 <!-- PORTFOLIO -->
 <section id="portfolio">
-  <h2 class="big-title rev">N&atilde;o formatos.<br>Hist&oacute;rias.</h2>
+  <h2 class="big-title rev">Cada hist&oacute;ria<br>encontra sua forma.</h2>
   <div class="srv-grid rev">
     <div class="srv">
       <div class="srv-bar"></div>
@@ -428,6 +428,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       <div class="srv-num">04</div>
       <div class="srv-name">Comunica&ccedil;&atilde;o Pol&iacute;tica</div>
       <p class="srv-desc">Produ&ccedil;&atilde;o estrat&eacute;gica para campanhas pol&iacute;ticas. Do diagn&oacute;stico &agrave; entrega, com impacto e resultado.</p>
+    </div>
+    <div class="srv">
+      <div class="srv-bar"></div>
+      <div class="srv-num">05</div>
+      <div class="srv-name">Esportes</div>
+      <p class="srv-desc">Corridas, competi&ccedil;&otilde;es e times. Ritmo, tens&atilde;o e a hist&oacute;ria por tr&aacute;s do resultado.</p>
+    </div>
+    <div class="srv">
+      <div class="srv-bar"></div>
+      <div class="srv-num">06</div>
+      <div class="srv-name">Conte&uacute;do para Redes</div>
+      <p class="srv-desc">Produ&ccedil;&atilde;o recorrente para marcas que precisam de presen&ccedil;a cont&iacute;nua e consistente.</p>
+    </div>
+    <div class="srv">
+      <div class="srv-bar"></div>
+      <div class="srv-num">07</div>
+      <div class="srv-name">Intelig&ecirc;ncia Artificial</div>
+      <p class="srv-desc">Produ&ccedil;&atilde;o assistida por IA generativa. Apresentada como anima&ccedil;&atilde;o e motion, nunca como atalho.</p>
+    </div>
+    <div class="srv">
+      <div class="srv-bar"></div>
+      <div class="srv-num">08</div>
+      <div class="srv-name">P&oacute;s-Produ&ccedil;&atilde;o</div>
+      <p class="srv-desc">Edi&ccedil;&atilde;o, corre&ccedil;&atilde;o de cor e finaliza&ccedil;&atilde;o para material j&aacute; captado.</p>
     </div>
   </div>
 </section>
@@ -476,7 +500,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   </div>
 </section>
 <section id="cta" class="rev">
-  <h2 class="cta-title">Daqui a alguns anos,<br><span class="grad-text">sua marca ainda ter&aacute; orgulho?</span></h2>
+  <h2 class="cta-title">O tempo n&atilde;o <span class="grad-text">perdoa.</span></h2>
   <p class="cta-sub">Todo filme encontra um p&uacute;blico. Toda marca encontra seu mercado. Mas ambos encontram, inevitavelmente, o tempo.<br><br>Se essa pergunta tamb&eacute;m importa para voc&ecirc;, teremos prazer em construir o pr&oacute;ximo projeto ao seu lado.</p>
   <a href="https://wa.me/5583998683878?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20quero%20fazer%20um%20projeto" class="btn-cta" target="_blank">
     Vamos conversar.
@@ -507,7 +531,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 <footer>
   <div class="foot-logo">
     <img src="data:image/png;base64,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" alt="Bourbon Films">
-    <p class="foot-text">Produtora audiovisual de Campina Grande, PB. Dire&ccedil;&atilde;o e produ&ccedil;&atilde;o para cinema e publicidade desde 2015.</p>
+    <p class="foot-text">Produtora audiovisual de Campina Grande, PB. Dire&ccedil;&atilde;o e produ&ccedil;&atilde;o para cinema e publicidade desde 2012.</p>
   </div>
   <div class="foot-col">
     <h4>Navegue</h4>
