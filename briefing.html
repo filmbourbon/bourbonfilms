@@ -1165,114 +1165,132 @@ function buildEmail(){
     'documentario':'Documentario','comunicacao-pol':'Comunicacao politica',
     'redes-sociais':'Conteudo para redes sociais','pos-producao':'Pos-producao / edicao',
     'ia-generativa':'Video com IA generativa','outro':'Outro',
-    'leigo':'Leigo (primeiro contato com producao)','alguma-exp':'Alguma experiencia','profissional':'Profissional / entende do ramo',
-    'sim-completo':'Sim, roteiro completo','sim-parcial':'Roteiro parcial / storyline',
-    'tenho-ideia':'Tem ideia, nao tem roteiro','do-zero':'Do zero, precisa de direcao criativa',
-    'bourbon-indica':'Sim, a Bourbon indica','cliente-tem':'Sim, o cliente ja tem',
-    'sim-bourbon':'Sim, a Bourbon providencia','nao':'Nao',
-    'bourbon-estudio':'Sim, estudio da Bourbon','externo':'Locacao externa','nao':'Nao precisa',
-    'sim-produto':'Ensaio de produto','sim-elenco':'Ensaio com elenco','sim-ambos':'Produto e elenco',
+    'leigo':'Leigo','alguma-exp':'Alguma experiencia','profissional':'Profissional',
+    'sim-completo':'Roteiro completo','sim-parcial':'Roteiro parcial','tenho-ideia':'Tem ideia','do-zero':'Do zero',
+    'bourbon-indica':'Bourbon indica','cliente-tem':'Cliente ja tem','bourbon-estudio':'Estudio da Bourbon',
+    'externo':'Locacao externa','sim-produto':'Ensaio de produto','sim-elenco':'Ensaio com elenco','sim-ambos':'Produto e elenco',
     'sim-total':'100% animado','sim-parcial':'Parcialmente animado',
+    'bourbon-faz':'Bourbon cuida','cliente-faz':'Cliente cuida','conjunto':'Juntos',
     'instagram':'Instagram','youtube':'YouTube','tiktok':'TikTok','linkedin':'LinkedIn',
     'tv-ooh':'TV / OOH','interno':'Uso interno','multiplas':'Multiplas plataformas',
-    'ate-15s':'Ate 15 segundos','30s':'30 segundos','1min':'1 minuto',
-    '2-3min':'2 a 3 minutos','5min+':'5 minutos ou mais',
-    '1':'1 video','2-3':'2 a 3 videos','4-5':'4 a 5 videos','pacote':'Pacote',
+    'ate-15s':'Ate 15s','30s':'30s','1min':'1 min','2-3min':'2-3 min','5min+':'5 min+',
+    '1':'1 video','2-3':'2 a 3','4-5':'4 a 5','pacote':'Pacote',
     '16x9':'Horizontal 16:9','9x16':'Vertical 9:16','1x1':'Quadrado 1:1','multiplo':'Multiplos formatos',
-    'permanente':'Permanente','ate-3m':'Ate 3 meses','ate-1a':'Ate 1 ano','mais-1a':'Mais de 1 ano',
-    'evento':'Pontual / pos-evento',
+    'permanente':'Permanente','ate-3m':'Ate 3 meses','ate-1a':'Ate 1 ano','mais-1a':'Mais de 1 ano','evento':'Pontual',
     'sim-ate3m':'Sim, ate 3 meses','sim-ate1a':'Sim, ate 1 ano','sim-mais1a':'Sim, mais de 1 ano',
-    'ate2h':'Ate 2 horas','meio-dia':'Meio periodo','dia-inteiro':'Dia inteiro','multiplos-dias':'Multiplos dias',
-    'sim-abert':'Sim, abertas / espontaneas','highlight':'Highlight (video curto)','completo':'Cobertura completa',
-    'stories':'Conteudo para stories/reels',
-    '1':'1 camera','2':'2 cameras','3+':'3 ou mais','drone':'Inclui drone',
-    'diaria':'Diario','3x-semana':'3x por semana','semanal':'Semanal','quinzenal':'Quinzenal','mensal':'Mensal',
-    'ate-4':'Ate 4/mes','5-8':'5 a 8/mes','9-15':'9 a 15/mes','16-20':'16 a 20/mes','20+':'Mais de 20/mes',
-    'reels-curtos':'Reels curtos (ate 30s)','reels-medios':'Reels medios (30s a 1min)','longo':'Conteudo longo (+1min)','variado':'Variado',
-    'informal':'Informal e descontraido','profissional':'Profissional e direto','editorial':'Editorial / inspiracional',
-    'politico':'Politico / institucional',
-    'cliente-faz':'Cliente faz os roteiros','bourbon-faz':'A Bourbon cuida','conjunto':'Desenvolvemos juntos',
-    'whatsapp':'WhatsApp','email':'E-mail','videochamada':'Videochamada','ligacao':'Ligacao telefonica',
-    'reuniao':'Reuniao presencial','qualquer':'Qualquer canal',
+    'ate2h':'Ate 2h','meio-dia':'Meio periodo','dia-inteiro':'Dia inteiro','multiplos-dias':'Multiplos dias',
+    'sim-abert':'Sim, abertas','highlight':'Highlight','completo':'Cobertura completa','stories':'Stories/Reels',
+    '1':'1 camera','2':'2 cameras','3+':'3 ou mais','drone':'Com drone',
+    'diaria':'Diario','3x-semana':'3x/semana','semanal':'Semanal','quinzenal':'Quinzenal','mensal':'Mensal',
+    'ate-4':'Ate 4/mes','5-8':'5-8/mes','9-15':'9-15/mes','16-20':'16-20/mes','20+':'20+/mes',
+    'reels-curtos':'Reels curtos (ate 30s)','reels-medios':'Reels medios (30s-1min)','longo':'Longo (+1min)','variado':'Variado',
+    'informal':'Informal','profissional':'Profissional','editorial':'Editorial','politico':'Politico',
+    'whatsapp':'WhatsApp','email':'E-mail','videochamada':'Videochamada','ligacao':'Ligacao','reuniao':'Reuniao presencial','qualquer':'Qualquer canal',
     'sim-cnpj':'Sim, CNPJ','sim-cpf':'Sim, CPF',
     'entrada-50':'50% entrada + 50% entrega','30-dias':'30 dias','60-dias':'60 dias','a-combinar':'A combinar',
-    'meio-dia':'Meio periodo','1':'1 dia','2':'2 dias','3+':'3 dias ou mais',
-    '2h':'Ate 2 horas','4h':'Meio periodo (4h)',
+    'meio-dia':'Meio periodo (4h)','1':'1 dia','2':'2 dias','3+':'3+ dias',
+    '2h':'Ate 2h','4h':'Meio periodo (4h)',
     'sim-cliente':'Cliente providencia','sim-incluir':'Incluir na proposta',
-    'hd-externo':'HD externo','link-nuvem':'Link na nuvem','ja-entregou':'Ja entregue anteriormente',
-    'festival':'Festival de cinema','streaming':'Plataforma de streaming','privado':'Uso privado',
-    'sim-todos':'Todos definidos','parcial':'Parcialmente','nao':'Ainda nao',
+    'hd-externo':'HD externo','link-nuvem':'Link na nuvem','ja-entregou':'Ja entregue',
+    'festival':'Festival','streaming':'Streaming','privado':'Uso privado',
     'corte':'Corte e montagem','color':'Correcao de cor','motion':'Motion graphics',
     'som':'Sonorizacao','narracao':'Locucao','legenda':'Legenda','todos':'Pacote completo',
-    'avatar':'Avatar / apresentador virtual','edicao-ia':'Edicao com IA','voz-ia':'Voz por IA','video-ia-total':'100% por IA',
   };
   function translateVal(v){return tbl[v]||v;}
-  function label(l,v){if(!v||v==='__skip__')return '';return '<tr><td style="padding:6px 12px;color:#666;font-size:13px;white-space:nowrap;vertical-align:top;border-bottom:1px solid #f0f0f0">'+l+'</td><td style="padding:6px 12px;font-size:13px;font-weight:500;border-bottom:1px solid #f0f0f0">'+v+'</td></tr>';}
-  function section(title,rows){var r=rows.filter(Boolean).join('');if(!r)return '';return '<tr><td colspan="2" style="padding:16px 12px 6px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#C9963A;font-weight:700;border-bottom:2px solid #C9963A">'+title+'</td></tr>'+r;}
-  var links=function(id){var v=answers[id];if(!Array.isArray(v)||!v.length)return '';return '<tr><td colspan="2" style="padding:6px 12px;font-size:13px;border-bottom:1px solid #f0f0f0"><strong>Referencias:</strong><br>'+v.map(function(u){return '- '+u;}).join('<br>')+'</td></tr>';};
-
-  var rows='';
-  rows+=section('IDENTIFICACAO',[
-    label('Nome',vv('nome')),label('Empresa',vv('empresa')),label('WhatsApp',vv('whatsapp')),
-    label('E-mail',answers._gate_email||''),label('Escopo',vv('tipo_escopo')),
-    label('Ja cliente?',vv('ja_cliente'))
-  ]);
-  if(answers.ja_cliente==='nao'){
-    rows+=section('O PROJETO',[
-      label('Tipo de trabalho',vv('new_tipo')),label('Nivel audiovisual',vv('new_nivel')),
-      label('Descricao',vv('new_descricao')),label('Roteiro',vv('new_roteiro')),
-      label('Link do roteiro',vv('new_roteiro_link')),label('Ideia inicial',vv('new_ideia_texto'))
-    ]);
-    rows+=section('PRODUCAO',[
-      label('Produto para filmar',vv('new_produto')),label('Estudio',vv('new_estudio')),
-      label('Ator / Atriz',vv('new_ator')),label('Narracao',vv('new_narracao')),
-      label('Animacao / Motion',vv('new_animacao')),label('Ensaio fotografico',vv('new_ensaio_foto')),
-      label('Cameras',vv('new_cameras')),label('Gravacao noturna',vv('new_noturna')),
-      label('Data de gravacao',vv('new_data_grav')+(vv('new_data_grav_data')?' ('+vv('new_data_grav_data')+')':'')),
-    ]);
-    if(answers.new_tipo&&answers.new_tipo.indexOf('cobertura-evento')>=0){
-      rows+=section('EVENTO',[
-        label('Local e data',vv('new_evento_local')),label('Duracao',vv('new_evento_duracao')),
-        label('Entrevistas',vv('new_evento_entrevistas')),label('Tipo de entrega',vv('new_evento_entrega'))
-      ]);
-    }
-    rows+=section('DISTRIBUICAO',[
-      label('Plataformas',vv('new_plataformas')),label('Quantidade',vv('new_qtd')),
-      label('Duracao estimada',vv('new_duracao')),label('Formato',vv('new_formato')),
-      label('Tempo de veiculacao',vv('new_veiculacao')),label('Patrocinio',vv('new_patrocinio'))
-    ]);
-    rows+=links('new_referencias');
-    rows+=section('OBSERVACOES',[label('Obs',vv('new_obs'))]);
-  } else if(answers.ja_cliente==='sim'){
-    rows+=section('O PROJETO',[
-      label('Tipo',vv('ret_tipo')),label('Descricao',vv('ret_descricao')),
-      label('Duracao',vv('ret_duracao')),label('Quantidade',vv('ret_qtd')),
-      label('Formato',vv('ret_formato')),label('Data de entrega',vv('ret_data'))
-    ]);
-    rows+=links('ret_referencias');
-    rows+=section('OBSERVACOES',[label('Obs',vv('ret_obs'))]);
-  } else {
-    rows+=section('SOBRE A MARCA',[
-      label('Contexto',vv('rec_sobre')),label('Plataformas',vv('rec_plataformas')),
-      label('Frequencia',vv('rec_frequencia')),label('Qtd/mes',vv('rec_qtd_mes')),
-      label('Duracao media',vv('rec_duracao')),label('Formato',vv('rec_formato')),
-      label('Tom de voz',vv('rec_tom')),label('Roteiros',vv('rec_tem_roteiro'))
-    ]);
-    rows+=links('rec_referencias');
-    rows+=section('OBSERVACOES',[label('Obs',vv('rec_obs'))]);
+  function line(label,val){
+    if(!val||val==='__skip__')return '';
+    return label+': '+val+'\n';
   }
-  rows+=section('CONTRATO E LOGISTICA',[
-    label('Responsavel pelas aprovacoes',vv('neg_decisor')),
-    label('Rodadas de revisao',vv('neg_revisoes')),
-    label('Nota fiscal',vv('neg_nf')),label('Prazo de faturamento',vv('neg_faturamento')),
-    label('Dias de captacao',vv('prod_dias_captacao')),
-    label('Duracao por gravacao',vv('prod_duracao_rec')),
-    label('Alimentacao',vv('prod_alimentacao')),
-    label('Retorno preferido',vv('pref_contato'))
-  ]);
-  return '<div style="font-family:Arial,sans-serif;max-width:680px;margin:0 auto;border:1px solid #e0e0e0"><div style="background:#0A0A0A;padding:24px 28px;display:flex;align-items:center;gap:16px"><div style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-.02em">BOURBON FILMS</div><div style="color:#C9963A;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-left:auto">Briefing de Projeto</div></div><div style="padding:20px 4px"><table style="width:100%;border-collapse:collapse">'+rows+'</table></div><div style="background:#f9f9f9;padding:14px 16px;font-size:11px;color:#999;text-align:center">bourbonfilms.com.br | 83 99868-3878 | @bourbonfilm</div></div>';
-}
+  function sep(title){return '\n--- '+title.toUpperCase()+' ---\n';}
+  function links(id){
+    var v=answers[id];
+    if(!Array.isArray(v)||!v.length)return '';
+    return 'Referencias:\n'+v.map(function(u,i){return '  '+(i+1)+'. '+u;}).join('\n')+'\n';
+  }
 
+  var txt='BRIEFING | BOURBON FILMS\n';
+  txt+='================================\n';
+  txt+=sep('IDENTIFICACAO');
+  txt+=line('Nome',vv('nome'));
+  txt+=line('Empresa',vv('empresa'));
+  txt+=line('WhatsApp',vv('whatsapp'));
+  if(answers._gate_email)txt+=line('E-mail',answers._gate_email);
+  txt+=line('Escopo',vv('tipo_escopo'));
+  txt+=line('Ja cliente',vv('ja_cliente'));
+
+  if(answers.ja_cliente==='nao'){
+    txt+=sep('O PROJETO');
+    txt+=line('Tipo de trabalho',vv('new_tipo'));
+    txt+=line('Nivel audiovisual',vv('new_nivel'));
+    txt+=line('Descricao',vv('new_descricao'));
+    txt+=line('Roteiro',vv('new_roteiro'));
+    if(vv('new_roteiro_link'))txt+=line('Link roteiro',vv('new_roteiro_link'));
+    if(vv('new_ideia_texto'))txt+=line('Ideia inicial',vv('new_ideia_texto'));
+    txt+=sep('PRODUCAO');
+    txt+=line('Produto para filmar',vv('new_produto'));
+    txt+=line('Estudio',vv('new_estudio'));
+    txt+=line('Ator / Atriz',vv('new_ator'));
+    txt+=line('Narracao',vv('new_narracao'));
+    txt+=line('Animacao / Motion',vv('new_animacao'));
+    txt+=line('Ensaio fotografico',vv('new_ensaio_foto'));
+    if(has('new_nivel','alguma-exp')||has('new_nivel','profissional')){
+      txt+=line('Cameras',vv('new_cameras'));
+      txt+=line('Gravacao noturna',vv('new_noturna'));
+    }
+    txt+=line('Data de gravacao',vv('new_data_grav')+(vv('new_data_grav_data')?' ('+vv('new_data_grav_data')+')':''));
+    if(answers.new_tipo&&answers.new_tipo.indexOf('cobertura-evento')>=0){
+      txt+=sep('EVENTO');
+      txt+=line('Local e data',vv('new_evento_local'));
+      txt+=line('Duracao',vv('new_evento_duracao'));
+      txt+=line('Entrevistas',vv('new_evento_entrevistas'));
+      txt+=line('Tipo de entrega',vv('new_evento_entrega'));
+    }
+    txt+=sep('DISTRIBUICAO');
+    txt+=line('Plataformas',vv('new_plataformas'));
+    txt+=line('Quantidade',vv('new_qtd'));
+    txt+=line('Duracao estimada',vv('new_duracao'));
+    txt+=line('Formato',vv('new_formato'));
+    txt+=line('Tempo de veiculacao',vv('new_veiculacao'));
+    txt+=line('Patrocinio',vv('new_patrocinio'));
+    txt+=links('new_referencias');
+    if(vv('new_obs'))txt+=sep('OBSERVACOES')+vv('new_obs')+'\n';
+  } else if(answers.ja_cliente==='sim'){
+    txt+=sep('O PROJETO');
+    txt+=line('Tipo',vv('ret_tipo'));
+    txt+=line('Descricao',vv('ret_descricao'));
+    txt+=line('Duracao',vv('ret_duracao'));
+    txt+=line('Quantidade',vv('ret_qtd'));
+    txt+=line('Formato',vv('ret_formato'));
+    txt+=line('Data de entrega',vv('ret_data'));
+    txt+=links('ret_referencias');
+    if(vv('ret_obs'))txt+=sep('OBSERVACOES')+vv('ret_obs')+'\n';
+  } else {
+    txt+=sep('SOBRE A MARCA');
+    txt+=line('Contexto',vv('rec_sobre'));
+    txt+=line('Plataformas',vv('rec_plataformas'));
+    txt+=line('Frequencia',vv('rec_frequencia'));
+    txt+=line('Qtd/mes',vv('rec_qtd_mes'));
+    txt+=line('Duracao media',vv('rec_duracao'));
+    txt+=line('Formato',vv('rec_formato'));
+    txt+=line('Tom de voz',vv('rec_tom'));
+    txt+=line('Roteiros/pautas',vv('rec_tem_roteiro'));
+    txt+=links('rec_referencias');
+    if(vv('rec_obs'))txt+=sep('OBSERVACOES')+vv('rec_obs')+'\n';
+  }
+
+  txt+=sep('CONTRATO E LOGISTICA');
+  txt+=line('Responsavel pelas aprovacoes',vv('neg_decisor'));
+  txt+=line('Rodadas de revisao',vv('neg_revisoes'));
+  txt+=line('Nota fiscal',vv('neg_nf'));
+  txt+=line('Prazo de faturamento',vv('neg_faturamento'));
+  txt+=line('Dias de captacao',vv('prod_dias_captacao'));
+  txt+=line('Duracao por gravacao',vv('prod_duracao_rec'));
+  txt+=line('Alimentacao',vv('prod_alimentacao'));
+  txt+=line('Retorno preferido',vv('pref_contato'));
+  txt+='\n================================\n';
+  txt+='bourbonfilms.com.br | 83 99868-3878';
+  return txt;
+}
 function submitBriefing(){
   var btn=document.getElementById('main-submit');if(btn){btn.classList.add('submitting');btn.disabled=true;}
   var fd=new FormData();
