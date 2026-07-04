@@ -565,6 +565,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 <script>
 // CURSOR
 const cur=document.getElementById('cur'),ring=document.getElementById('ring');
+if(window.matchMedia('(hover:none),(pointer:coarse)').matches){
+  if(cur)cur.style.display='none';
+  if(ring)ring.style.display='none';
+  document.body.style.cursor='auto';
+}else{
 let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
 (function a(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(a)})();
@@ -572,6 +577,7 @@ document.querySelectorAll('a,button').forEach(el=>{
   el.addEventListener('mouseenter',()=>{cur.style.transform='translate(-50%,-50%) scale(2.8)';cur.style.opacity='.5'});
   el.addEventListener('mouseleave',()=>{cur.style.transform='translate(-50%,-50%) scale(1)';cur.style.opacity='1'});
 });
+}
 
 // PRELOADER
 window.addEventListener('load',()=>setTimeout(()=>document.getElementById('preloader').classList.add('done'),2200));
