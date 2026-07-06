@@ -90,15 +90,15 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 /* PORTFOLIO */
 #portfolio{background:var(--ink)}
 .port-intro{max-width:640px;margin-bottom:56px}
-.port-cats{display:flex;flex-direction:column;gap:64px}
-.port-cat{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.port-cats{display:flex;flex-direction:column;gap:110px}
+.port-cat{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:20px 0}
 .port-cat:nth-child(even) .port-vid{order:2}
 .port-cat-label{display:flex;align-items:center;gap:14px;margin-bottom:18px}
 .port-cat-num{font-family:'Outfit',sans-serif;font-size:13px;letter-spacing:.2em;color:var(--gold)}
 .port-cat-name{font-family:'Outfit',sans-serif;font-size:30px;font-weight:800;text-transform:uppercase;letter-spacing:.01em}
 .port-vid{position:relative;width:100%;padding-bottom:56.25%;background:#000;overflow:hidden;border:1px solid var(--glass-border)}
 .port-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-.port-vid.vertical{max-width:220px;margin:0 auto;padding-bottom:391px}
+.port-vid.vertical{max-width:300px;margin:0 auto;padding-bottom:533px}
 .port-cases{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
 .port-case-chip{padding:9px 18px;border:1px solid rgba(232,228,222,.15);color:rgba(232,228,222,.55);background:none;font-family:'DM Sans',sans-serif;cursor:pointer;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:all .2s}
 .port-case-chip:hover{border-color:var(--gold);color:var(--gold)}
@@ -118,7 +118,7 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 /* BASTIDORES */
 #bastidores{background:var(--surface)}
 .bast-top{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:center;margin-bottom:56px}
-.bast-vid-wrap{position:relative;width:100%;padding-bottom:177.77%;background:#000;overflow:hidden;border:1px solid var(--glass-border)}
+.bast-vid-wrap{position:relative;width:100%;max-width:300px;margin:0 auto;padding-bottom:533px;background:#000;overflow:hidden;border:1px solid var(--glass-border)}
 .bast-vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
 .bast-body{font-size:17px;line-height:1.75;color:rgba(232,228,222,.68)}
 .bast-gallery{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
@@ -223,7 +223,7 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
   .port-cat{grid-template-columns:1fr}
   .port-cat:nth-child(even) .port-vid{order:0}
   .bast-top{grid-template-columns:1fr}
-  .bast-vid-wrap{padding-bottom:130%}
+  .bast-vid-wrap{padding-bottom:533px;max-width:280px}
   .tl-wrap{margin-top:40px}
   .tl-steps{grid-template-columns:1fr;gap:0}
   .tl-line{display:none}
@@ -632,8 +632,7 @@ document.querySelectorAll('iframe[data-yt]').forEach(f=>videoObs.observe(f));
 function switchCase(btn){
   const iframe=btn.closest('.port-cat').querySelector('.port-vid iframe');
   const vid=btn.dataset.vid;
-  const p=ytPlayers[iframe.id];
-  if(p&&typeof p.loadVideoById==='function'){ p.loadVideoById(vid); p.mute(); }
+  iframe.src="https://www.youtube.com/embed/"+vid+"?autoplay=1&mute=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&enablejsapi=1";
   btn.parentNode.querySelectorAll('.port-case-chip').forEach(c=>c.classList.remove('active'));
   btn.classList.add('active');
 }
