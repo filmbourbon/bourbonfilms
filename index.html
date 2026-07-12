@@ -331,7 +331,7 @@ fbq('init','880805848416367');fbq('track','PageView');
     
   <div class="port-cat rev">
     <div class="port-vid vertical">
-      <iframe id="portvid0" data-yt="1" data-src="https://www.youtube.com/embed/6uI8ceFZq-c?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
+      <iframe id="portvid0" data-yt="1" data-src="https://www.youtube.com/embed/6uI8ceFZq-c?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
     </div>
     <div>
       <div class="port-cat-label"><span class="port-cat-num">01</span></div>
@@ -341,7 +341,7 @@ fbq('init','880805848416367');fbq('track','PageView');
   </div>
   <div class="port-cat rev">
     <div class="port-vid">
-      <iframe id="portvid1" data-yt="1" data-src="https://www.youtube.com/embed/_hWKFYm8KVw?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
+      <iframe id="portvid1" data-yt="1" data-src="https://www.youtube.com/embed/_hWKFYm8KVw?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
     </div>
     <div>
       <div class="port-cat-label"><span class="port-cat-num">02</span></div>
@@ -351,7 +351,7 @@ fbq('init','880805848416367');fbq('track','PageView');
   </div>
   <div class="port-cat rev">
     <div class="port-vid">
-      <iframe id="portvid2" data-yt="1" data-src="https://www.youtube.com/embed/yvoVBEW2fTc?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
+      <iframe id="portvid2" data-yt="1" data-src="https://www.youtube.com/embed/yvoVBEW2fTc?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
     </div>
     <div>
       <div class="port-cat-label"><span class="port-cat-num">03</span></div>
@@ -361,7 +361,7 @@ fbq('init','880805848416367');fbq('track','PageView');
   </div>
   <div class="port-cat rev">
     <div class="port-vid">
-      <iframe id="portvid3" data-yt="1" data-src="https://www.youtube.com/embed/fW3FMY0x6VY?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
+      <iframe id="portvid3" data-yt="1" data-src="https://www.youtube.com/embed/fW3FMY0x6VY?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
     </div>
     <div>
       <div class="port-cat-label"><span class="port-cat-num">04</span></div>
@@ -408,7 +408,7 @@ fbq('init','880805848416367');fbq('track','PageView');
 <section id="bastidores" class="section">
   <div class="bast-top">
     <div class="bast-vid-wrap rev">
-      <iframe id="bastvid" data-yt="1" data-src="https://www.youtube.com/embed/l0N26i4Izi8?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
+      <iframe id="bastvid" data-yt="1" data-src="https://www.youtube.com/embed/l0N26i4Izi8?mute=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
     </div>
     <div class="rev">
       <div class="eyebrow">Bastidores</div>
@@ -627,7 +627,7 @@ function switchCase(btn){
   const iframe=btn.closest('.port-cat').querySelector('.port-vid iframe');
   const vid=btn.dataset.vid;
   iframe.dataset.loaded='1';
-  iframe.src="https://www.youtube.com/embed/"+vid+"?autoplay=1&mute=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3";
+  iframe.src="https://www.youtube.com/embed/"+vid+"?autoplay=1&mute=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0";
   btn.parentNode.querySelectorAll('.port-case-chip').forEach(c=>c.classList.remove('active'));
   btn.classList.add('active');
 }
