@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trabalhe Conosco | Bourbon Films</title>
+<meta name="description" content="Quer trabalhar com a Bourbon Films? Preencha o formulário com seu perfil, portfólio e disponibilidade.">
+<meta name="robots" content="index, follow">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#080808;--s:#101010;--s2:#161616;--w:#E8E4DE;--m:#6B6560;--b:rgba(232,228,222,.1);--g:#F5A020;--o:#E85C1A;--e:#8B2800;--grad:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800)}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--w);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(8,8,8,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--b)}
+.nav-logo img{height:32px;width:auto;object-fit:contain;display:block}
+.nav-back{color:var(--m);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:7px;transition:color .2s}
+.nav-back:hover{color:var(--w)}
+
+#area{max-width:720px;margin:0 auto;padding:60px 40px 160px}
+.hero{margin-bottom:56px}
+.hero-ey{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.hero-ey::before{content:'';width:20px;height:1px;background:var(--g)}
+.hero h1{font-family:'Outfit',sans-serif;font-size:clamp(30px,4.5vw,52px);font-weight:800;line-height:.98;letter-spacing:-.02em;margin-bottom:16px}
+.gt{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:16px;color:rgba(232,228,222,.5);line-height:1.65;max-width:520px}
+
+.block{margin-bottom:52px}
+.block-num{font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.block-num::before{content:'';width:14px;height:1px;background:var(--g)}
+.block-title{font-family:'Outfit',sans-serif;font-size:22px;font-weight:700;margin-bottom:20px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:14px;color:rgba(232,228,222,.75);margin-bottom:8px}
+.field .req{color:var(--g)}
+.field .hint{display:block;font-size:12px;color:var(--m);margin-top:5px;font-style:italic}
+input[type=text],input[type=tel],input[type=email],input[type=url],input[type=number],select,textarea{width:100%;padding:13px 15px;background:var(--s2);border:1px solid var(--b);color:var(--w);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s,box-shadow .2s}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23F5A020' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center}
+input:focus,textarea:focus,select:focus{border-color:rgba(245,160,32,.5);box-shadow:0 0 0 3px rgba(245,160,32,.07)}
+input::placeholder,textarea::placeholder{color:var(--m);opacity:.6}
+textarea{resize:vertical;min-height:90px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 15px;border:1px solid var(--b);background:var(--s);cursor:pointer;transition:all .18s;font-size:14px;color:rgba(232,228,222,.7);line-height:1.4}
+.opt:hover{border-color:rgba(245,160,32,.35);color:var(--w)}
+.opt input{width:auto;padding:0}
+.opt-row{display:flex;flex-wrap:wrap;gap:8px}
+.opt-row .opt{flex:1 1 auto;min-width:150px}
+.note{display:flex;gap:10px;padding:11px 15px;background:rgba(245,160,32,.06);border-left:2px solid rgba(245,160,32,.3);font-size:13px;color:rgba(232,228,222,.58);line-height:1.55;margin-bottom:20px}
+.note strong{color:var(--g)}
+
+.submit-btn{margin-top:8px;padding:16px 34px;background:var(--grad);color:#000;font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:9px;transition:opacity .2s,box-shadow .2s,transform .2s;width:100%;justify-content:center}
+.submit-btn:hover{opacity:.85;box-shadow:0 8px 30px rgba(232,92,26,.35);transform:translateY(-1px)}
+.submit-btn:disabled{opacity:.4;pointer-events:none}
+
+#result{display:none;margin-top:50px;padding:44px 32px;border:1px solid var(--b);background:var(--s);text-align:center}
+#result h3{font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;margin-bottom:10px}
+#result p{color:rgba(232,228,222,.55);font-size:14px;margin-bottom:24px;line-height:1.6}
+#result .actions{display:flex;flex-direction:column;gap:10px}
+.result-btn{padding:14px 20px;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px}
+.result-btn.wpp{background:#25D366;color:#000}
+.result-btn.home{border:1px solid var(--b);color:var(--w)}
+
+@media(max-width:600px){
+  nav{padding:12px 20px}
+  #area{padding:40px 20px 100px}
+  .opt-row .opt{min-width:120px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="data:image/png;base64,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" alt="Bourbon Films">
+  </a>
+  <a href="index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Voltar ao site
+  </a>
+</nav>
+
+<div id="area">
+  <div class="hero">
+    <div class="hero-ey">Faça parte</div>
+    <h1>Trabalhe <span class="gt">conosco.</span></h1>
+    <p>Buscamos profissionais e colaboradores pra somar com a Bourbon Films em projetos audiovisuais. Preencha o formulário completo abaixo.</p>
+  </div>
+
+  <form id="workForm">
+
+    <div class="block">
+      <div class="block-num">01 . Identificação</div>
+      <div class="field">
+        <label>Nome completo <span class="req">*</span></label>
+        <input type="text" id="nome" required placeholder="Seu nome">
+      </div>
+      <div class="field">
+        <label>Cidade / Estado <span class="req">*</span></label>
+        <input type="text" id="cidade" required placeholder="Ex: Campina Grande, PB">
+      </div>
+      <div class="field">
+        <label>WhatsApp <span class="req">*</span></label>
+        <input type="tel" id="whatsapp" required placeholder="(83) 90000-0000">
+      </div>
+      <div class="field">
+        <label>E-mail <span class="req">*</span></label>
+        <input type="email" id="email" required placeholder="seu@email.com">
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-num">02 . Perfil profissional</div>
+      <div class="field">
+        <label>Área de atuação principal <span class="req">*</span></label>
+        <select id="area_atuacao" required>
+          <option value="">Selecione</option>
+          <option>Direção</option>
+          <option>Diretor(a) de Fotografia</option>
+          <option>Edição / Montagem</option>
+          <option>Roteiro</option>
+          <option>Produção / Produtor executivo</option>
+          <option>Assistente de Produção</option>
+          <option>Operador(a) de Drone</option>
+          <option>Motion Design / Animação</option>
+          <option>Colorista</option>
+          <option>Som Direto / Sonoplastia</option>
+          <option>Atuação (ator/atriz)</option>
+          <option>Modelo</option>
+          <option>Still / Fotografia</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Se selecionou "Outro", especifique</label>
+        <input type="text" id="area_outro" placeholder="Opcional">
+      </div>
+      <div class="field">
+        <label>Quantos anos de experiência na área <span class="req">*</span></label>
+        <input type="text" id="experiencia" required placeholder="Ex: 3 anos">
+      </div>
+      <div class="field">
+        <label>Já atuou em produtora audiovisual antes? Se sim, qual</label>
+        <input type="text" id="produtora_anterior" placeholder="Ex: Não / Sim, na XYZ Filmes">
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-num">03 . Portfólio</div>
+      <div class="note"><strong>Importante:</strong> não aceitamos anexos de nenhum tipo. Envie apenas links.</div>
+      <div class="field">
+        <label>Link do portfólio ou reel <span class="req">*</span></label>
+        <input type="url" id="portfolio" required placeholder="https://">
+      </div>
+      <div class="field">
+        <label>Instagram</label>
+        <input type="url" id="instagram" placeholder="https://instagram.com/seuperfil">
+      </div>
+      <div class="field">
+        <label>Vimeo / YouTube</label>
+        <input type="url" id="video_link" placeholder="https://">
+      </div>
+      <div class="field">
+        <label>Outro link (Behance, LinkedIn, site próprio)</label>
+        <input type="url" id="outro_link" placeholder="https://">
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-num">04 . Disponibilidade e logística</div>
+      <div class="field">
+        <label>Tipo de vínculo desejado <span class="req">*</span></label>
+        <select id="vinculo" required>
+          <option value="">Selecione</option>
+          <option>Freelancer por projeto</option>
+          <option>CLT</option>
+          <option>Banco de horas</option>
+          <option>Sociedade / parceria</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Disponibilidade para viagem <span class="req">*</span></label>
+        <select id="viagem" required>
+          <option value="">Selecione</option>
+          <option>Sim, Nordeste e Brasil todo</option>
+          <option>Sim, apenas Nordeste</option>
+          <option>Sim, apenas Paraíba</option>
+          <option>Não tenho disponibilidade</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Possui equipamento próprio? Quais</label>
+        <textarea id="equipamento_proprio" placeholder="Descreva aqui (sem anexos, apenas texto)"></textarea>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-num">05 . Softwares e equipamentos</div>
+      <div class="field">
+        <label>Softwares que domina</label>
+        <div class="opt-row">
+          <label class="opt"><input type="checkbox" class="soft" value="Premiere"> Premiere</label>
+          <label class="opt"><input type="checkbox" class="soft" value="DaVinci Resolve"> DaVinci Resolve</label>
+          <label class="opt"><input type="checkbox" class="soft" value="After Effects"> After Effects</label>
+          <label class="opt"><input type="checkbox" class="soft" value="Photoshop"> Photoshop</label>
+          <label class="opt"><input type="checkbox" class="soft" value="Final Cut"> Final Cut</label>
+          <label class="opt"><input type="checkbox" class="soft" value="Pro Tools"> Pro Tools</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Outro software (opcional)</label>
+        <input type="text" id="software_outro" placeholder="Ex: Cinema 4D">
+      </div>
+      <div class="field">
+        <label>Câmeras / equipamentos que domina ou possui</label>
+        <textarea id="cameras" placeholder="Ex: Sony A7 III, drone DJI Mini 4 Pro..."></textarea>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-num">06 . Condições</div>
+      <div class="field">
+        <label>Pretensão de cachê / diária <span class="req">*</span></label>
+        <input type="text" id="pretensao" required placeholder="Ex: R$ 400/diária">
+      </div>
+      <div class="field">
+        <label>Forma de pagamento preferida</label>
+        <select id="pagamento">
+          <option value="">Selecione</option>
+          <option>PIX</option>
+          <option>Transferência bancária</option>
+          <option>Nota fiscal / CNPJ</option>
+          <option>A combinar</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-num">07 . Motivação e referências</div>
+      <div class="field">
+        <label>Por que quer trabalhar com a Bourbon Films <span class="req">*</span></label>
+        <textarea id="motivacao" required placeholder="Conte um pouco"></textarea>
+      </div>
+      <div class="field">
+        <label>Referências profissionais (nome e contato, opcional)</label>
+        <textarea id="referencias" placeholder="Nome - telefone/e-mail"></textarea>
+      </div>
+      <div class="field">
+        <label>Observações finais</label>
+        <textarea id="observacoes" placeholder="Opcional"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">
+      Enviar candidatura
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </form>
+
+  <div id="result">
+    <h3>Candidatura enviada!</h3>
+    <p>Recebemos seu formulário. Se fizer sentido pro momento da Bourbon, entramos em contato.</p>
+    <div class="actions">
+      <a href="index.html" class="result-btn home">Voltar ao site</a>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('workForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  var softs = Array.from(document.querySelectorAll('.soft:checked')).map(c=>c.value).join(', ') || 'Nenhum selecionado';
+
+  var lines = [
+    '--- IDENTIFICAÇÃO ---',
+    'Nome: ' + document.getElementById('nome').value,
+    'Cidade/Estado: ' + document.getElementById('cidade').value,
+    'WhatsApp: ' + document.getElementById('whatsapp').value,
+    'E-mail: ' + document.getElementById('email').value,
+    '',
+    '--- PERFIL PROFISSIONAL ---',
+    'Área de atuação: ' + document.getElementById('area_atuacao').value,
+    'Área (outro): ' + (document.getElementById('area_outro').value || '-'),
+    'Anos de experiência: ' + document.getElementById('experiencia').value,
+    'Produtora anterior: ' + (document.getElementById('produtora_anterior').value || '-'),
+    '',
+    '--- PORTFÓLIO ---',
+    'Portfólio/Reel: ' + document.getElementById('portfolio').value,
+    'Instagram: ' + (document.getElementById('instagram').value || '-'),
+    'Vimeo/YouTube: ' + (document.getElementById('video_link').value || '-'),
+    'Outro link: ' + (document.getElementById('outro_link').value || '-'),
+    '',
+    '--- DISPONIBILIDADE E LOGÍSTICA ---',
+    'Tipo de vínculo: ' + document.getElementById('vinculo').value,
+    'Disponibilidade de viagem: ' + document.getElementById('viagem').value,
+    'Equipamento próprio: ' + (document.getElementById('equipamento_proprio').value || '-'),
+    '',
+    '--- SOFTWARES E EQUIPAMENTOS ---',
+    'Softwares: ' + softs,
+    'Software (outro): ' + (document.getElementById('software_outro').value || '-'),
+    'Câmeras/equipamentos: ' + (document.getElementById('cameras').value || '-'),
+    '',
+    '--- CONDIÇÕES ---',
+    'Pretensão de cachê/diária: ' + document.getElementById('pretensao').value,
+    'Forma de pagamento: ' + (document.getElementById('pagamento').value || '-'),
+    '',
+    '--- MOTIVAÇÃO E REFERÊNCIAS ---',
+    'Motivação: ' + document.getElementById('motivacao').value,
+    'Referências: ' + (document.getElementById('referencias').value || '-'),
+    'Observações: ' + (document.getElementById('observacoes').value || '-')
+  ];
+
+  var fd = new FormData();
+  fd.append('access_key','cecf6141-9abc-4182-aa50-fb7625cc188e');
+  fd.append('subject','Nova candidatura - Trabalhe Conosco - ' + document.getElementById('nome').value);
+  fd.append('message', lines.join('\n'));
+
+  fetch('https://api.web3forms.com/submit',{method:'POST',body:fd})
+    .then(function(){
+      document.getElementById('workForm').style.display='none';
+      document.getElementById('result').style.display='block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    })
+    .catch(function(){
+      btn.disabled = false;
+      btn.textContent = 'Enviar candidatura';
+      alert('Não foi possível enviar agora. Tenta de novo em instantes.');
+    });
+});
+</script>
+</body>
+</html>
