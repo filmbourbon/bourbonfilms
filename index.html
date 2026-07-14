@@ -215,8 +215,16 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 .cont-embeds::-webkit-scrollbar{height:6px}
 .cont-embeds::-webkit-scrollbar-thumb{background:rgba(245,160,32,.3)}
 .cont-embed-ig{flex:0 0 auto;width:360px;max-width:360px}
-.cont-embed-yt{flex:0 1 260px;max-width:320px;align-self:flex-start;aspect-ratio:16/9;position:relative;background:#000;overflow:hidden;border:1px solid var(--glass-border)}
-.cont-embed-yt iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.yt-stack{position:relative;flex:0 0 auto;width:320px;aspect-ratio:16/9;align-self:flex-start}
+.yt-stack-item{position:absolute;inset:0;background:#000;border:1px solid var(--glass-border);overflow:hidden;cursor:grab;transition:transform .4s cubic-bezier(.16,1,.3,1),opacity .4s;touch-action:pan-y}
+.yt-stack-item.dragging{transition:none;cursor:grabbing}
+.yt-stack-item iframe{position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none}
+.yt-stack-item.active iframe{pointer-events:auto}
+.yt-stack-hint{position:absolute;bottom:8px;right:10px;z-index:50;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(232,228,222,.55);background:rgba(8,8,8,.55);padding:5px 10px;pointer-events:none;display:flex;align-items:center;gap:6px}
+.yt-stack-hint svg{width:12px;height:12px}
+.yt-stack-dots{position:absolute;top:8px;right:10px;z-index:50;display:flex;gap:5px}
+.yt-stack-dot{width:5px;height:5px;border-radius:50%;background:rgba(232,228,222,.3)}
+.yt-stack-dot.on{background:var(--gold)}
 
 /* CLIENTES */
 #clientes{padding:80px 0;background:var(--surface)}
@@ -296,7 +304,7 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
   .proj-mosaic{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr)}
   #continuos{padding:56px 20px}
   .cont-embed-ig{width:100%;max-width:360px}
-  .cont-embed-yt{flex-basis:100%;max-width:100%}
+  .yt-stack{width:100%;max-width:360px}
   .cont-card{padding:24px 20px}
   .cont-head{flex-direction:column;align-items:flex-start}
   .cont-profiles{width:100%}
@@ -579,7 +587,7 @@ fbq('init','880805848416367');fbq('track','PageView');
         </div>
         <div class="cont-profiles"><a href="https://www.instagram.com/fazendacoruja/" target="_blank" rel="noopener" class="cont-profile-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> Instagram</a><a href="https://www.youtube.com/@FazendaCoruja" target="_blank" rel="noopener" class="cont-profile-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.5v-7l6.3 3.5-6.3 3.5Z"/></svg> YouTube</a></div>
       </div>
-      <div class="cont-embeds"><div class="cont-embed-ig"><blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DZvdnq5h5kz/" data-instgrm-version="14" style="margin:0;width:360px;min-width:326px;max-width:360px"></blockquote></div><div class="cont-embed-ig"><blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DUyzgy8AWWH/" data-instgrm-version="14" style="margin:0;width:360px;min-width:326px;max-width:360px"></blockquote></div><div class="cont-embed-yt"><iframe data-yt="1" data-src="https://www.youtube.com/embed/4ZnbLylfzKA?mute=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe></div><div class="cont-embed-yt"><iframe data-yt="1" data-src="https://www.youtube.com/embed/5_F9lplkIc8?mute=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe></div><div class="cont-embed-yt"><iframe data-yt="1" data-src="https://www.youtube.com/embed/c19eiipXJjU?mute=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe></div>
+      <div class="cont-embeds"><div class="cont-embed-ig"><blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DZvdnq5h5kz/" data-instgrm-version="14" style="margin:0;width:360px;min-width:326px;max-width:360px"></blockquote></div><div class="cont-embed-ig"><blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DUyzgy8AWWH/" data-instgrm-version="14" style="margin:0;width:360px;min-width:326px;max-width:360px"></blockquote></div><div class="yt-stack"><div class="yt-stack-item" data-i="0"><iframe data-yt="1" data-src="https://www.youtube.com/embed/4ZnbLylfzKA?mute=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe></div><div class="yt-stack-item" data-i="1"><iframe data-yt="1" data-src="https://www.youtube.com/embed/5_F9lplkIc8?mute=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe></div><div class="yt-stack-item" data-i="2"><iframe data-yt="1" data-src="https://www.youtube.com/embed/c19eiipXJjU?mute=1&controls=1&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe></div><div class="yt-stack-dots"><span class="yt-stack-dot"></span><span class="yt-stack-dot"></span><span class="yt-stack-dot"></span></div><div class="yt-stack-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M8 5l-5 7 5 7M16 5l5 7-5 7"/></svg>arraste</div></div>
       </div>
     </div>
     <div class="cont-card rev">
@@ -756,6 +764,74 @@ const videoObs=new IntersectionObserver(entries=>entries.forEach(e=>{
   if(e.isIntersecting)activate(e.target);
 }),{threshold:.2,rootMargin:'0px 0px -10% 0px'});
 document.querySelectorAll('iframe[data-src]').forEach(f=>videoObs.observe(f));
+
+// YOUTUBE STACK: draggable deck of videos. Drag/swipe left or right past a
+// threshold to cycle to the next video underneath. Works with mouse and
+// touch identically via Pointer Events, no scrollbar, no page scroll hijack.
+function initYtStack(stack){
+  const items = Array.from(stack.querySelectorAll('.yt-stack-item'));
+  const dots = Array.from(stack.querySelectorAll('.yt-stack-dot'));
+  let order = items.map((_,i)=>i); // order[0] is the index of the front card
+  let dragging=false, startX=0, dx=0, activeEl=null;
+
+  function layout(animate){
+    order.forEach((itemIdx,pos)=>{
+      const el=items[itemIdx];
+      el.style.zIndex = order.length - pos;
+      el.classList.toggle('active', pos===0);
+      if(pos===0){
+        el.style.transform = 'translateX(0) scale(1) rotate(0deg)';
+        el.style.opacity = '1';
+      } else {
+        const off = Math.min(pos,3);
+        el.style.transform = `translateX(${off*8}px) translateY(${off*8}px) scale(${1-off*0.045})`;
+        el.style.opacity = pos<=3 ? String(1-off*0.22) : '0';
+      }
+    });
+    dots.forEach((d,i)=>d.classList.toggle('on', i===order[0]));
+  }
+
+  function advance(dir){
+    if(dir>0) order.push(order.shift());
+    else order.unshift(order.pop());
+    layout(true);
+  }
+
+  items.forEach(el=>{
+    el.addEventListener('pointerdown', e=>{
+      if(order[0] !== items.indexOf(el)) return; // only the front card is draggable
+      dragging=true; activeEl=el; startX=e.clientX; dx=0;
+      el.classList.add('dragging');
+      el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener('pointermove', e=>{
+      if(!dragging || activeEl!==el) return;
+      dx = e.clientX-startX;
+      el.style.transform = `translateX(${dx}px) rotate(${dx/28}deg)`;
+    });
+    function end(e){
+      if(!dragging || activeEl!==el) return;
+      dragging=false;
+      el.classList.remove('dragging');
+      if(Math.abs(dx) > 60){
+        advance(dx<0?1:-1);
+      } else {
+        layout(true);
+      }
+      dx=0;
+    }
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+  });
+
+  dots.forEach((d,i)=>d.addEventListener('click', ()=>{
+    while(order[0]!==i) order.push(order.shift());
+    layout(true);
+  }));
+
+  layout(false);
+}
+document.querySelectorAll('.yt-stack').forEach(initYtStack);
 
 // PORTFOLIO CASE SWITCHER: clicking a case chip loads the new video into the
 // same player in place, no navigation away from the site.
