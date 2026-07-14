@@ -211,11 +211,11 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 .cont-profile-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border:1px solid rgba(232,228,222,.18);color:rgba(232,228,222,.75);text-decoration:none;font-size:12px;letter-spacing:.04em;transition:all .2s}
 .cont-profile-btn:hover{border-color:var(--gold);color:var(--gold)}
 .cont-profile-btn svg{width:15px;height:15px}
-.cont-embeds{display:flex;flex-direction:column;gap:20px;align-items:center}
+.cont-embeds{display:flex;flex-wrap:wrap;gap:14px}
 .cont-embeds::-webkit-scrollbar{height:6px}
 .cont-embeds::-webkit-scrollbar-thumb{background:rgba(245,160,32,.3)}
-.cont-embed-ig{width:100%;max-width:400px}
-.cont-embed-yt{width:100%;max-width:640px;position:relative;padding-bottom:56.25%;background:#000;overflow:hidden;border:1px solid var(--glass-border)}
+.cont-embed-ig{flex:1 1 220px;max-width:260px}
+.cont-embed-yt{flex:1 1 260px;max-width:320px;aspect-ratio:16/9;position:relative;background:#000;overflow:hidden;border:1px solid var(--glass-border)}
 .cont-embed-yt iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
 
 /* CLIENTES */
