@@ -63,6 +63,17 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .contra-item{display:flex;gap:10px;font-size:13px;color:rgba(232,228,222,.6);line-height:1.6}
 .contra-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:7px}
 
+#contrapartidas-cap{background:var(--surface)}
+.cp-tier{margin-top:40px;padding:28px 30px;background:rgba(8,8,8,.5);border:1px solid rgba(232,228,222,.1);margin-bottom:20px}
+.cp-tier-tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px}
+.cp-tier-title{font-family:'Outfit',sans-serif;font-size:19px;font-weight:800;margin-bottom:12px}
+.cp-tier-desc{font-size:14px;color:rgba(232,228,222,.65);line-height:1.75;margin-bottom:14px}
+.cp-list{display:flex;flex-direction:column;gap:8px}
+.cp-item{display:flex;gap:10px;font-size:13.5px;color:rgba(232,228,222,.6);line-height:1.6}
+.cp-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:7px}
+.cp-example{margin-top:14px;padding:14px 18px;background:rgba(245,160,32,.06);border-left:2px solid rgba(245,160,32,.4);font-size:13px;color:rgba(232,228,222,.6);line-height:1.6}
+.cp-example strong{color:var(--gold)}
+
 #comissao{}
 .comm-highlight{max-width:680px;padding:32px;background:rgba(245,160,32,.05);border:1px solid rgba(245,160,32,.3);margin-top:32px}
 .comm-highlight p{font-size:15px;color:rgba(232,228,222,.75);line-height:1.7;margin-bottom:20px}
@@ -159,6 +170,10 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
   .arg-num{width:34px;height:34px;font-size:13px}
   .arg-title{font-size:16px}
   .arg-desc{font-size:13.5px}
+  .cp-tier{padding:22px 20px}
+  .cp-tier-title{font-size:17px}
+  .cp-tier-desc,.cp-item{font-size:13px}
+  .cp-example{font-size:12.5px}
 }
 </style>
 </head>
@@ -250,6 +265,65 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
         <p class="flow-desc">A empresa deposita via PIX ou TED na conta vinculada ao PRONAC no Banco do Brasil. O sistema emite automaticamente a Declaração de Benefícios Fiscais (DBF) para a Receita Federal. Nenhuma burocracia adicional.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section id="contrapartidas-cap" class="section">
+  <div class="rev">
+    <div class="eyebrow">O que a marca recebe</div>
+    <h2 class="big-title">Contrapartidas em quatro camadas.</h2>
+    <p style="margin-top:14px;font-size:14px;color:rgba(232,228,222,.5);max-width:640px">A primeira camada já está garantida em qualquer patrocínio. As outras três são o espaço que você tem pra negociar e fechar um contrato sob medida. Existe ainda uma op&ccedil;&atilde;o &agrave; parte, pra quem prefere n&atilde;o aparecer.</p>
+  </div>
+
+  <div class="cp-tier rev" style="border-color:rgba(232,228,222,.2)">
+    <div class="cp-tier-tag" style="color:rgba(232,228,222,.6)">Op&ccedil;&atilde;o &agrave; parte &middot; Sem exposi&ccedil;&atilde;o p&uacute;blica</div>
+    <div class="cp-tier-title">Pra quem s&oacute; quer direcionar o imposto</div>
+    <p class="cp-tier-desc">Nenhuma das camadas acima &eacute; obrigat&oacute;ria. A empresa pode optar por n&atilde;o aparecer em momento nenhum do projeto, sem logo, sem men&ccedil;&atilde;o, sem qualquer exposi&ccedil;&atilde;o p&uacute;blica, e mesmo assim redirecionar o valor que j&aacute; sairia como imposto. A parte burocr&aacute;tica do contrato de patroc&iacute;nio continua a mesma, s&oacute; a publicidade &eacute; facultativa. &Eacute; a op&ccedil;&atilde;o certa pra empresas que t&ecirc;m interesse em apoiar mas n&atilde;o querem associar a marca publicamente ao projeto.</p>
+  </div>
+
+  <div class="cp-tier rev">
+    <div class="cp-tier-tag">Camada 01 &middot; Protocolares</div>
+    <div class="cp-tier-title">J&aacute; garantidas em todos os patroc&iacute;nios</div>
+    <p class="cp-tier-desc">Toda empresa patrocinadora entra automaticamente com esta exposi&ccedil;&atilde;o, sem precisar negociar nada:</p>
+    <div class="cp-list">
+      <div class="cp-item">Marca aplicada como "Apresenta" ou "Patrocinador Master" em todo o material do projeto, com inclus&atilde;o do selo</div>
+      <div class="cp-item">Logo na abertura e em cada epis&oacute;dio da webs&eacute;rie</div>
+      <div class="cp-item">Men&ccedil;&atilde;o em entrevistas e podcasts relacionados ao projeto</div>
+      <div class="cp-item">Logo estampada em camisas, bon&eacute;s, folders, panfletos e cartazes</div>
+      <div class="cp-item">Presen&ccedil;a nas redes sociais: cita&ccedil;&otilde;es (@s e #s), vinheta e Stories fixo de destaque</div>
+      <div class="cp-item">&Aacute;rea dedicada &agrave; marca no site oficial do projeto</div>
+      <div class="cp-item">Pelo menos 1 nota &agrave; imprensa por cidade de exibi&ccedil;&atilde;o</div>
+      <div class="cp-item">Vinheta e/ou locu&ccedil;&atilde;o em off antes das sess&otilde;es de exibi&ccedil;&atilde;o</div>
+      <div class="cp-item">Cess&atilde;o de fotos e v&iacute;deos de qualidade, com direito de uso pela marca por at&eacute; 5 anos</div>
+      <div class="cp-item">Direito de exibir os produtos audiovisuais do patroc&iacute;nio por at&eacute; 5 anos</div>
+    </div>
+  </div>
+
+  <div class="cp-tier rev">
+    <div class="cp-tier-tag">Camada 02 &middot; Experi&ecirc;ncias exclusivas</div>
+    <div class="cp-tier-title">Negoci&aacute;vel, pra quem quer al&eacute;m da exposi&ccedil;&atilde;o</div>
+    <p class="cp-tier-desc">Em exibi&ccedil;&otilde;es f&iacute;sicas in loco, o patrocinador pode ter tratamento diferenciado. E se houver interesse real da empresa, a experi&ecirc;ncia pode ir bem al&eacute;m disso:</p>
+    <div class="cp-list">
+      <div class="cp-item">Lugares especiais reservados em exibi&ccedil;&otilde;es presenciais</div>
+      <div class="cp-item">Acesso antecipado ao projeto antes do lan&ccedil;amento p&uacute;blico</div>
+      <div class="cp-item">At&eacute; 2 exibi&ccedil;&otilde;es b&ocirc;nus do projeto, mediante solicita&ccedil;&atilde;o e acordo</div>
+      <div class="cp-item">Apresenta&ccedil;&atilde;o exclusiva pros funcion&aacute;rios da empresa, seguida de debate/conversa com a equipe</div>
+      <div class="cp-item">Participa&ccedil;&atilde;o em entrevistas ao lado da nossa equipe em r&aacute;dio, TV e podcasts</div>
+    </div>
+  </div>
+
+  <div class="cp-tier rev">
+    <div class="cp-tier-tag">Camada 03 &middot; Conte&uacute;do personalizado</div>
+    <div class="cp-tier-title">Negoci&aacute;vel, sob medida pra cada marca</div>
+    <p class="cp-tier-desc">Al&eacute;m do protocolar, a Bourbon topa produzir conte&uacute;do estrat&eacute;gico espec&iacute;fico pro momento daquela empresa: posts em coautoria (collab), s&eacute;ries de conte&uacute;do pensadas pro p&uacute;blico dela, campanhas alinhadas com o que a marca est&aacute; vivendo naquele per&iacute;odo. N&atilde;o &eacute; gen&eacute;rico, &eacute; constru&iacute;do caso a caso, e entra na proposta que voc&ecirc; fecha.</p>
+  </div>
+
+  <div class="cp-tier rev">
+    <div class="cp-tier-tag">Camada 04 &middot; Permuta de servi&ccedil;o audiovisual</div>
+    <div class="cp-tier-title">A Bourbon tamb&eacute;m paga em trabalho</div>
+    <p class="cp-tier-desc">Como somos uma produtora, parte da contrapartida pode ser entregue como presta&ccedil;&atilde;o de servi&ccedil;o audiovisual pra empresa patrocinadora, com desconto negociado ou cess&atilde;o total do trabalho, dependendo do valor patrocinado.</p>
+    <div class="cp-example">
+      <strong>Exemplo de negocia&ccedil;&atilde;o:</strong> a empresa precisa de um comercial pra TV. Em vez de (ou al&eacute;m de) contrapartida de exposi&ccedil;&atilde;o, ela recebe o servi&ccedil;o de produ&ccedil;&atilde;o com desconto ou de gra&ccedil;a. Pode ser estruturado como um pacote: um n&uacute;mero de v&iacute;deos pra redes sociais, um n&uacute;mero de comerciais pra TV, o que fizer sentido pro valor do aporte. Isso entra no contrato fechado entre voc&ecirc;, a empresa e a Bourbon.</div>
   </div>
 </section>
 
