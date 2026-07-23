@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta de Orçamento | Bourbon Films</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#080808;--surface:#101010;--white:#E8E4DE;--muted:#6B6560;
+  --gold:#F5A020;--orange:#E85C1A;--ember:#8B2800;
+  --grad:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);
+  --glass:rgba(255,255,255,.045);--glass-border:rgba(255,255,255,.09);
+}
+body{background:var(--ink);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 56px;background:rgba(8,8,8,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-border)}
+.nav-logo img{height:28px;width:auto;object-fit:contain;display:block}
+.pdf-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;border:1px solid rgba(245,160,32,.4);color:var(--gold);background:none;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.pdf-btn:hover{background:rgba(245,160,32,.1)}
+.pdf-btn svg{width:15px;height:15px}
+
+#area{max-width:760px;margin:0 auto;padding:60px 24px 100px}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:22px;height:1px;background:var(--gold)}
+.hdr h1{font-family:'Outfit',sans-serif;font-size:clamp(28px,4.5vw,46px);font-weight:800;line-height:1.05;margin-bottom:10px}
+.hdr .for{font-size:15px;color:rgba(232,228,222,.55);margin-bottom:8px}
+.hdr .for strong{color:var(--white)}
+.hdr .validade{font-size:12px;color:var(--muted);margin-bottom:44px}
+
+.block{margin-bottom:44px}
+.block-tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px}
+.block-body{font-size:15px;color:rgba(232,228,222,.72);line-height:1.85}
+.block-body p{margin-bottom:14px}
+.block-body strong{color:var(--white);display:block;font-size:15px;margin-bottom:4px}
+
+#invest{background:rgba(245,160,32,.06);border:1px solid rgba(245,160,32,.3);padding:32px}
+#invest .block-tag{color:var(--gold)}
+.invest-value{font-family:'Outfit',sans-serif;font-size:clamp(28px,4vw,38px);font-weight:800;margin:8px 0 4px}
+.invest-extenso{font-size:13px;color:rgba(232,228,222,.5);margin-bottom:14px;font-style:italic}
+.invest-cond{font-size:13px;color:rgba(232,228,222,.6);line-height:1.6}
+.invest-fiscal{font-size:12px;color:var(--muted);margin-top:10px}
+
+.foot-actions{margin-top:56px;display:flex;flex-direction:column;gap:12px}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:17px 28px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .2s;border:none;cursor:pointer;font-family:'Outfit',sans-serif}
+.btn.primary{background:var(--grad);color:#000}
+.btn.primary:hover{opacity:.85;transform:translateY(-2px)}
+.btn.secondary{border:1px solid var(--glass-border);color:var(--white);background:none}
+.btn.secondary:hover{border-color:var(--gold);color:var(--gold)}
+
+#empty{max-width:520px;margin:120px auto;text-align:center;padding:0 24px}
+#empty h2{font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;margin-bottom:12px}
+#empty p{font-size:14px;color:var(--muted);line-height:1.7}
+
+footer{padding:40px 24px;text-align:center;border-top:1px solid var(--glass-border);margin-top:60px}
+footer a{color:var(--gold);text-decoration:none;font-size:13px}
+
+@media(max-width:600px){
+  nav{padding:14px 20px}
+  #area{padding:40px 18px 80px}
+  #invest{padding:24px 18px}
+}
+
+@media print{
+  @page{margin:0;size:A4}
+  body{background:#fff !important;color:#1a1a1a}
+  nav,footer,.foot-actions{display:none !important}
+  #area{max-width:100%;padding:0;margin:0}
+  #empty{display:none}
+  .pdf-doc{display:block !important}
+}
+.pdf-doc{display:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="data:image/png;base64,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" alt="Bourbon Films">
+  </a>
+  <button type="button" class="pdf-btn" id="pdfBtn" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
+    Baixar PDF
+  </button>
+</nav>
+
+<div id="area"></div>
+
+<div class="pdf-doc" id="pdfDoc"></div>
+
+<footer>
+  <a href="index.html">bourbonfilms.com.br</a>
+</footer>
+
+<style>
+.pdf-doc{
+  font-family:'DM Sans',sans-serif;color:#1a1a1a;background:#fff;
+  width:210mm;min-height:297mm;margin:0 auto;position:relative;
+}
+.pdf-header{position:relative;height:150px;background:linear-gradient(120deg,#8B2800 0%,#E85C1A 45%,#F5A020 100%);overflow:hidden}
+.pdf-header::before{content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:rgba(0,0,0,.15)}
+.pdf-header::after{content:'';position:absolute;bottom:-80px;left:20%;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.08)}
+.pdf-titlebox{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.pdf-titlebox h1{font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;color:#fff;letter-spacing:.04em;text-transform:uppercase}
+.pdf-titlebox h2{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+.pdf-body{padding:34px 46px 20px}
+.pdf-section-title{font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:#1a1a1a;margin-bottom:10px;margin-top:22px}
+.pdf-section-title:first-child{margin-top:0}
+.pdf-text{font-size:12.5px;line-height:1.7;color:#333}
+.pdf-text p{margin-bottom:10px}
+.pdf-text strong{display:block;font-size:12.5px;color:#1a1a1a;margin-bottom:2px}
+.pdf-invest-value{font-size:16px;font-weight:800;color:#1a1a1a}
+.pdf-invest-extenso{font-size:12px;color:#666;font-style:italic}
+.pdf-invest-cond{font-size:12px;color:#444;margin-top:8px;line-height:1.6}
+.pdf-invest-fiscal{font-size:11.5px;color:#666;margin-top:8px}
+.pdf-footer{position:absolute;bottom:0;left:0;right:0;background:#0c0c0c;color:#fff;padding:14px 46px;display:flex;justify-content:space-between;align-items:center;font-size:11px}
+.pdf-footer .l{display:flex;gap:18px}
+.pdf-footer .l span{display:flex;align-items:center;gap:6px}
+</style>
+
+<script>
+function b64DecodeUnicode(str){
+  return decodeURIComponent(Array.prototype.map.call(atob(str), c =>
+    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  ).join(''));
+}
+function esc(s){
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+function nl2p(s){
+  if(!s) return '';
+  return s.split(/\n{2,}/).map(par => '<p>'+esc(par).replace(/\n/g,'<br>')+'</p>').join('');
+}
+
+const params = new URLSearchParams(window.location.search);
+const raw = params.get('d');
+const area = document.getElementById('area');
+const pdfDoc = document.getElementById('pdfDoc');
+const pdfBtn = document.getElementById('pdfBtn');
+
+let data = null;
+if(raw){
+  try{ data = JSON.parse(b64DecodeUnicode(raw)); }catch(e){ data = null; }
+}
+
+if(!data){
+  area.innerHTML = `
+    <div id="empty">
+      <h2>Proposta n&atilde;o encontrada</h2>
+      <p>Este link n&atilde;o cont&eacute;m uma proposta v&aacute;lida. Confira se copiou o link completo enviado pela Bourbon Films.</p>
+    </div>
+  `;
+} else {
+  const wppText = encodeURIComponent('Olá! Vi a proposta "' + (data.projeto||'') + '" e quero conversar sobre ela.');
+  const estruturaLabel = data.animacao ? 'Processo de produção' : 'Estrutura de trabalho';
+
+  area.innerHTML = `
+    <div class="hdr">
+      <div class="eyebrow">Proposta de orçamento</div>
+      <h1>${esc(data.projeto || 'Proposta Bourbon Films')}</h1>
+      <p class="for">Para <strong>${esc(data.cliente || '')}</strong></p>
+      ${data.validade ? `<p class="validade">Proposta v&aacute;lida at&eacute; ${esc(data.validade)}</p>` : ''}
+    </div>
+
+    ${data.objetivo ? `
+    <div class="block">
+      <div class="block-tag">Objetivo</div>
+      <div class="block-body">${nl2p(data.objetivo)}</div>
+    </div>` : ''}
+
+    ${data.estrutura ? `
+    <div class="block">
+      <div class="block-tag">${estruturaLabel}</div>
+      <div class="block-body">${nl2p(data.estrutura)}</div>
+    </div>` : ''}
+
+    ${data.investimento ? `
+    <div class="block" id="invest">
+      <div class="block-tag">Investimento</div>
+      <div class="invest-value">${esc(data.investimento)}</div>
+      ${data.extenso ? `<div class="invest-extenso">(${esc(data.extenso)})</div>` : ''}
+      ${data.condicoes ? `<div class="invest-cond">${esc(data.condicoes)}</div>` : ''}
+      <div class="invest-fiscal">O valor apresentado já contempla os encargos fiscais da produtora, incluindo emissão de nota fiscal.</div>
+    </div>` : ''}
+
+    ${data.custos ? `
+    <div class="block">
+      <div class="block-tag">Descri&ccedil;&atilde;o de custos</div>
+      <div class="block-body">${nl2p(data.custos)}</div>
+    </div>` : ''}
+
+    ${data.compromisso ? `
+    <div class="block">
+      <div class="block-tag">Compromisso</div>
+      <div class="block-body">${nl2p(data.compromisso)}</div>
+    </div>` : ''}
+
+    <div class="foot-actions">
+      <a href="https://wa.me/5583998683878?text=${wppText}" target="_blank" class="btn primary">Falar sobre esta proposta</a>
+      <a href="index.html" class="btn secondary">Conhecer a Bourbon Films</a>
+    </div>
+  `;
+
+  const hoje = new Date();
+  const dataFmt = data.dataDoc || (hoje.getDate() + ' de ' + ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'][hoje.getMonth()] + ' de ' + hoje.getFullYear());
+
+  pdfDoc.innerHTML = `
+    <div class="pdf-header">
+      <div class="pdf-titlebox">
+        <h1>Proposta de Or&ccedil;amento</h1>
+        <h2>${esc(data.projeto || '')}</h2>
+      </div>
+    </div>
+    <div class="pdf-body">
+      ${data.objetivo ? `<div class="pdf-section-title">Objetivo</div><div class="pdf-text">${nl2p(data.objetivo)}</div>` : ''}
+      ${data.estrutura ? `<div class="pdf-section-title">${estruturaLabel}</div><div class="pdf-text">${nl2p(data.estrutura)}</div>` : ''}
+      ${data.investimento ? `
+      <div class="pdf-section-title">Investimento</div>
+      <div class="pdf-invest-value">${esc(data.investimento)}${data.extenso ? ' <span class="pdf-invest-extenso">('+esc(data.extenso)+')</span>' : ''}</div>
+      ${data.condicoes ? `<div class="pdf-invest-cond">${esc(data.condicoes)}</div>` : ''}
+      <div class="pdf-invest-fiscal">O valor apresentado já contempla os encargos fiscais da produtora, incluindo emissão de nota fiscal.</div>
+      ` : ''}
+      ${data.custos ? `<div class="pdf-section-title">Descri&ccedil;&atilde;o de Custos</div><div class="pdf-text">${nl2p(data.custos)}</div>` : ''}
+      ${data.compromisso ? `<div class="pdf-section-title">Compromisso</div><div class="pdf-text">${nl2p(data.compromisso)}</div>` : ''}
+    </div>
+    <div class="pdf-footer">
+      <div class="l">
+        <span>@bourbonfilm</span>
+        <span>83 99868-3878</span>
+      </div>
+      <span>${esc(dataFmt)}</span>
+    </div>
+  `;
+
+  pdfBtn.style.display = 'flex';
+  pdfBtn.addEventListener('click', ()=> window.print());
+}
+</script>
+</body>
+</html>

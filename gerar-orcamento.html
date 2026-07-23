@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerar Orçamento | Bourbon Films</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#080808;--surface:#101010;--white:#E8E4DE;--muted:#6B6560;
+  --gold:#F5A020;--orange:#E85C1A;--ember:#8B2800;
+  --grad:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);
+  --glass:rgba(255,255,255,.045);--glass-border:rgba(255,255,255,.09);
+}
+body{background:var(--ink);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 56px;background:rgba(8,8,8,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-border)}
+.nav-logo img{height:28px;width:auto;object-fit:contain;display:block}
+.nav-back{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.nav-back:hover{color:var(--white)}
+
+#area{max-width:640px;margin:0 auto;padding:60px 24px 100px}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
+h1{font-family:'Outfit',sans-serif;font-size:clamp(28px,4.5vw,42px);font-weight:800;margin-bottom:12px}
+.sub{font-size:14px;color:rgba(232,228,222,.5);margin-bottom:36px;line-height:1.6}
+
+.toggle-row{display:flex;gap:10px;margin-bottom:32px}
+.toggle-opt{flex:1;padding:13px;text-align:center;border:1px solid var(--glass-border);cursor:pointer;font-size:13px;color:rgba(232,228,222,.6);transition:all .2s}
+.toggle-opt.active{border-color:var(--gold);color:var(--gold);background:rgba(245,160,32,.06)}
+
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13px;color:rgba(232,228,222,.7);margin-bottom:7px}
+.field .hint{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+input,textarea{width:100%;padding:12px 14px;background:var(--surface);border:1px solid var(--glass-border);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none}
+input:focus,textarea:focus{border-color:rgba(245,160,32,.5)}
+textarea{resize:vertical;min-height:80px}
+
+.btn{width:100%;padding:16px;margin-top:10px;background:var(--grad);color:#000;font-family:'Outfit',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer}
+.btn:hover{opacity:.85}
+
+#result{display:none;margin-top:36px;padding:24px;background:var(--glass);border:1px solid var(--glass-border)}
+#result h3{font-family:'Outfit',sans-serif;font-size:16px;margin-bottom:12px}
+.link-box{display:flex;gap:8px;margin-bottom:14px}
+.link-box input{flex:1;font-size:12px;color:var(--gold)}
+.copy-btn{flex-shrink:0;padding:0 18px;background:none;border:1px solid rgba(245,160,32,.4);color:var(--gold);cursor:pointer;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.copy-btn.copied{border-color:#25D366;color:#25D366}
+.preview-link{display:inline-block;font-size:12px;color:rgba(232,228,222,.55);text-decoration:none;border-bottom:1px solid rgba(232,228,222,.2)}
+.preview-link:hover{color:var(--gold);border-color:var(--gold)}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="data:image/png;base64,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" alt="Bourbon Films">
+  </a>
+  <a href="index.html" class="nav-back">Voltar ao site</a>
+</nav>
+
+<div id="area">
+  <div class="eyebrow">Uso interno</div>
+  <h1>Gerar orçamento</h1>
+  <p class="sub">Preenche os campos seguindo o padrão da Bourbon e gera um link pronto pra mandar pro cliente. O cliente também consegue baixar em PDF direto da página.</p>
+
+  <div class="toggle-row">
+    <div class="toggle-opt active" id="optNormal" onclick="setTipo(false)">Trabalho padrão</div>
+    <div class="toggle-opt" id="optAnimacao" onclick="setTipo(true)">Animação</div>
+  </div>
+
+  <form id="form">
+    <div class="field">
+      <label>Nome do cliente</label>
+      <input type="text" id="cliente" placeholder="Ex: Academia Korpus">
+    </div>
+    <div class="field">
+      <label>Nome do projeto / trabalho</label>
+      <input type="text" id="projeto" placeholder="Ex: Cobertura CONEDU 2026">
+    </div>
+    <div class="field">
+      <label>Objetivo</label>
+      <textarea id="objetivo" placeholder="O que será entregue, para quem e com que finalidade. Foco no resultado, não no processo."></textarea>
+      <span class="hint">Um parágrafo. Descreve o resultado, não a execução técnica.</span>
+    </div>
+    <div class="field">
+      <label id="estruturaLabel">Estrutura de trabalho</label>
+      <textarea id="estrutura" placeholder="Cada função em negrito seguida de parágrafo curto. Sem bullets. Sem nomes. Sem mencionar vínculo empregatício."></textarea>
+      <span class="hint" id="estruturaHint">Ex: Diretor de Fotografia&#10;Parágrafo curto sobre a função.</span>
+    </div>
+    <div class="field">
+      <label>Investimento (valor)</label>
+      <input type="text" id="investimento" placeholder="Ex: R$ 4.480">
+    </div>
+    <div class="field">
+      <label>Valor por extenso (opcional)</label>
+      <input type="text" id="extenso" placeholder="Ex: quatro mil, quatrocentos e oitenta reais">
+    </div>
+    <div class="field">
+      <label>Condições de pagamento</label>
+      <input type="text" id="condicoes" value="50% no ato do fechamento e 50% na entrega, valor necessário para viabilizar a reserva da equipe e a preparação completa do projeto.">
+    </div>
+    <div class="field">
+      <label>Descrição de custos</label>
+      <textarea id="custos" style="min-height:160px">Este orçamento reflete muito mais do que uma execução técnica. Cada real investido aqui remunera profissionais que carregam anos de experiência, sensibilidade narrativa e comprometimento com a entrega. Usamos equipamentos de ponta, mas sabemos que equipamento nenhum substitui o olhar de quem sabe o que está fazendo. O nosso verdadeiro diferencial é a equipe, e é nela que você está investindo. Cada projeto que assumimos é tratado como único, porque acreditamos que nenhuma história merece ser contada de forma genérica.
+
+Captação
+Descreva aqui o item de custo, aprofundando o que já foi dito na estrutura de trabalho.</textarea>
+      <span class="hint">Primeiro parágrafo já vem padrão. Pode reduzir em projetos menores. Itens seguintes: subtítulo + texto corrido.</span>
+    </div>
+    <div class="field">
+      <label>Compromisso (opcional)</label>
+      <textarea id="compromisso" placeholder="Parágrafo final curto, reforçando cuidado e orgulho na entrega. Omitir se o espaço estiver comprometido."></textarea>
+    </div>
+    <div class="field">
+      <label>Validade da proposta (opcional)</label>
+      <input type="text" id="validade" placeholder="Ex: 30/07/2026">
+    </div>
+    <div class="field">
+      <label>Data do documento (opcional)</label>
+      <input type="text" id="dataDoc" placeholder="Ex: 30 de abril de 2026">
+      <span class="hint">Se vazio, usa a data de hoje automaticamente.</span>
+    </div>
+    <button type="submit" class="btn">Gerar link</button>
+  </form>
+
+  <div id="result">
+    <h3>Link pronto:</h3>
+    <div class="link-box">
+      <input type="text" id="linkOutput" readonly>
+      <button type="button" class="copy-btn" id="copyBtn">Copiar</button>
+    </div>
+    <a href="#" target="_blank" id="previewLink" class="preview-link">Ver pr&eacute;via da proposta &rarr;</a>
+  </div>
+</div>
+
+<script>
+let isAnimacao = false;
+function setTipo(animacao){
+  isAnimacao = animacao;
+  document.getElementById('optNormal').classList.toggle('active', !animacao);
+  document.getElementById('optAnimacao').classList.toggle('active', animacao);
+  document.getElementById('estruturaLabel').textContent = animacao ? 'Processo de produção' : 'Estrutura de trabalho';
+  document.getElementById('estrutura').placeholder = animacao
+    ? 'Um único parágrafo com as etapas sequenciais: conceito visual, desenvolvimento de personagens e cenários, animação, edição e finalização. Nunca mencionar tecnologias ou IA, sempre "animação".'
+    : 'Cada função em negrito seguida de parágrafo curto. Sem bullets. Sem nomes. Sem mencionar vínculo empregatício.';
+}
+
+function b64EncodeUnicode(str){
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p1) =>
+    String.fromCharCode('0x' + p1)
+  ));
+}
+
+document.getElementById('form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const data = {
+    cliente: document.getElementById('cliente').value,
+    projeto: document.getElementById('projeto').value,
+    objetivo: document.getElementById('objetivo').value,
+    estrutura: document.getElementById('estrutura').value,
+    animacao: isAnimacao,
+    investimento: document.getElementById('investimento').value,
+    extenso: document.getElementById('extenso').value,
+    condicoes: document.getElementById('condicoes').value,
+    custos: document.getElementById('custos').value,
+    compromisso: document.getElementById('compromisso').value,
+    validade: document.getElementById('validade').value,
+    dataDoc: document.getElementById('dataDoc').value
+  };
+  const encoded = b64EncodeUnicode(JSON.stringify(data));
+  const url = window.location.origin + window.location.pathname.replace('gerar-orcamento.html','orcamento.html') + '?d=' + encoded;
+
+  document.getElementById('linkOutput').value = url;
+  document.getElementById('previewLink').href = url;
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+});
+
+document.getElementById('copyBtn').addEventListener('click', function(){
+  const input = document.getElementById('linkOutput');
+  input.select();
+  navigator.clipboard.writeText(input.value).then(()=>{
+    const btn = document.getElementById('copyBtn');
+    const original = btn.textContent;
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1800);
+  });
+});
+</script>
+</body>
+</html>
