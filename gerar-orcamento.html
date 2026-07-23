@@ -23,11 +23,17 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .nav-back{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
 .nav-back:hover{color:var(--white)}
 
-#area{max-width:640px;margin:0 auto;padding:60px 24px 100px}
+#area{max-width:720px;margin:0 auto;padding:60px 24px 100px}
 .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
 h1{font-family:'Outfit',sans-serif;font-size:clamp(28px,4.5vw,42px);font-weight:800;margin-bottom:12px}
 .sub{font-size:14px;color:rgba(232,228,222,.5);margin-bottom:36px;line-height:1.6}
+
+.tab-row{display:flex;gap:10px;margin-bottom:32px;border-bottom:1px solid var(--glass-border)}
+.tab{padding:12px 4px;margin-right:20px;font-size:13px;color:rgba(232,228,222,.5);cursor:pointer;border-bottom:2px solid transparent}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
 
 .toggle-row{display:flex;gap:10px;margin-bottom:32px}
 .toggle-opt{flex:1;padding:13px;text-align:center;border:1px solid var(--glass-border);cursor:pointer;font-size:13px;color:rgba(232,228,222,.6);transition:all .2s}
@@ -36,12 +42,14 @@ h1{font-family:'Outfit',sans-serif;font-size:clamp(28px,4.5vw,42px);font-weight:
 .field{margin-bottom:18px}
 .field label{display:block;font-size:13px;color:rgba(232,228,222,.7);margin-bottom:7px}
 .field .hint{display:block;font-size:11px;color:var(--muted);margin-top:4px}
-input,textarea{width:100%;padding:12px 14px;background:var(--surface);border:1px solid var(--glass-border);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none}
-input:focus,textarea:focus{border-color:rgba(245,160,32,.5)}
+input,textarea,select{width:100%;padding:12px 14px;background:var(--surface);border:1px solid var(--glass-border);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none}
+input:focus,textarea:focus,select:focus{border-color:rgba(245,160,32,.5)}
 textarea{resize:vertical;min-height:80px}
 
 .btn{width:100%;padding:16px;margin-top:10px;background:var(--grad);color:#000;font-family:'Outfit',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer}
 .btn:hover{opacity:.85}
+.btn.ghost{background:none;border:1px solid var(--glass-border);color:var(--white)}
+.btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
 
 #result{display:none;margin-top:36px;padding:24px;background:var(--glass);border:1px solid var(--glass-border)}
 #result h3{font-family:'Outfit',sans-serif;font-size:16px;margin-bottom:12px}
@@ -51,6 +59,28 @@ textarea{resize:vertical;min-height:80px}
 .copy-btn.copied{border-color:#25D366;color:#25D366}
 .preview-link{display:inline-block;font-size:12px;color:rgba(232,228,222,.55);text-decoration:none;border-bottom:1px solid rgba(232,228,222,.2)}
 .preview-link:hover{color:var(--gold);border-color:var(--gold)}
+
+/* CALCULADORA */
+.calc-warn{padding:14px 18px;background:rgba(232,92,26,.08);border-left:2px solid rgba(232,92,26,.4);font-size:12.5px;color:rgba(232,228,222,.65);line-height:1.6;margin-bottom:28px}
+.calc-warn strong{color:var(--orange)}
+.calc-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12.5px}
+.calc-table th{text-align:left;padding:8px 6px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--glass-border)}
+.calc-table td{padding:6px;border-bottom:1px solid rgba(232,228,222,.05)}
+.calc-table input{padding:7px 8px;font-size:12.5px}
+.calc-table input.item-name{width:100%}
+.calc-table input.item-val{width:90px}
+.calc-row-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 6px}
+.calc-row-remove:hover{color:var(--orange)}
+.calc-add{font-size:12px;color:var(--gold);background:none;border:1px dashed rgba(245,160,32,.4);padding:9px 16px;cursor:pointer;margin-bottom:24px}
+.calc-add:hover{background:rgba(245,160,32,.06)}
+.calc-tier-select{display:flex;gap:10px;margin-bottom:24px}
+.calc-tier-opt{flex:1;padding:11px;text-align:center;border:1px solid var(--glass-border);cursor:pointer;font-size:12.5px;color:rgba(232,228,222,.6)}
+.calc-tier-opt.active{border-color:var(--gold);color:var(--gold);background:rgba(245,160,32,.06)}
+.calc-summary{padding:20px 22px;background:rgba(245,160,32,.05);border:1px solid rgba(245,160,32,.25)}
+.calc-line{display:flex;justify-content:space-between;font-size:13px;color:rgba(232,228,222,.65);padding:5px 0}
+.calc-line.total{font-family:'Outfit',sans-serif;font-weight:800;font-size:17px;color:var(--gold);border-top:1px solid rgba(245,160,32,.25);margin-top:8px;padding-top:12px}
+.calc-fee-imposto{display:flex;gap:10px;margin-bottom:18px}
+.calc-fee-imposto .field{flex:1;margin-bottom:0}
 </style>
 </head>
 <body>
@@ -65,88 +95,276 @@ textarea{resize:vertical;min-height:80px}
 <div id="area">
   <div class="eyebrow">Uso interno</div>
   <h1>Gerar orçamento</h1>
-  <p class="sub">Preenche os campos seguindo o padrão da Bourbon e gera um link pronto pra mandar pro cliente. O cliente também consegue baixar em PDF direto da página.</p>
+  <p class="sub">Calcula o valor internamente, monta a proposta no padrão da Bourbon e gera o link pra mandar pro cliente.</p>
 
-  <div class="toggle-row">
-    <div class="toggle-opt active" id="optNormal" onclick="setTipo(false)">Trabalho padrão</div>
-    <div class="toggle-opt" id="optAnimacao" onclick="setTipo(true)">Animação</div>
+  <div class="tab-row">
+    <div class="tab active" id="tabCalc" onclick="showTab('calc')">1. Calcular preço</div>
+    <div class="tab" id="tabProp" onclick="showTab('prop')">2. Montar proposta</div>
   </div>
 
-  <form id="form">
+  <!-- ================= ABA CALCULADORA (uso interno, nunca vai pro cliente) ================= -->
+  <div class="tab-panel active" id="panelCalc">
+    <div class="calc-warn"><strong>Só você vê isto.</strong> Nada desta calculadora aparece pro cliente, é referência interna pra chegar no valor final.</div>
+
     <div class="field">
-      <label>Nome do cliente</label>
-      <input type="text" id="cliente" placeholder="Ex: Academia Korpus">
+      <label>Nome do projeto (referência interna)</label>
+      <input type="text" id="calcNome" placeholder="Ex: Manifesto Redepharma Run">
     </div>
-    <div class="field">
-      <label>Nome do projeto / trabalho</label>
-      <input type="text" id="projeto" placeholder="Ex: Cobertura CONEDU 2026">
+
+    <table class="calc-table" id="calcTable">
+      <thead>
+        <tr><th>Item</th><th>Mín. viável</th><th>Cheio</th><th>Ideal</th><th></th></tr>
+      </thead>
+      <tbody id="calcRows"></tbody>
+    </table>
+    <button type="button" class="calc-add" onclick="addRow()">+ adicionar item</button>
+
+    <div class="calc-fee-imposto">
+      <div class="field">
+        <label>Fee (%)</label>
+        <input type="text" id="feePct" value="10">
+      </div>
+      <div class="field">
+        <label>Imposto (%)</label>
+        <input type="text" id="impostoPct" value="6">
+      </div>
     </div>
-    <div class="field">
-      <label>Objetivo</label>
-      <textarea id="objetivo" placeholder="O que será entregue, para quem e com que finalidade. Foco no resultado, não no processo."></textarea>
-      <span class="hint">Um parágrafo. Descreve o resultado, não a execução técnica.</span>
+
+    <label style="display:block;font-size:13px;color:rgba(232,228,222,.7);margin-bottom:10px">Qual coluna usar como base do orçamento</label>
+    <div class="calc-tier-select">
+      <div class="calc-tier-opt" data-tier="min" onclick="setTier('min')">Mín. viável</div>
+      <div class="calc-tier-opt" data-tier="cheio" onclick="setTier('cheio')">Cheio</div>
+      <div class="calc-tier-opt active" data-tier="ideal" onclick="setTier('ideal')">Ideal</div>
     </div>
-    <div class="field">
-      <label id="estruturaLabel">Estrutura de trabalho</label>
-      <textarea id="estrutura" placeholder="Cada função em negrito seguida de parágrafo curto. Sem bullets. Sem nomes. Sem mencionar vínculo empregatício."></textarea>
-      <span class="hint" id="estruturaHint">Ex: Diretor de Fotografia&#10;Parágrafo curto sobre a função.</span>
+
+    <div class="calc-summary">
+      <div class="calc-line"><span>Soma dos itens</span><span id="calcSoma">R$ 0,00</span></div>
+      <div class="calc-line"><span>Fee</span><span id="calcFee">R$ 0,00</span></div>
+      <div class="calc-line"><span>Subtotal</span><span id="calcSubtotal">R$ 0,00</span></div>
+      <div class="calc-line"><span>Imposto</span><span id="calcImposto">R$ 0,00</span></div>
+      <div class="calc-line total"><span>Total</span><span id="calcTotal">R$ 0,00</span></div>
     </div>
-    <div class="field">
-      <label>Investimento (valor)</label>
-      <input type="text" id="investimento" placeholder="Ex: R$ 4.480">
+
+    <button type="button" class="btn" onclick="useInProposal()">Usar este valor na proposta &rarr;</button>
+    <button type="button" class="btn ghost" onclick="downloadInternalPdf()">Baixar PDF interno de refer&ecirc;ncia</button>
+  </div>
+
+  <!-- ================= ABA PROPOSTA (o que vira o link do cliente) ================= -->
+  <div class="tab-panel" id="panelProp">
+    <div class="toggle-row">
+      <div class="toggle-opt active" id="optNormal" onclick="setTipo(false)">Trabalho padrão</div>
+      <div class="toggle-opt" id="optAnimacao" onclick="setTipo(true)">Animação</div>
     </div>
-    <div class="field">
-      <label>Valor por extenso (opcional)</label>
-      <input type="text" id="extenso" placeholder="Ex: quatro mil, quatrocentos e oitenta reais">
-    </div>
-    <div class="field">
-      <label>Condições de pagamento</label>
-      <input type="text" id="condicoes" value="50% no ato do fechamento e 50% na entrega, valor necessário para viabilizar a reserva da equipe e a preparação completa do projeto.">
-    </div>
-    <div class="field">
-      <label>Descrição de custos</label>
-      <textarea id="custos" style="min-height:160px">Este orçamento reflete muito mais do que uma execução técnica. Cada real investido aqui remunera profissionais que carregam anos de experiência, sensibilidade narrativa e comprometimento com a entrega. Usamos equipamentos de ponta, mas sabemos que equipamento nenhum substitui o olhar de quem sabe o que está fazendo. O nosso verdadeiro diferencial é a equipe, e é nela que você está investindo. Cada projeto que assumimos é tratado como único, porque acreditamos que nenhuma história merece ser contada de forma genérica.
+
+    <form id="form">
+      <div class="field">
+        <label>Nome do cliente</label>
+        <input type="text" id="cliente" placeholder="Ex: Academia Korpus">
+      </div>
+      <div class="field">
+        <label>Nome do projeto / trabalho</label>
+        <input type="text" id="projeto" placeholder="Ex: Cobertura CONEDU 2026">
+      </div>
+      <div class="field">
+        <label>Objetivo</label>
+        <textarea id="objetivo" placeholder="O que será entregue, para quem e com que finalidade. Foco no resultado, não no processo."></textarea>
+        <span class="hint">Um parágrafo. Descreve o resultado, não a execução técnica.</span>
+      </div>
+      <div class="field">
+        <label id="estruturaLabel">Estrutura de trabalho</label>
+        <textarea id="estrutura" placeholder="Cada função em negrito seguida de parágrafo curto. Sem bullets. Sem nomes."></textarea>
+      </div>
+      <div class="field">
+        <label>Investimento (valor)</label>
+        <input type="text" id="investimento" placeholder="Ex: R$ 4.480">
+        <span class="hint">Preenchido automaticamente se você usar a calculadora na aba 1.</span>
+      </div>
+      <div class="field">
+        <label>Valor por extenso (opcional)</label>
+        <input type="text" id="extenso" placeholder="Ex: quatro mil, quatrocentos e oitenta reais">
+      </div>
+      <div class="field">
+        <label>Condições de pagamento</label>
+        <input type="text" id="condicoes" value="50% no ato do fechamento e 50% na entrega, valor necessário para viabilizar a reserva da equipe e a preparação completa do projeto.">
+      </div>
+      <div class="field">
+        <label>Descrição de custos</label>
+        <textarea id="custos" style="min-height:160px">Este orçamento reflete muito mais do que uma execução técnica. Cada real investido aqui remunera profissionais que carregam anos de experiência, sensibilidade narrativa e comprometimento com a entrega. Usamos equipamentos de ponta, mas sabemos que equipamento nenhum substitui o olhar de quem sabe o que está fazendo. O nosso verdadeiro diferencial é a equipe, e é nela que você está investindo. Cada projeto que assumimos é tratado como único, porque acreditamos que nenhuma história merece ser contada de forma genérica.
 
 Captação
 Descreva aqui o item de custo, aprofundando o que já foi dito na estrutura de trabalho.</textarea>
-      <span class="hint">Primeiro parágrafo já vem padrão. Pode reduzir em projetos menores. Itens seguintes: subtítulo + texto corrido.</span>
-    </div>
-    <div class="field">
-      <label>Compromisso (opcional)</label>
-      <textarea id="compromisso" placeholder="Parágrafo final curto, reforçando cuidado e orgulho na entrega. Omitir se o espaço estiver comprometido."></textarea>
-    </div>
-    <div class="field">
-      <label>Validade da proposta (opcional)</label>
-      <input type="text" id="validade" placeholder="Ex: 30/07/2026">
-    </div>
-    <div class="field">
-      <label>Data do documento (opcional)</label>
-      <input type="text" id="dataDoc" placeholder="Ex: 30 de abril de 2026">
-      <span class="hint">Se vazio, usa a data de hoje automaticamente.</span>
-    </div>
-    <button type="submit" class="btn">Gerar link</button>
-  </form>
+      </div>
+      <div class="field">
+        <label>Compromisso (opcional)</label>
+        <textarea id="compromisso" placeholder="Parágrafo final curto. Omitir se o espaço estiver comprometido."></textarea>
+      </div>
+      <div class="field">
+        <label>Validade da proposta (opcional)</label>
+        <input type="text" id="validade" placeholder="Ex: 30/07/2026">
+      </div>
+      <div class="field">
+        <label>Data do documento (opcional)</label>
+        <input type="text" id="dataDoc" placeholder="Ex: 30 de abril de 2026">
+        <span class="hint">Se vazio, usa a data de hoje automaticamente.</span>
+      </div>
+      <button type="submit" class="btn">Gerar link</button>
+    </form>
 
-  <div id="result">
-    <h3>Link pronto:</h3>
-    <div class="link-box">
-      <input type="text" id="linkOutput" readonly>
-      <button type="button" class="copy-btn" id="copyBtn">Copiar</button>
+    <div id="result">
+      <h3>Link pronto:</h3>
+      <div class="link-box">
+        <input type="text" id="linkOutput" readonly>
+        <button type="button" class="copy-btn" id="copyBtn">Copiar</button>
+      </div>
+      <a href="#" target="_blank" id="previewLink" class="preview-link">Ver pr&eacute;via da proposta &rarr;</a>
     </div>
-    <a href="#" target="_blank" id="previewLink" class="preview-link">Ver pr&eacute;via da proposta &rarr;</a>
   </div>
 </div>
 
 <script>
+function showTab(name){
+  document.getElementById('tabCalc').classList.toggle('active', name==='calc');
+  document.getElementById('tabProp').classList.toggle('active', name==='prop');
+  document.getElementById('panelCalc').classList.toggle('active', name==='calc');
+  document.getElementById('panelProp').classList.toggle('active', name==='prop');
+}
+
+// ---------- CALCULADORA ----------
+let rowId = 0;
+let currentTier = 'ideal';
+
+function addRow(nome, min, cheio, ideal){
+  rowId++;
+  const tr = document.createElement('tr');
+  tr.id = 'row'+rowId;
+  tr.innerHTML = `
+    <td><input type="text" class="item-name" placeholder="Ex: Diretor" value="${nome||''}" oninput="calcAll()"></td>
+    <td><input type="text" class="item-val" data-tier="min" placeholder="0" value="${min||''}" oninput="calcAll()"></td>
+    <td><input type="text" class="item-val" data-tier="cheio" placeholder="0" value="${cheio||''}" oninput="calcAll()"></td>
+    <td><input type="text" class="item-val" data-tier="ideal" placeholder="0" value="${ideal||''}" oninput="calcAll()"></td>
+    <td><button type="button" class="calc-row-remove" onclick="removeRow(${rowId})">&times;</button></td>
+  `;
+  document.getElementById('calcRows').appendChild(tr);
+}
+function removeRow(id){
+  const el = document.getElementById('row'+id);
+  if(el) el.remove();
+  calcAll();
+}
+function setTier(t){
+  currentTier = t;
+  document.querySelectorAll('.calc-tier-opt').forEach(el=>el.classList.toggle('active', el.dataset.tier===t));
+  calcAll();
+}
+function toNum(v){
+  if(!v) return 0;
+  const n = parseFloat(String(v).replace(/\./g,'').replace(',','.'));
+  return isNaN(n) ? 0 : n;
+}
+function fmtMoney(n){
+  return 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function calcAll(){
+  let soma = 0;
+  document.querySelectorAll(`.item-val[data-tier="${currentTier}"]`).forEach(inp=>{
+    soma += toNum(inp.value);
+  });
+  const feePct = toNum(document.getElementById('feePct').value) / 100;
+  const impostoPct = toNum(document.getElementById('impostoPct').value) / 100;
+  const fee = soma * feePct;
+  const subtotal = soma + fee;
+  const imposto = subtotal * impostoPct;
+  const total = subtotal + imposto;
+
+  document.getElementById('calcSoma').textContent = fmtMoney(soma);
+  document.getElementById('calcFee').textContent = fmtMoney(fee);
+  document.getElementById('calcSubtotal').textContent = fmtMoney(subtotal);
+  document.getElementById('calcImposto').textContent = fmtMoney(imposto);
+  document.getElementById('calcTotal').textContent = fmtMoney(total);
+
+  return {soma, fee, subtotal, imposto, total};
+}
+
+function useInProposal(){
+  const r = calcAll();
+  document.getElementById('investimento').value = fmtMoney(r.total);
+  showTab('prop');
+  document.getElementById('investimento').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function downloadInternalPdf(){
+  const r = calcAll();
+  const nome = document.getElementById('calcNome').value || 'Sem nome';
+  const items = [];
+  document.querySelectorAll('#calcRows tr').forEach(tr=>{
+    const name = tr.querySelector('.item-name').value;
+    if(!name) return;
+    const min = tr.querySelector('[data-tier="min"]').value;
+    const cheio = tr.querySelector('[data-tier="cheio"]').value;
+    const ideal = tr.querySelector('[data-tier="ideal"]').value;
+    items.push({name, min, cheio, ideal});
+  });
+
+  let rowsHtml = items.map(it => `
+    <tr>
+      <td>${it.name}</td>
+      <td>${it.min || '0'}</td>
+      <td>${it.cheio || '0'}</td>
+      <td>${it.ideal || '0'}</td>
+    </tr>`).join('');
+
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <html><head><meta charset="UTF-8"><title>Referência interna - ${nome}</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:40px;color:#111}
+      h1{font-size:20px;margin-bottom:4px}
+      .tag{font-size:11px;color:#c0392b;font-weight:bold;text-transform:uppercase;margin-bottom:24px}
+      table{width:100%;border-collapse:collapse;margin-bottom:24px}
+      th,td{padding:8px;border:1px solid #ddd;font-size:12px;text-align:left}
+      th{background:#f5f5f5}
+      .summary div{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid #eee}
+      .summary .total{font-weight:bold;font-size:16px;border-top:2px solid #333;margin-top:8px;padding-top:10px}
+      .tier{font-size:11px;color:#666;margin-bottom:20px}
+    </style></head><body>
+    <h1>Refer&ecirc;ncia interna de precifica&ccedil;&atilde;o</h1>
+    <div class="tag">Documento interno. Nunca enviar ao cliente.</div>
+    <p><strong>Projeto:</strong> ${nome}</p>
+    <p class="tier"><strong>Coluna usada como base:</strong> ${currentTier === 'min' ? 'Mínimo viável' : currentTier === 'cheio' ? 'Cheio' : 'Ideal'}</p>
+    <table>
+      <thead><tr><th>Item</th><th>Mín. viável</th><th>Cheio</th><th>Ideal</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <div class="summary">
+      <div><span>Soma dos itens</span><span>${fmtMoney(r.soma)}</span></div>
+      <div><span>Fee (${document.getElementById('feePct').value}%)</span><span>${fmtMoney(r.fee)}</span></div>
+      <div><span>Subtotal</span><span>${fmtMoney(r.subtotal)}</span></div>
+      <div><span>Imposto (${document.getElementById('impostoPct').value}%)</span><span>${fmtMoney(r.imposto)}</span></div>
+      <div class="total"><span>Total</span><span>${fmtMoney(r.total)}</span></div>
+    </div>
+    </body></html>
+  `);
+  win.document.close();
+  setTimeout(()=> win.print(), 400);
+}
+
+// linhas iniciais (mesmos itens da planilha, valores zerados pra você preencher)
+addRow('Diretor');
+addRow('Cinegrafista 01');
+addRow('Cinegrafista 02');
+addRow('Editor');
+addRow('Assistente de produção');
+addRow('Deslocamento');
+addRow('Alimentação');
+addRow('Produção');
+
+// ---------- PROPOSTA ----------
 let isAnimacao = false;
 function setTipo(animacao){
   isAnimacao = animacao;
   document.getElementById('optNormal').classList.toggle('active', !animacao);
   document.getElementById('optAnimacao').classList.toggle('active', animacao);
   document.getElementById('estruturaLabel').textContent = animacao ? 'Processo de produção' : 'Estrutura de trabalho';
-  document.getElementById('estrutura').placeholder = animacao
-    ? 'Um único parágrafo com as etapas sequenciais: conceito visual, desenvolvimento de personagens e cenários, animação, edição e finalização. Nunca mencionar tecnologias ou IA, sempre "animação".'
-    : 'Cada função em negrito seguida de parágrafo curto. Sem bullets. Sem nomes. Sem mencionar vínculo empregatício.';
 }
 
 function b64EncodeUnicode(str){
@@ -191,6 +409,9 @@ document.getElementById('copyBtn').addEventListener('click', function(){
     setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1800);
   });
 });
+
+document.getElementById('feePct').addEventListener('input', calcAll);
+document.getElementById('impostoPct').addEventListener('input', calcAll);
 </script>
 </body>
 </html>

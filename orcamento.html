@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Proposta de Orçamento | Bourbon Films</title>
 <meta name="robots" content="noindex, nofollow">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -17,7 +17,13 @@
   --grad:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);
   --glass:rgba(255,255,255,.045);--glass-border:rgba(255,255,255,.09);
 }
-body{background:var(--ink);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--ink);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(245,160,32,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(245,160,32,.05) 1px,transparent 1px);
+  background-size:44px 44px;background-position:center center}
+nav,section,footer{position:relative;z-index:1}
 
 nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 56px;background:rgba(8,8,8,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-border)}
 .nav-logo img{height:28px;width:auto;object-fit:contain;display:block}
@@ -25,54 +31,70 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .pdf-btn:hover{background:rgba(245,160,32,.1)}
 .pdf-btn svg{width:15px;height:15px}
 
-#area{max-width:760px;margin:0 auto;padding:60px 24px 100px}
+.section{padding:80px 56px}
 .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:'';width:22px;height:1px;background:var(--gold)}
-.hdr h1{font-family:'Outfit',sans-serif;font-size:clamp(28px,4.5vw,46px);font-weight:800;line-height:1.05;margin-bottom:10px}
-.hdr .for{font-size:15px;color:rgba(232,228,222,.55);margin-bottom:8px}
-.hdr .for strong{color:var(--white)}
-.hdr .validade{font-size:12px;color:var(--muted);margin-bottom:44px}
+.big-title{font-family:'Outfit',sans-serif;font-size:clamp(30px,4.2vw,54px);font-weight:800;line-height:1.05;letter-spacing:-.01em}
+.grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-.block{margin-bottom:44px}
-.block-tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px}
-.block-body{font-size:15px;color:rgba(232,228,222,.72);line-height:1.85}
-.block-body p{margin-bottom:14px}
-.block-body strong{color:var(--white);display:block;font-size:15px;margin-bottom:4px}
+#hero-orc{padding:100px 56px 70px;text-align:center;position:relative;overflow:hidden}
+#hero-orc::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(232,92,26,.08) 0%,transparent 65%);pointer-events:none}
+#hero-orc h1{position:relative;font-family:'Outfit',sans-serif;font-size:clamp(32px,5.5vw,60px);font-weight:800;line-height:1.05;margin-bottom:16px}
+#hero-orc .for{position:relative;font-size:16px;color:rgba(232,228,222,.55)}
+#hero-orc .for strong{color:var(--white)}
+#hero-orc .validade{position:relative;font-size:12px;color:var(--muted);margin-top:10px}
 
-#invest{background:rgba(245,160,32,.06);border:1px solid rgba(245,160,32,.3);padding:32px}
-#invest .block-tag{color:var(--gold)}
-.invest-value{font-family:'Outfit',sans-serif;font-size:clamp(28px,4vw,38px);font-weight:800;margin:8px 0 4px}
-.invest-extenso{font-size:13px;color:rgba(232,228,222,.5);margin-bottom:14px;font-style:italic}
-.invest-cond{font-size:13px;color:rgba(232,228,222,.6);line-height:1.6}
-.invest-fiscal{font-size:12px;color:var(--muted);margin-top:10px}
+.block{max-width:760px}
+.block-tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.block-tag::before{content:'';width:20px;height:1px;background:var(--gold)}
+.block-body{font-size:16px;color:rgba(232,228,222,.72);line-height:1.85}
+.block-body p{margin-bottom:16px}
 
-.foot-actions{margin-top:56px;display:flex;flex-direction:column;gap:12px}
-.btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:17px 28px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .2s;border:none;cursor:pointer;font-family:'Outfit',sans-serif}
+#invest-sec{background:var(--surface)}
+.invest-box{max-width:760px;padding:36px 40px;background:rgba(245,160,32,.06);border:1px solid rgba(245,160,32,.3)}
+.invest-value{font-family:'Outfit',sans-serif;font-size:clamp(30px,4.5vw,44px);font-weight:800;margin:10px 0 6px}
+.invest-extenso{font-size:13px;color:rgba(232,228,222,.5);margin-bottom:18px;font-style:italic}
+.invest-cond{font-size:14px;color:rgba(232,228,222,.65);line-height:1.7}
+.invest-fiscal{font-size:12px;color:var(--muted);margin-top:14px;padding-top:14px;border-top:1px solid rgba(232,228,222,.08)}
+
+#refs{background:var(--ink)}
+.refs-grid{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
+.ref-card{flex:1 1 220px;padding:24px;background:var(--glass);border:1px solid var(--glass-border);text-decoration:none;color:var(--white);transition:all .2s}
+.ref-card:hover{border-color:rgba(245,160,32,.4);background:rgba(245,160,32,.06)}
+.ref-name{font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.ref-name svg{width:14px;height:14px;color:var(--gold);flex-shrink:0}
+.ref-desc{font-size:13px;color:var(--muted);line-height:1.5}
+
+#cta-orc{text-align:center;padding:100px 56px}
+.foot-actions{max-width:420px;margin:32px auto 0;display:flex;flex-direction:column;gap:12px}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:18px 28px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .2s;border:none;cursor:pointer;font-family:'Outfit',sans-serif}
 .btn.primary{background:var(--grad);color:#000}
 .btn.primary:hover{opacity:.85;transform:translateY(-2px)}
 .btn.secondary{border:1px solid var(--glass-border);color:var(--white);background:none}
 .btn.secondary:hover{border-color:var(--gold);color:var(--gold)}
 
-#empty{max-width:520px;margin:120px auto;text-align:center;padding:0 24px}
+#empty{max-width:520px;margin:140px auto;text-align:center;padding:0 24px}
 #empty h2{font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;margin-bottom:12px}
 #empty p{font-size:14px;color:var(--muted);line-height:1.7}
 
-footer{padding:40px 24px;text-align:center;border-top:1px solid var(--glass-border);margin-top:60px}
+footer{padding:40px 56px;text-align:center;border-top:1px solid var(--glass-border)}
 footer a{color:var(--gold);text-decoration:none;font-size:13px}
 
-@media(max-width:600px){
-  nav{padding:14px 20px}
-  #area{padding:40px 18px 80px}
-  #invest{padding:24px 18px}
+.rev{opacity:0;transform:translateY(28px);transition:opacity .8s,transform .85s cubic-bezier(.16,1,.3,1)}
+.rev.vis{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+  nav{padding:16px 24px}
+  .section,#hero-orc,#cta-orc{padding:56px 24px}
+  .invest-box{padding:26px 22px}
 }
 
 @media print{
   @page{margin:0;size:A4}
-  body{background:#fff !important;color:#1a1a1a}
-  nav,footer,.foot-actions{display:none !important}
-  #area{max-width:100%;padding:0;margin:0}
-  #empty{display:none}
+  body{background:#fff !important}
+  nav,footer,.foot-actions,#refs,body::before{display:none !important}
   .pdf-doc{display:block !important}
+  #hero-orc,.section{display:none !important}
 }
 .pdf-doc{display:none}
 </style>
@@ -89,7 +111,7 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
   </button>
 </nav>
 
-<div id="area"></div>
+<div id="content"></div>
 
 <div class="pdf-doc" id="pdfDoc"></div>
 
@@ -98,10 +120,7 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
 </footer>
 
 <style>
-.pdf-doc{
-  font-family:'DM Sans',sans-serif;color:#1a1a1a;background:#fff;
-  width:210mm;min-height:297mm;margin:0 auto;position:relative;
-}
+.pdf-doc{font-family:'DM Sans',sans-serif;color:#1a1a1a;background:#fff;width:210mm;min-height:297mm;margin:0 auto;position:relative}
 .pdf-header{position:relative;height:150px;background:linear-gradient(120deg,#8B2800 0%,#E85C1A 45%,#F5A020 100%);overflow:hidden}
 .pdf-header::before{content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:rgba(0,0,0,.15)}
 .pdf-header::after{content:'';position:absolute;bottom:-80px;left:20%;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.08)}
@@ -113,14 +132,12 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
 .pdf-section-title:first-child{margin-top:0}
 .pdf-text{font-size:12.5px;line-height:1.7;color:#333}
 .pdf-text p{margin-bottom:10px}
-.pdf-text strong{display:block;font-size:12.5px;color:#1a1a1a;margin-bottom:2px}
 .pdf-invest-value{font-size:16px;font-weight:800;color:#1a1a1a}
 .pdf-invest-extenso{font-size:12px;color:#666;font-style:italic}
 .pdf-invest-cond{font-size:12px;color:#444;margin-top:8px;line-height:1.6}
 .pdf-invest-fiscal{font-size:11.5px;color:#666;margin-top:8px}
 .pdf-footer{position:absolute;bottom:0;left:0;right:0;background:#0c0c0c;color:#fff;padding:14px 46px;display:flex;justify-content:space-between;align-items:center;font-size:11px}
 .pdf-footer .l{display:flex;gap:18px}
-.pdf-footer .l span{display:flex;align-items:center;gap:6px}
 </style>
 
 <script>
@@ -141,7 +158,7 @@ function nl2p(s){
 
 const params = new URLSearchParams(window.location.search);
 const raw = params.get('d');
-const area = document.getElementById('area');
+const content = document.getElementById('content');
 const pdfDoc = document.getElementById('pdfDoc');
 const pdfBtn = document.getElementById('pdfBtn');
 
@@ -151,7 +168,7 @@ if(raw){
 }
 
 if(!data){
-  area.innerHTML = `
+  content.innerHTML = `
     <div id="empty">
       <h2>Proposta n&atilde;o encontrada</h2>
       <p>Este link n&atilde;o cont&eacute;m uma proposta v&aacute;lida. Confira se copiou o link completo enviado pela Bourbon Films.</p>
@@ -161,51 +178,84 @@ if(!data){
   const wppText = encodeURIComponent('Olá! Vi a proposta "' + (data.projeto||'') + '" e quero conversar sobre ela.');
   const estruturaLabel = data.animacao ? 'Processo de produção' : 'Estrutura de trabalho';
 
-  area.innerHTML = `
-    <div class="hdr">
-      <div class="eyebrow">Proposta de orçamento</div>
-      <h1>${esc(data.projeto || 'Proposta Bourbon Films')}</h1>
+  content.innerHTML = `
+    <section id="hero-orc">
+      <div class="eyebrow" style="justify-content:center">Proposta de or&ccedil;amento</div>
+      <h1>${esc(data.projeto || 'Bourbon Films')}</h1>
       <p class="for">Para <strong>${esc(data.cliente || '')}</strong></p>
-      ${data.validade ? `<p class="validade">Proposta v&aacute;lida at&eacute; ${esc(data.validade)}</p>` : ''}
-    </div>
+      ${data.validade ? `<p class="validade">V&aacute;lida at&eacute; ${esc(data.validade)}</p>` : ''}
+    </section>
 
     ${data.objetivo ? `
-    <div class="block">
-      <div class="block-tag">Objetivo</div>
-      <div class="block-body">${nl2p(data.objetivo)}</div>
-    </div>` : ''}
+    <section class="section rev">
+      <div class="block">
+        <div class="block-tag">Objetivo</div>
+        <div class="block-body">${nl2p(data.objetivo)}</div>
+      </div>
+    </section>` : ''}
 
     ${data.estrutura ? `
-    <div class="block">
-      <div class="block-tag">${estruturaLabel}</div>
-      <div class="block-body">${nl2p(data.estrutura)}</div>
-    </div>` : ''}
+    <section class="section rev" style="background:var(--surface)">
+      <div class="block">
+        <div class="block-tag">${estruturaLabel}</div>
+        <div class="block-body">${nl2p(data.estrutura)}</div>
+      </div>
+    </section>` : ''}
 
     ${data.investimento ? `
-    <div class="block" id="invest">
-      <div class="block-tag">Investimento</div>
-      <div class="invest-value">${esc(data.investimento)}</div>
-      ${data.extenso ? `<div class="invest-extenso">(${esc(data.extenso)})</div>` : ''}
-      ${data.condicoes ? `<div class="invest-cond">${esc(data.condicoes)}</div>` : ''}
-      <div class="invest-fiscal">O valor apresentado já contempla os encargos fiscais da produtora, incluindo emissão de nota fiscal.</div>
-    </div>` : ''}
+    <section id="invest-sec" class="section rev">
+      <div class="invest-box">
+        <div class="block-tag">Investimento</div>
+        <div class="invest-value">${esc(data.investimento)}</div>
+        ${data.extenso ? `<div class="invest-extenso">(${esc(data.extenso)})</div>` : ''}
+        ${data.condicoes ? `<div class="invest-cond">${esc(data.condicoes)}</div>` : ''}
+        <div class="invest-fiscal">O valor apresentado j&aacute; contempla os encargos fiscais da produtora, incluindo emiss&atilde;o de nota fiscal.</div>
+      </div>
+    </section>` : ''}
 
     ${data.custos ? `
-    <div class="block">
-      <div class="block-tag">Descri&ccedil;&atilde;o de custos</div>
-      <div class="block-body">${nl2p(data.custos)}</div>
-    </div>` : ''}
+    <section class="section rev">
+      <div class="block">
+        <div class="block-tag">Descri&ccedil;&atilde;o de custos</div>
+        <div class="block-body">${nl2p(data.custos)}</div>
+      </div>
+    </section>` : ''}
 
     ${data.compromisso ? `
-    <div class="block">
-      <div class="block-tag">Compromisso</div>
-      <div class="block-body">${nl2p(data.compromisso)}</div>
-    </div>` : ''}
+    <section class="section rev" style="background:var(--surface)">
+      <div class="block">
+        <div class="block-tag">Compromisso</div>
+        <div class="block-body">${nl2p(data.compromisso)}</div>
+      </div>
+    </section>` : ''}
 
-    <div class="foot-actions">
-      <a href="https://wa.me/5583998683878?text=${wppText}" target="_blank" class="btn primary">Falar sobre esta proposta</a>
-      <a href="index.html" class="btn secondary">Conhecer a Bourbon Films</a>
-    </div>
+    <section id="refs" class="section rev">
+      <div class="eyebrow">Conhe&ccedil;a mais</div>
+      <h2 class="big-title" style="margin-bottom:8px">Antes de decidir, veja quem somos.</h2>
+      <div class="refs-grid">
+        <a href="index.html#portfolio" target="_blank" class="ref-card">
+          <div class="ref-name">Portf&oacute;lio <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
+          <div class="ref-desc">Trabalhos reais, por categoria</div>
+        </a>
+        <a href="bourbon-cultural.html" target="_blank" class="ref-card">
+          <div class="ref-name">Bourbon Cultural <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
+          <div class="ref-desc">Nossos projetos documentais</div>
+        </a>
+        <a href="https://instagram.com/bourbonfilm" target="_blank" class="ref-card">
+          <div class="ref-name">Instagram <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
+          <div class="ref-desc">@bourbonfilm</div>
+        </a>
+      </div>
+    </section>
+
+    <section id="cta-orc" class="rev">
+      <div class="eyebrow" style="justify-content:center">Vamos em frente?</div>
+      <h2 class="big-title">Bora fechar essa hist&oacute;ria.</h2>
+      <div class="foot-actions">
+        <a href="https://wa.me/5583998683878?text=${wppText}" target="_blank" class="btn primary">Falar sobre esta proposta</a>
+        <a href="index.html" class="btn secondary">Conhecer a Bourbon Films</a>
+      </div>
+    </section>
   `;
 
   const hoje = new Date();
@@ -231,16 +281,18 @@ if(!data){
       ${data.compromisso ? `<div class="pdf-section-title">Compromisso</div><div class="pdf-text">${nl2p(data.compromisso)}</div>` : ''}
     </div>
     <div class="pdf-footer">
-      <div class="l">
-        <span>@bourbonfilm</span>
-        <span>83 99868-3878</span>
-      </div>
+      <div class="l"><span>@bourbonfilm</span><span>83 99868-3878</span></div>
       <span>${esc(dataFmt)}</span>
     </div>
   `;
 
   pdfBtn.style.display = 'flex';
   pdfBtn.addEventListener('click', ()=> window.print());
+
+  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting)e.target.classList.add('vis')
+  }),{threshold:.12});
+  document.querySelectorAll('.rev').forEach(el=>obs.observe(el));
 }
 </script>
 </body>
