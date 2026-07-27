@@ -89,7 +89,7 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 @keyframes lup{to{opacity:1;transform:translateY(0)}}
 
 /* SECTION SHELL */
-.section{padding:110px 56px}
+.section{padding:100px 56px}
 .section-tight{padding:80px 56px}
 .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:'';width:22px;height:1px;background:var(--gold)}
@@ -199,7 +199,7 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 .proj-note{font-size:12px;color:var(--muted);line-height:1.6}
 
 /* TRABALHOS CONTINUOS */
-#continuos{padding:100px 56px;background:var(--surface)}
+#continuos{padding:100px 56px;background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%)}
 .cont-intro{max-width:640px;margin-bottom:56px}
 .cont-cards{display:flex;flex-direction:column;gap:56px}
 .cont-card{background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:36px}
@@ -227,7 +227,7 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 .yt-stack-dot.on{background:var(--gold)}
 
 /* CLIENTES */
-#clientes{padding:80px 0;background:var(--surface)}
+#clientes{padding:80px 0}
 .cli-label{text-align:center;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:48px;padding:0 56px}
 .cli-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0;border-top:1px solid rgba(232,228,222,.05)}
 .cli-item{display:flex;align-items:center;justify-content:center;padding:44px 32px;border-right:1px solid rgba(232,228,222,.05);border-bottom:1px solid rgba(232,228,222,.05)}
@@ -256,7 +256,7 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 .dep-role{font-size:11px;color:var(--muted);margin-top:2px}
 
 /* GOOGLE REVIEWS */
-#reviews{padding:100px 56px;background:var(--surface);text-align:center}
+#reviews{padding:100px 56px;text-align:center}
 .rev-stars{color:var(--gold);font-size:32px;letter-spacing:6px;margin-bottom:18px}
 .rev-score{font-family:'Outfit',sans-serif;font-size:clamp(48px,6vw,84px);font-weight:800;line-height:1}
 .rev-count{font-size:15px;color:var(--muted);margin-bottom:32px}
@@ -265,7 +265,7 @@ h1.hero-title{font-family:'Outfit',sans-serif;font-size:clamp(58px,8.5vw,118px);
 
 /* CTA */
 #cta{padding:120px 56px;text-align:center;position:relative;overflow:hidden}
-#cta::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(232,92,26,.07) 0%,transparent 65%);pointer-events:none}
+
 .cta-title{font-family:'Outfit',sans-serif;font-size:clamp(34px,4.6vw,66px);font-weight:800;line-height:1.08;margin-bottom:24px;position:relative}
 .cta-sub{font-size:17px;color:rgba(232,228,222,.5);margin-bottom:44px;position:relative;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.7}
 .btn-cta{display:inline-flex;align-items:center;gap:14px;padding:20px 48px;background:var(--grad);color:#000;font-weight:800;font-size:13px;letter-spacing:.11em;text-transform:uppercase;text-decoration:none;position:relative;transition:all .22s}
@@ -353,7 +353,7 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
 }
 
 /* ===== VIDRO FOSCO (glassmorphism), camada agregada ===== */
-[class*="card"]:not(.btn):not(.pdf-btn),
+[class*="card"]:not(.btn):not(.pdf-btn):not(.proj-card),
 [class*="badge"],
 [class*="chip"],
 .cp-tier,
@@ -371,8 +371,7 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
 .proj-btn:not(.site):not(.wpp),
 .link-btn,
 .social-btn{
-  background:
-    linear-gradient(135deg, rgba(245,160,32,.09) 0%, rgba(255,255,255,.04) 35%, rgba(8,8,8,.24) 100%) !important;
+  background:rgba(28,22,14,.42) !important;
   backdrop-filter:blur(13px) saturate(145%) !important;
   -webkit-backdrop-filter:blur(13px) saturate(145%) !important;
   border-radius:14px !important;
@@ -408,19 +407,19 @@ footer{padding:64px 56px 36px;border-top:1px solid rgba(232,228,222,.05);display
   box-shadow:none !important;
 }
 .proj-btn.wpp{
-  background:rgba(37,211,102,.12) !important;
+  background:rgba(37,211,102,.1) !important;
   backdrop-filter:none !important;
   -webkit-backdrop-filter:none !important;
   border:1px solid rgba(37,211,102,.35) !important;
-  border-radius:0 !important;
+  border-radius:14px !important;
   box-shadow:none !important;
 }
 
 /* mais elementos de profundidade atrás do vidro */
-.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(6px);opacity:.7;animation:orbDrift 22s ease-in-out infinite alternate}
-.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.28) 0%,transparent 70%)}
-.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.22) 0%,transparent 70%);animation-delay:-8s}
-.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.22) 0%,transparent 70%);animation-delay:-15s}
+.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(70px);opacity:.6;animation:orbDrift 22s ease-in-out infinite alternate}
+.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.3) 0%,rgba(232,92,26,.12) 45%,transparent 78%)}
+.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.24) 0%,rgba(245,160,32,.1) 45%,transparent 78%);animation-delay:-8s}
+.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.24) 0%,rgba(139,40,0,.1) 45%,transparent 78%);animation-delay:-15s}
 @keyframes orbDrift{
   0%{transform:translate(0,0) scale(1)}
   50%{transform:translate(30px,-40px) scale(1.08)}

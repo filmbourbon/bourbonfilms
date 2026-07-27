@@ -36,14 +36,14 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .nav-back{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:8px;transition:color .2s}
 .nav-back:hover{color:var(--white)}
 
-.section{padding:80px 56px}
+.section{padding:100px 56px}
 .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:'';width:22px;height:1px;background:var(--gold)}
 .big-title{font-family:'Outfit',sans-serif;font-size:clamp(30px,4.2vw,54px);font-weight:800;line-height:1.05;letter-spacing:-.01em}
 .grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
 #hero-cap{padding:100px 56px 70px;text-align:center;position:relative;overflow:hidden}
-#hero-cap::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(232,92,26,.08) 0%,transparent 65%);pointer-events:none}
+
 #hero-cap h1{position:relative;font-family:'Outfit',sans-serif;font-size:clamp(32px,5.5vw,64px);font-weight:800;line-height:1.05;margin-bottom:22px}
 #hero-cap .sub{position:relative;font-size:16px;color:rgba(232,228,222,.55);max-width:600px;margin:0 auto;line-height:1.7}
 
@@ -52,7 +52,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .info-box{max-width:760px;padding:18px 22px;background:rgba(245,160,32,.06);border-left:2px solid rgba(245,160,32,.4);font-size:14px;color:rgba(232,228,222,.65);line-height:1.65;margin-top:8px}
 .info-box strong{color:var(--gold)}
 
-#caminho{background:var(--surface)}
+#caminho{background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) 100%)}
 .flow-steps{margin-top:48px;display:flex;flex-direction:column;gap:0}
 .flow-step{display:flex;gap:24px;padding:30px 0;border-bottom:1px solid rgba(232,228,222,.08)}
 .flow-step:last-child{border-bottom:none}
@@ -63,7 +63,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .contra-item{display:flex;gap:10px;font-size:13px;color:rgba(232,228,222,.6);line-height:1.6}
 .contra-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:7px}
 
-#contrapartidas-cap{background:var(--surface)}
+#contrapartidas-cap{background:linear-gradient(to bottom, var(--surface) 0, var(--surface) calc(100% - 140px), transparent 100%)}
 .cp-tier{margin-top:40px;padding:28px 30px;background:rgba(8,8,8,.5);border:1px solid rgba(232,228,222,.1);margin-bottom:20px}
 .cp-tier-tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px}
 .cp-tier-title{font-family:'Outfit',sans-serif;font-size:19px;font-weight:800;margin-bottom:12px}
@@ -93,7 +93,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .arg-step.last .arg-num{background:var(--grad);border:none;color:#000}
 .arg-step.last .arg-title{color:var(--gold)}
 
-#projetos-cap{background:var(--surface)}
+#projetos-cap{background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%)}
 .proj-intro{max-width:680px;margin-bottom:40px}
 .total-box{max-width:100%;margin-bottom:48px;padding:28px 32px;background:var(--grad);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 .total-label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,0,0,.6);font-weight:700}
@@ -177,7 +177,7 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
 }
 
 /* ===== VIDRO FOSCO (glassmorphism), camada agregada ===== */
-[class*="card"]:not(.btn):not(.pdf-btn),
+[class*="card"]:not(.btn):not(.pdf-btn):not(.proj-card),
 [class*="badge"],
 [class*="chip"],
 .cp-tier,
@@ -195,8 +195,7 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
 .proj-btn:not(.site):not(.wpp),
 .link-btn,
 .social-btn{
-  background:
-    linear-gradient(135deg, rgba(245,160,32,.09) 0%, rgba(255,255,255,.04) 35%, rgba(8,8,8,.24) 100%) !important;
+  background:rgba(28,22,14,.42) !important;
   backdrop-filter:blur(13px) saturate(145%) !important;
   -webkit-backdrop-filter:blur(13px) saturate(145%) !important;
   border-radius:14px !important;
@@ -232,19 +231,19 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
   box-shadow:none !important;
 }
 .proj-btn.wpp{
-  background:rgba(37,211,102,.12) !important;
+  background:rgba(37,211,102,.1) !important;
   backdrop-filter:none !important;
   -webkit-backdrop-filter:none !important;
   border:1px solid rgba(37,211,102,.35) !important;
-  border-radius:0 !important;
+  border-radius:14px !important;
   box-shadow:none !important;
 }
 
 /* mais elementos de profundidade atrás do vidro */
-.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(6px);opacity:.7;animation:orbDrift 22s ease-in-out infinite alternate}
-.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.28) 0%,transparent 70%)}
-.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.22) 0%,transparent 70%);animation-delay:-8s}
-.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.22) 0%,transparent 70%);animation-delay:-15s}
+.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(70px);opacity:.6;animation:orbDrift 22s ease-in-out infinite alternate}
+.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.3) 0%,rgba(232,92,26,.12) 45%,transparent 78%)}
+.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.24) 0%,rgba(245,160,32,.1) 45%,transparent 78%);animation-delay:-8s}
+.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.24) 0%,rgba(139,40,0,.1) 45%,transparent 78%);animation-delay:-15s}
 @keyframes orbDrift{
   0%{transform:translate(0,0) scale(1)}
   50%{transform:translate(30px,-40px) scale(1.08)}

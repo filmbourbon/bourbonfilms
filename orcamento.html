@@ -31,14 +31,14 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .pdf-btn:hover{background:rgba(245,160,32,.1)}
 .pdf-btn svg{width:15px;height:15px}
 
-.section{padding:80px 56px}
+.section{padding:100px 56px}
 .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:'';width:22px;height:1px;background:var(--gold)}
 .big-title{font-family:'Outfit',sans-serif;font-size:clamp(30px,4.2vw,54px);font-weight:800;line-height:1.05;letter-spacing:-.01em}
 .grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
 #hero-orc{padding:100px 56px 70px;text-align:center;position:relative;overflow:hidden}
-#hero-orc::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(232,92,26,.08) 0%,transparent 65%);pointer-events:none}
+
 #hero-orc h1{position:relative;font-family:'Outfit',sans-serif;font-size:clamp(32px,5.5vw,60px);font-weight:800;line-height:1.05;margin-bottom:16px}
 #hero-orc .for{position:relative;font-size:16px;color:rgba(232,228,222,.55)}
 #hero-orc .for strong{color:var(--white)}
@@ -50,7 +50,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .block-body{font-size:16px;color:rgba(232,228,222,.72);line-height:1.85}
 .block-body p{margin-bottom:16px}
 
-#invest-sec{background:var(--surface)}
+#invest-sec{background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%)}
 .invest-box{max-width:760px;padding:36px 40px;background:rgba(245,160,32,.06);border:1px solid rgba(245,160,32,.3)}
 .invest-value{font-family:'Outfit',sans-serif;font-size:clamp(30px,4.5vw,44px);font-weight:800;margin:10px 0 6px}
 .invest-extenso{font-size:13px;color:rgba(232,228,222,.5);margin-bottom:18px;font-style:italic}
@@ -99,7 +99,7 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
 .pdf-doc{display:none}
 
 /* ===== VIDRO FOSCO (glassmorphism), camada agregada ===== */
-[class*="card"]:not(.btn):not(.pdf-btn),
+[class*="card"]:not(.btn):not(.pdf-btn):not(.proj-card),
 [class*="badge"],
 [class*="chip"],
 .cp-tier,
@@ -117,8 +117,7 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
 .proj-btn:not(.site):not(.wpp),
 .link-btn,
 .social-btn{
-  background:
-    linear-gradient(135deg, rgba(245,160,32,.09) 0%, rgba(255,255,255,.04) 35%, rgba(8,8,8,.24) 100%) !important;
+  background:rgba(28,22,14,.42) !important;
   backdrop-filter:blur(13px) saturate(145%) !important;
   -webkit-backdrop-filter:blur(13px) saturate(145%) !important;
   border-radius:14px !important;
@@ -154,19 +153,19 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
   box-shadow:none !important;
 }
 .proj-btn.wpp{
-  background:rgba(37,211,102,.12) !important;
+  background:rgba(37,211,102,.1) !important;
   backdrop-filter:none !important;
   -webkit-backdrop-filter:none !important;
   border:1px solid rgba(37,211,102,.35) !important;
-  border-radius:0 !important;
+  border-radius:14px !important;
   box-shadow:none !important;
 }
 
 /* mais elementos de profundidade atrás do vidro */
-.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(6px);opacity:.7;animation:orbDrift 22s ease-in-out infinite alternate}
-.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.28) 0%,transparent 70%)}
-.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.22) 0%,transparent 70%);animation-delay:-8s}
-.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.22) 0%,transparent 70%);animation-delay:-15s}
+.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(70px);opacity:.6;animation:orbDrift 22s ease-in-out infinite alternate}
+.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.3) 0%,rgba(232,92,26,.12) 45%,transparent 78%)}
+.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.24) 0%,rgba(245,160,32,.1) 45%,transparent 78%);animation-delay:-8s}
+.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.24) 0%,rgba(139,40,0,.1) 45%,transparent 78%);animation-delay:-15s}
 @keyframes orbDrift{
   0%{transform:translate(0,0) scale(1)}
   50%{transform:translate(30px,-40px) scale(1.08)}
@@ -271,7 +270,7 @@ if(!data){
     </section>` : ''}
 
     ${data.estrutura ? `
-    <section class="section rev" style="background:var(--surface)">
+    <section class="section rev" style="background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%)">
       <div class="block">
         <div class="block-tag">${estruturaLabel}</div>
         <div class="block-body">${nl2p(data.estrutura)}</div>
@@ -298,7 +297,7 @@ if(!data){
     </section>` : ''}
 
     ${data.compromisso ? `
-    <section class="section rev" style="background:var(--surface)">
+    <section class="section rev" style="background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%)">
       <div class="block">
         <div class="block-tag">Compromisso</div>
         <div class="block-body">${nl2p(data.compromisso)}</div>

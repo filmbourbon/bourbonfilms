@@ -86,8 +86,7 @@ body::after{content:'';position:fixed;top:-10%;left:50%;transform:translateX(-50
 .proj-btn:not(.site):not(.wpp),
 .link-btn,
 .social-btn{
-  background:
-    linear-gradient(135deg, rgba(245,160,32,.09) 0%, rgba(255,255,255,.04) 35%, rgba(8,8,8,.24) 100%) !important;
+  background:rgba(28,22,14,.42) !important;
   backdrop-filter:blur(13px) saturate(145%) !important;
   -webkit-backdrop-filter:blur(13px) saturate(145%) !important;
   border-radius:14px !important;
@@ -123,19 +122,19 @@ body::after{content:'';position:fixed;top:-10%;left:50%;transform:translateX(-50
   box-shadow:none !important;
 }
 .proj-btn.wpp{
-  background:rgba(37,211,102,.12) !important;
+  background:rgba(37,211,102,.1) !important;
   backdrop-filter:none !important;
   -webkit-backdrop-filter:none !important;
   border:1px solid rgba(37,211,102,.35) !important;
-  border-radius:0 !important;
+  border-radius:14px !important;
   box-shadow:none !important;
 }
 
 /* mais elementos de profundidade atrás do vidro */
-.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(6px);opacity:.7;animation:orbDrift 22s ease-in-out infinite alternate}
-.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.28) 0%,transparent 70%)}
-.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.22) 0%,transparent 70%);animation-delay:-8s}
-.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.22) 0%,transparent 70%);animation-delay:-15s}
+.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(70px);opacity:.6;animation:orbDrift 22s ease-in-out infinite alternate}
+.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.3) 0%,rgba(232,92,26,.12) 45%,transparent 78%)}
+.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.24) 0%,rgba(245,160,32,.1) 45%,transparent 78%);animation-delay:-8s}
+.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.24) 0%,rgba(139,40,0,.1) 45%,transparent 78%);animation-delay:-15s}
 @keyframes orbDrift{
   0%{transform:translate(0,0) scale(1)}
   50%{transform:translate(30px,-40px) scale(1.08)}

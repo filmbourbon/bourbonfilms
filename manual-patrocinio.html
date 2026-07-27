@@ -35,18 +35,18 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .nav-back{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:8px;transition:color .2s}
 .nav-back:hover{color:var(--white)}
 
-.section{padding:80px 56px}
+.section{padding:100px 56px}
 .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:'';width:22px;height:1px;background:var(--gold)}
 .big-title{font-family:'Outfit',sans-serif;font-size:clamp(30px,4.2vw,54px);font-weight:800;line-height:1.05;letter-spacing:-.01em}
 .grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
 #hero-manual{padding:100px 56px 70px;text-align:center;position:relative;overflow:hidden}
-#hero-manual::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(232,92,26,.08) 0%,transparent 65%);pointer-events:none}
+
 #hero-manual h1{position:relative;font-family:'Outfit',sans-serif;font-size:clamp(32px,5.5vw,68px);font-weight:800;line-height:1.05;margin-bottom:22px}
 #hero-manual .sub{position:relative;font-size:16px;color:rgba(232,228,222,.55);max-width:560px;margin:0 auto;line-height:1.7}
 
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(232,228,222,.08);border-bottom:1px solid rgba(232,228,222,.08);background:var(--surface)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(232,228,222,.08);border-bottom:1px solid rgba(232,228,222,.08);background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%)}
 .stat-box{padding:40px 24px;text-align:center;border-right:1px solid rgba(232,228,222,.08)}
 .stat-box:last-child{border-right:none}
 .stat-num{font-family:'Outfit',sans-serif;font-size:clamp(32px,4vw,48px);font-weight:800;color:var(--gold)}
@@ -55,7 +55,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 #oque-e p{font-size:16px;line-height:1.8;color:rgba(232,228,222,.72);max-width:760px;margin-bottom:18px}
 #oque-e p strong{color:var(--white)}
 
-#fluxo{background:var(--surface)}
+#fluxo{background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%)}
 .flow-steps{margin-top:48px;display:flex;flex-direction:column;gap:0}
 .flow-step{display:flex;gap:24px;padding:26px 0;border-bottom:1px solid rgba(232,228,222,.08)}
 .flow-step:last-child{border-bottom:none}
@@ -75,7 +75,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .art-cell p{font-size:13px;color:rgba(232,228,222,.65);line-height:1.6}
 .art-cell .pct{font-family:'Outfit',sans-serif;font-weight:800;color:var(--white);font-size:15px;margin-top:12px;display:block}
 
-#projetos-manual{background:var(--surface);padding:100px 56px}
+#projetos-manual{background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%);padding:100px 56px}
 .proj-intro{max-width:680px;margin-bottom:48px}
 .proj-cards{display:flex;flex-direction:column;gap:56px}
 .proj-card{position:relative;overflow:hidden;border:1px solid var(--glass-border);scroll-margin-top:100px}
@@ -152,7 +152,7 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
 }
 
 /* ===== VIDRO FOSCO (glassmorphism), camada agregada ===== */
-[class*="card"]:not(.btn):not(.pdf-btn),
+[class*="card"]:not(.btn):not(.pdf-btn):not(.proj-card),
 [class*="badge"],
 [class*="chip"],
 .cp-tier,
@@ -170,8 +170,7 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
 .proj-btn:not(.site):not(.wpp),
 .link-btn,
 .social-btn{
-  background:
-    linear-gradient(135deg, rgba(245,160,32,.09) 0%, rgba(255,255,255,.04) 35%, rgba(8,8,8,.24) 100%) !important;
+  background:rgba(28,22,14,.42) !important;
   backdrop-filter:blur(13px) saturate(145%) !important;
   -webkit-backdrop-filter:blur(13px) saturate(145%) !important;
   border-radius:14px !important;
@@ -207,19 +206,19 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
   box-shadow:none !important;
 }
 .proj-btn.wpp{
-  background:rgba(37,211,102,.12) !important;
+  background:rgba(37,211,102,.1) !important;
   backdrop-filter:none !important;
   -webkit-backdrop-filter:none !important;
   border:1px solid rgba(37,211,102,.35) !important;
-  border-radius:0 !important;
+  border-radius:14px !important;
   box-shadow:none !important;
 }
 
 /* mais elementos de profundidade atrás do vidro */
-.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(6px);opacity:.7;animation:orbDrift 22s ease-in-out infinite alternate}
-.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.28) 0%,transparent 70%)}
-.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.22) 0%,transparent 70%);animation-delay:-8s}
-.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.22) 0%,transparent 70%);animation-delay:-15s}
+.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(70px);opacity:.6;animation:orbDrift 22s ease-in-out infinite alternate}
+.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.3) 0%,rgba(232,92,26,.12) 45%,transparent 78%)}
+.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.24) 0%,rgba(245,160,32,.1) 45%,transparent 78%);animation-delay:-8s}
+.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.24) 0%,rgba(139,40,0,.1) 45%,transparent 78%);animation-delay:-15s}
 @keyframes orbDrift{
   0%{transform:translate(0,0) scale(1)}
   50%{transform:translate(30px,-40px) scale(1.08)}
