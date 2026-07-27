@@ -27,7 +27,7 @@
   --ink:#080808;--surface:#101010;--white:#E8E4DE;--muted:#6B6560;
   --gold:#F5A020;--orange:#E85C1A;--ember:#8B2800;
   --grad:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);
-  --glass:rgba(255,255,255,.045);--glass-border:rgba(255,255,255,.09);
+  --glass:rgba(255,255,255,.09);--glass-border:rgba(255,255,255,.18);
 }
 html{scroll-behavior:smooth}
 body{background:var(--ink);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden}
@@ -175,9 +175,85 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
   .cp-tier-desc,.cp-item{font-size:13px}
   .cp-example{font-size:12.5px}
 }
+
+/* ===== VIDRO FOSCO (glassmorphism), camada agregada ===== */
+[class*="card"]:not(.btn):not(.pdf-btn),
+[class*="badge"],
+[class*="chip"],
+.cp-tier,
+[class*="-box"]:not(.wpp-float):not(.total-box):not(.invest-box),
+.tab,
+.toggle-opt,
+.ref-card,
+.mat-card,
+.comm-highlight,
+.info-box,
+.stat-box,
+.dep-card,
+.pm-card,
+.cont-card,
+.proj-btn:not(.site):not(.wpp),
+.link-btn,
+.social-btn{
+  background:
+    linear-gradient(135deg, rgba(245,160,32,.09) 0%, rgba(255,255,255,.04) 35%, rgba(8,8,8,.24) 100%) !important;
+  backdrop-filter:blur(13px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(13px) saturate(145%) !important;
+  border-radius:14px !important;
+  border:1px solid rgba(255,255,255,.16) !important;
+  border-top-color:rgba(255,255,255,.3) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 10px 28px rgba(0,0,0,.3) !important;
+}
+/* linhas internas voltam ao normal, sem vidro próprio (evita capsula em cima de capsula) */
+.cp-tier-tag, .cp-tier-title, .cp-tier-desc, .cp-list, .cp-item,
+.contra-list, .contra-item, .flow-desc, .arg-desc, .pilar-desc{
+  background:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+.flow-step, .pilar, .arg-step, .comm-ex{
+  background:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+/* elementos que precisam continuar sólidos e vívidos, não vidro */
+.total-box{
+  background:var(--grad) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+.proj-btn.wpp{
+  background:rgba(37,211,102,.12) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border:1px solid rgba(37,211,102,.35) !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+
+/* mais elementos de profundidade atrás do vidro */
+.glass-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(6px);opacity:.7;animation:orbDrift 22s ease-in-out infinite alternate}
+.glass-orb.o1{top:8%;left:-6%;width:360px;height:360px;background:radial-gradient(circle,rgba(232,92,26,.28) 0%,transparent 70%)}
+.glass-orb.o2{bottom:4%;right:-8%;width:420px;height:420px;background:radial-gradient(circle,rgba(245,160,32,.22) 0%,transparent 70%);animation-delay:-8s}
+.glass-orb.o3{top:45%;left:60%;width:280px;height:280px;background:radial-gradient(circle,rgba(139,40,0,.22) 0%,transparent 70%);animation-delay:-15s}
+@keyframes orbDrift{
+  0%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(30px,-40px) scale(1.08)}
+  100%{transform:translate(-20px,20px) scale(.96)}
+}
+@media(max-width:900px){.glass-orb{opacity:.4}.glass-orb.o3{display:none}}
 </style>
 </head>
-<body>
+<body><div class="glass-orb o1"></div><div class="glass-orb o2"></div><div class="glass-orb o3"></div>
 
 <nav>
   <a href="index.html" class="nav-logo">
@@ -476,7 +552,7 @@ footer a{color:var(--gold);text-decoration:none;font-size:13px}
 
 <section id="contato-cap" class="section rev">
   <div class="eyebrow" style="justify-content:center">Interesse?</div>
-  <h2 class="big-title">Me chame aqui.</h2>
+  <h2 class="big-title">Nos chame aqui.</h2>
   <a href="https://wa.me/5583998683878?text=Ol%C3%A1%21%20Tenho%20interesse%20em%20ser%20captador%20de%20recursos%20para%20os%20projetos%20da%20Bourbon%20Films." target="_blank" class="cc-btn">
     Falar no WhatsApp
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
