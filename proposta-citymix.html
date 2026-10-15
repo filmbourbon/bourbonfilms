@@ -263,6 +263,75 @@ section{padding:140px 56px 110px;max-width:980px;margin:0 auto;position:relative
   .m-bar-btn{padding:11px 16px;border-radius:11px;background:var(--grad);color:#0a0a0a;font-family:'Outfit',sans-serif;font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
 }
 
+
+.tier{margin:-2px 0 16px;padding:14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+.tier-head{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.tier-head b{font-family:'Outfit',sans-serif;font-size:20px;letter-spacing:0;color:#3ddc7e;transition:transform .3s}
+.tier-head b.bump{animation:bump .5s ease}
+@keyframes bump{50%{transform:scale(1.25)}}
+.tier-bar{display:flex;gap:4px}
+.tier-bar div{flex:1;text-align:center}
+.tier-bar i{display:block;height:6px;border-radius:3px;background:rgba(232,228,222,.14);transition:background .3s}
+.tier-bar div.on i{background:var(--grad)}
+.tier-bar span{display:block;font-size:10.5px;color:var(--muted);margin-top:6px;font-family:'Outfit',sans-serif;font-weight:600}
+.tier-bar div.on span{color:rgba(232,228,222,.9)}
+.tier-bar div.cur span{color:var(--gold)}
+.tier-hint{font-size:11.5px;color:var(--muted);margin-top:8px}
+.midia-note{display:none;margin-top:12px;padding:10px 12px;border-radius:10px;border:1px dashed rgba(232,228,222,.25);font-size:12.5px;line-height:1.5;color:rgba(232,228,222,.8)}
+.midia-note.show{display:block}
+.midia-note b{color:var(--white)}
+.fr-midia{display:block;margin-top:10px;font-size:12.5px;line-height:1.55;color:rgba(232,228,222,.85);padding:10px 12px;border-radius:10px;border:1px dashed rgba(232,228,222,.25)}
+.fr-midia b{color:var(--gold);font-weight:600}
+.fr-price .plus{display:block;font-size:11px;color:var(--gold);font-weight:600;text-align:right}
+
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:36px;position:relative}
+.phase{padding:26px 24px;position:relative}
+.ph-when{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.phase h3{font-size:22px;font-weight:800;margin-bottom:8px}
+.phase p{font-size:14px;color:rgba(232,228,222,.76);line-height:1.7}
+@media(max-width:760px){
+  .phases{grid-template-columns:1fr;gap:10px;margin-top:24px;padding-left:22px}
+  .phases::before{content:'';position:absolute;left:6px;top:14px;bottom:14px;width:2px;border-radius:2px;background:var(--grad);opacity:.6}
+  .phase{padding:20px 18px}
+  .phase::before{content:'';position:absolute;left:-22px;top:24px;width:14px;height:14px;border-radius:50%;background:#0a0a0a;border:2px solid var(--gold)}
+  .phase h3{font-size:19px}
+  .fr-price .plus{text-align:left}
+  .tier-bar span{font-size:10px}
+}
+
+
+.grid3.stats .cell{text-align:left}
+.step-label{display:flex;align-items:center;gap:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;margin:34px 0 14px}
+.step-label span{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--grad);color:#0a0a0a;font-size:13px;font-weight:800}
+.dur{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dur button{position:relative;cursor:pointer;text-align:left;padding:18px 18px 16px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--glass-border);color:var(--white);font-family:'DM Sans',sans-serif;transition:border-color .25s,background .25s}
+.dur button b{display:block;font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;line-height:1.1}
+.dur button small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.dur button em{display:inline-block;margin-top:10px;font-style:normal;font-size:11.5px;font-weight:700;color:#3ddc7e}
+.dur button em.none{color:var(--muted);font-weight:500}
+.dur button.on{border-color:rgba(245,160,32,.8);background:linear-gradient(160deg,rgba(245,160,32,.14),rgba(20,17,14,.7))}
+.dur button.on b{color:var(--gold)}
+.dur .flag{position:absolute;top:-9px;right:12px;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--grad);color:#0a0a0a}
+.sum-save{display:none;margin-top:12px;font-size:13px;color:rgba(232,228,222,.85);padding:10px 12px;border-radius:10px;background:rgba(61,220,126,.07);border:1px solid rgba(61,220,126,.3)}
+.sum-save.show{display:block}
+.sum-save b{color:#3ddc7e}
+.sel-layout{margin-top:0}
+.fr p{font-size:14px}
+@media(max-width:760px){
+  .grid3.stats .cell{text-align:center;padding:16px 8px}
+  .grid3.stats .cell-tag{font-size:17px;letter-spacing:0;text-transform:none;margin-bottom:2px}
+  .grid3.stats .cell p{font-size:11.5px}
+  .step-label{margin:26px 0 12px;font-size:14px}
+  .dur{gap:8px}
+  .dur button{padding:14px 10px 12px;text-align:center}
+  .dur button b{font-size:19px}
+  .dur button small{font-size:11px}
+  .dur button em{font-size:10.5px;margin-top:6px}
+  .dur .flag{right:50%;transform:translateX(50%);white-space:nowrap;font-size:8.5px}
+  .credit{flex-direction:column;align-items:flex-start;gap:6px}
+  .agree p{font-size:14px}
+}
+
 /* closing */
 .closing-box{padding:48px 44px;margin-top:36px;position:relative;overflow:hidden}
 .closing-box::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,160,32,.07),transparent 60%);pointer-events:none}
@@ -324,10 +393,10 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
 <section id="hero">
   <div class="hero-kicker">Bourbon Films &middot; Complexo CityMix</div>
   <h1 class="hero-title">Proposta de<br><span class="grad">Parceria Estratégica.</span></h1>
-  <p class="hero-sub">Produção audiovisual de alto padrão e estratégia contínua para o Complexo CityMix, com a Bourbon Films instalada dentro do próprio empreendimento.</p>
+  <p class="hero-sub">Produção audiovisual de alto padrão e estratégia contínua, com a Bourbon Films dentro do CityMix.</p>
   <div class="hero-meta">
     <div class="hero-meta-item"><div class="hero-meta-label">Espaço</div><div class="hero-meta-value">66,5 m² &middot; 16º andar</div></div>
-    <div class="hero-meta-item"><div class="hero-meta-label">Parceria</div><div class="hero-meta-value">12 meses renováveis</div></div>
+    <div class="hero-meta-item"><div class="hero-meta-label">Parceria</div><div class="hero-meta-value">6, 12 ou 24 meses</div></div>
     <div class="hero-meta-item"><div class="hero-meta-label">Locação</div><div class="hero-meta-value">24 meses</div></div>
   </div>
 </section>
@@ -336,13 +405,12 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
 
 <section id="quem-somos" class="rev">
   <div class="eyebrow">Quem somos</div>
-  <h2 class="section-title">Produção audiovisual guiada por um único critério.</h2>
-  <p class="lede">A Bourbon Films é uma produtora sediada em Campina Grande, dedicada à produção audiovisual de alto nível para televisão e redes sociais.</p>
-  <p class="body-text">Nosso trabalho não busca competir em volume. Cada entrega é pensada com padrão cinematográfico, da estratégia à finalização, independente do formato ou da plataforma em que será veiculada. É esse compromisso com qualidade, e não com quantidade, que define a forma como nos posicionamos diante de cada projeto e de cada parceria.</p>
+  <h2 class="section-title">Qualidade, nunca volume.</h2>
+  <p class="lede">Produtora de Campina Grande com padrão cinematográfico para televisão e redes sociais.</p>
   <div class="grid3 stats">
-    <div class="glass cell"><div class="cell-tag">+14 anos</div><p>de mercado audiovisual, construindo marcas com cuidado e permanência.</p></div>
-    <div class="glass cell"><div class="cell-tag">+125 clientes</div><p>entre varejo, saúde, educação, esporte e grandes marcas nacionais.</p></div>
-    <div class="glass cell"><div class="cell-tag">+500 projetos</div><p>entregues para televisão, redes sociais, eventos e campanhas.</p></div>
+    <div class="glass cell"><div class="cell-tag">+14 anos</div><p>de mercado</p></div>
+    <div class="glass cell"><div class="cell-tag">+125</div><p>clientes</p></div>
+    <div class="glass cell"><div class="cell-tag">+500</div><p>projetos</p></div>
   </div>
 </section>
 
@@ -350,18 +418,17 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
 
 <section id="parceria" class="rev">
   <div class="eyebrow">A parceria</div>
-  <h2 class="section-title">Mais do que um fornecedor. Um parceiro presente.</h2>
-  <p class="lede">O Complexo CityMix vive um momento de crescimento em Campina Grande, e cada nova etapa merece ser comunicada com o mesmo padrão que marca o empreendimento.</p>
-  <p class="body-text">Nossa proposta é estar ao lado do CityMix de forma contínua: planejando, produzindo e acompanhando os resultados mês a mês. Estando instalados dentro do complexo, a distância entre uma ideia e sua execução diminui. Quando algo acontece no CityMix, a Bourbon Films já está lá.</p>
+  <h2 class="section-title">Um parceiro presente, <span class="grad">no mesmo prédio.</span></h2>
+  <p class="lede">Planejar, produzir e acompanhar os resultados do CityMix, mês a mês. Quando algo acontece no complexo, a Bourbon Films já está lá.</p>
   <div class="grid2 swipe">
-    <div class="glass cell"><div class="cell-tag">Planejamento mensal</div><p>Uma reunião por mês para alinhar prioridades, calendário de produção e próximos passos da comunicação.</p></div>
-    <div class="glass cell"><div class="cell-tag">Resultados à vista</div><p>Um relatório mensal objetivo, mostrando o que foi produzido, publicado e como o público respondeu.</p></div>
-    <div class="glass cell"><div class="cell-tag">Canal direto</div><p>Contato direto com a direção da Bourbon Films, com resposta ágil para demandas e oportunidades.</p></div>
-    <div class="glass cell"><div class="cell-tag">Sempre por perto</div><p>Presença nos eventos, inaugurações e novidades do complexo, registrando o crescimento enquanto ele acontece.</p></div>
+    <div class="glass cell"><div class="cell-tag">Reunião mensal</div><p>Prioridades e calendário alinhados todo mês.</p></div>
+    <div class="glass cell"><div class="cell-tag">Relatório</div><p>O que foi feito e como o público respondeu.</p></div>
+    <div class="glass cell"><div class="cell-tag">Canal direto</div><p>Contato com a direção e resposta ágil.</p></div>
+    <div class="glass cell"><div class="cell-tag">Sempre por perto</div><p>Presença nos eventos e novidades do complexo.</p></div>
   </div>
   <div class="glass reassure">
     <div class="reassure-mark">+</div>
-    <p>A Bourbon Films chega para somar à estrutura que o CityMix já tem. Entramos como braço de produção e estratégia audiovisual ao lado do time de marketing, reforçando a capacidade de execução do que já é planejado internamente.</p>
+    <p>Chegamos para <b style="color:var(--white)">somar</b> ao time de marketing do CityMix, como braço de produção e estratégia.</p>
   </div>
 </section>
 
@@ -369,13 +436,12 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
 
 <section id="estrutura" class="rev">
   <div class="eyebrow">A estrutura</div>
-  <h2 class="section-title">Um investimento de longo prazo dentro do CityMix.</h2>
-  <p class="lede">A Bourbon Films vai instalar no 16º andar uma estrutura própria e completa de produção.</p>
-  <p class="body-text">A sala de 66,5 m² receberá um estúdio de podcast, um espaço de captação para vídeo e fotografia e uma ilha de edição para finalização. É um investimento expressivo em equipamento, acústica e acabamento, pensado para durar e para elevar ainda mais o padrão do que produzimos, inclusive para o próprio CityMix.</p>
+  <h2 class="section-title">Um investimento de longo prazo <span class="grad">no 16º andar.</span></h2>
+  <p class="lede">A Bourbon Films vai montar ali uma estrutura própria e completa de produção.</p>
   <div class="grid3 swipe">
-    <div class="glass cell"><div class="cell-tag">Podcast</div><p>Estúdio acústico preparado para gravações em áudio e vídeo.</p></div>
-    <div class="glass cell"><div class="cell-tag">Captação</div><p>Espaço de luz controlada para vídeo e fotografia.</p></div>
-    <div class="glass cell"><div class="cell-tag">Edição</div><p>Ilha de edição, cor e finalização a poucos andares do cliente.</p></div>
+    <div class="glass cell"><div class="cell-tag">Podcast</div><p>Estúdio acústico para áudio e vídeo.</p></div>
+    <div class="glass cell"><div class="cell-tag">Captação</div><p>Luz controlada para vídeo e fotografia.</p></div>
+    <div class="glass cell"><div class="cell-tag">Edição</div><p>Ilha de edição e finalização.</p></div>
   </div>
 </section>
 
@@ -384,51 +450,57 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
 <section id="como-funciona" class="rev">
   <div class="eyebrow">Como funciona</div>
   <h2 class="section-title">Dois acordos que se completam.</h2>
-  <p class="lede">A proposta se apoia em dois compromissos, cada um com seu próprio papel.</p>
   <div class="grid2">
     <div class="glass agree">
       <div class="cell-tag">Locação da sala</div>
       <div class="agree-term">24</div>
       <div class="agree-unit">meses</div>
-      <p>O prazo da locação acompanha o tamanho do investimento na estrutura. É o que permite à Bourbon Films construir o espaço com a qualidade que ele merece. O condomínio fica integralmente por conta da Bourbon Films.</p>
+      <p>Prazo compatível com o investimento na estrutura. Condomínio por conta da Bourbon Films.</p>
     </div>
     <div class="glass agree">
       <div class="cell-tag">Parceria audiovisual</div>
-      <div class="agree-term">12</div>
-      <div class="agree-unit">meses renováveis</div>
-      <p>O plano mensal de produção e estratégia, com valor congelado durante todo o primeiro ano. A cada ciclo, a parceria se renova com base nos resultados construídos juntos.</p>
+      <div class="agree-term">6 a 24</div>
+      <div class="agree-unit">meses, à sua escolha</div>
+      <p>Quanto maior o prazo, menor o valor mensal.</p>
     </div>
   </div>
   <div class="glass credit">
     <div>
-      <div class="credit-label">Aluguel convertido em crédito</div>
+      <div class="credit-label">Aluguel vira crédito</div>
       <div class="credit-value grad">R$ 2.600,00 / mês</div>
     </div>
-    <p>O valor do aluguel da sala é abatido integralmente do plano mensal. Na prática, o CityMix recebe o pacote completo e paga apenas a diferença.</p>
+    <p>Abatidos integralmente do valor da parceria.</p>
   </div>
 </section>
 
 <div class="divider"></div>
 
-
 <section id="monte" class="rev">
   <div class="eyebrow">Monte a parceria</div>
-  <h2 class="section-title">Escolha as frentes que fazem sentido <span class="grad">para o CityMix.</span></h2>
-  <p class="lede">A parceria é construída por frentes de trabalho. A base garante a produção e a estratégia do mês. As demais ampliam o alcance da comunicação e foram pensadas para funcionar em conjunto.</p>
+  <h2 class="section-title">Escolha o prazo <span class="grad">e as frentes.</span></h2>
+  <p class="lede">Mais frentes e mais tempo, maior o desconto.</p>
 
+  <div class="step-label"><span>1</span>Prazo da parceria</div>
+  <div class="dur" id="dur"></div>
+
+  <div class="step-label"><span>2</span>Frentes de trabalho</div>
   <div class="sel-layout">
     <div class="sel-list" id="selList"></div>
 
     <aside class="glass sel-summary" id="selSummary">
       <div class="sum-title">Sua parceria</div>
+      <div class="tier" id="tier"><div class="tier-head"><span>Desconto por frentes</span><b id="tierPct">0%</b></div><div class="tier-bar" id="tierBar"></div></div>
       <div class="sum-items" id="sumItems"></div>
       <div class="sum-rows">
         <div class="calc-row"><span>Frentes selecionadas</span><span id="sumGross">R$ 0</span></div>
-        <div class="calc-row bundle-row" id="sumBundleRow"><span>Condição parceria completa</span><span id="sumBundle">R$ 0</span></div>
+        <div class="calc-row bundle-row" id="sumBundleRow"><span id="sumBundleLbl">Desconto por frentes</span><span id="sumBundle">R$ 0</span></div>
+        <div class="calc-row bundle-row" id="sumDurRow"><span id="sumDurLbl">Desconto por prazo</span><span id="sumDur">R$ 0</span></div>
         <div class="calc-row credit-row"><span>Crédito do aluguel</span><span>- R$ 2.600,00</span></div>
         <div class="calc-row total"><span>Investimento mensal</span><span id="sumTotal">R$ 0</span></div>
-        <div class="calc-note">valor congelado por 12 meses &middot; condomínio por conta da Bourbon Films</div>
+        <div class="calc-note" id="sumNote"></div>
+        <div class="midia-note" id="midiaNote"><b>+ Verba de mídia</b> definida a cada mês, por boleto à parte.</div>
       </div>
+      <div class="sum-save" id="sumSave"></div>
       <div class="sum-nudge" id="sumNudge"></div>
       <a class="wpp-btn sum-btn" id="sumBtn" href="#" target="_blank" rel="noopener">Enviar minha seleção</a>
     </aside>
@@ -440,13 +512,27 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
   <a class="m-bar-btn" href="#selSummary">Ver resumo</a>
 </div>
 
+
+<div class="divider"></div>
+
+<section id="tempo" class="rev">
+  <div class="eyebrow">Sobre resultados</div>
+  <h2 class="section-title">Resultado se constrói <span class="grad">com tempo.</span></h2>
+  <p class="lede">Os primeiros meses são de teste e ajuste. É o que sustenta o crescimento depois.</p>
+  <div class="phases">
+    <div class="glass phase"><div class="ph-when">Meses 1 a 3</div><h3>Testar</h3><p>Formatos, públicos e horários.</p></div>
+    <div class="glass phase"><div class="ph-when">Meses 4 a 6</div><h3>Ajustar</h3><p>O que funciona ganha espaço.</p></div>
+    <div class="glass phase"><div class="ph-when">Meses 7 em diante</div><h3>Escalar</h3><p>Investimento no que dá resultado.</p></div>
+  </div>
+</section>
+
 <div class="divider"></div>
 
 <section id="closing" class="rev">
   <div class="eyebrow">Próximo passo</div>
   <h2 class="section-title">Vamos crescer <span class="grad">juntos.</span></h2>
   <div class="glass closing-box">
-    <p class="body-text" style="position:relative">Esta proposta é o início de uma conversa. A Bourbon Films está à disposição para detalhar cada ponto, ajustar o que for preciso e construir com o CityMix o formato que faça sentido para os dois lados. Nosso objetivo é simples: que esta parceria seja vantajosa para todos.</p>
+    <p class="body-text" style="position:relative">Esta proposta é o início de uma conversa. Ajustamos o que for preciso para que a parceria seja vantajosa para todos.</p>
     <div class="contact-row">
       <div><div class="contact-label">Telefone</div><div class="contact-value"><a href="https://wa.me/5583998683878" target="_blank" rel="noopener">83 99868-3878</a></div></div>
       <div><div class="contact-label">Instagram</div><div class="contact-value"><a href="https://instagram.com/bourbonfilm" target="_blank" rel="noopener">@bourbonfilm</a></div></div>
@@ -504,25 +590,31 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
 
 
   // ===== seletor de frentes =====
-  var ALUGUEL=2600, DESCONTO_COMPLETA=400;
+  var ALUGUEL=2600;
+  var TIERS={2:0,3:4,4:6,5:8,6:10,7:12}; // nº de frentes : % de desconto
   var FR=[
     {id:'prod',nome:'Produção audiovisual',preco:2400,base:true,
-     desc:'Um VT de alto nível por mês: conceito, roteiro, direção, captação com equipe e equipamento de cinema, trilha, correção de cor e finalização. Entregue em versão para televisão e adaptado para redes sociais nos formatos horizontal e vertical.'},
+     desc:'Um VT de alto nível por mês, pronto para TV e redes sociais.'},
     {id:'plan',nome:'Planejamento estratégico',preco:1100,base:true,
-     desc:'Estratégia e calendário mensal de comunicação: campanhas, datas comerciais, lançamentos e ações do complexo, alinhados com o time de marketing em reunião mensal, com relatório de resultados.'},
+     desc:'Estratégia, calendário e reunião mensal com o marketing.'},
     {id:'redes',nome:'Gestão de redes sociais',preco:1300,pares:['cob'],
-     desc:'Gestão completa das redes do CityMix, com linha editorial, publicações, conteúdos verticais, stories, legendas e acompanhamento de desempenho.',
-     porque:{cob:'As redes ganham vida com o que acontece dentro do complexo. É a <b>Cobertura de eventos e ações</b> que alimenta o conteúdo com acontecimentos reais.'}},
+     desc:'Linha editorial, publicações, stories e desempenho.',
+     porque:{cob:'Redes ganham vida com o que acontece no complexo. Ative a <b>Cobertura de eventos</b> junto.'}},
     {id:'cob',nome:'Cobertura de eventos e ações',preco:700,pares:['redes'],
-     desc:'Foto e vídeo dos eventos, inaugurações, ativações e novidades do complexo, transformados em conteúdo e memória institucional do CityMix.',
-     porque:{redes:'Sem <b>Gestão de redes sociais</b>, o material registrado não chega ao público na velocidade que o momento pede.'}},
+     desc:'Foto e vídeo dos eventos e novidades do complexo.',
+     porque:{redes:'Sem <b>Gestão de redes</b>, o registro não chega ao público a tempo.'}},
     {id:'off',nome:'TV e mídia offline',preco:500,pares:['redes'],
-     desc:'Preparação e envio dos VTs para as emissoras dentro dos padrões técnicos, e adaptação das peças para rádio, telões, painéis de LED e mídia exterior.',
-     porque:{redes:'Campanhas na TV e na rua rendem mais quando continuam nas redes. Recomendamos ativar <b>Gestão de redes sociais</b> junto.'}},
+     desc:'Envio para emissoras e peças para rádio, telões e LED.',
+     porque:{redes:'Campanha na TV rende mais quando continua nas redes. Ative a <b>Gestão de redes</b> junto.'}},
+    {id:'traf',nome:'Tráfego pago',preco:900,midia:true,pares:['redes'],
+     desc:'Gestão de anúncios no Instagram, Facebook e Google.',
+     porque:{redes:'O anúncio leva gente ao perfil. A <b>Gestão de redes</b> faz essa gente ficar.'}},
     {id:'site',nome:'Gestão de site',preco:700,extra:true,pares:['redes'],
-     desc:'Gestão e atualização do site do CityMix: novidades, lojas, eventos e campanhas sempre em dia, com a mesma identidade das demais frentes.',
-     porque:{redes:'O site recebe o público que chega pelas redes. Recomendamos ativar <b>Gestão de redes sociais</b> junto para manter tudo conectado.'}}
+     desc:'Site do CityMix sempre atualizado.',
+     porque:{redes:'O site recebe quem chega pelas redes. Ative a <b>Gestão de redes</b> junto.'}}
   ];
+  var DUR=[{m:6,pct:0,nome:'Semestral'},{m:12,pct:5,nome:'Anual'},{m:24,pct:10,nome:'Bienal',flag:'Mais vantajoso'}];
+  var durSel=24;
   var CORE=FR.filter(function(f){return !f.extra}).map(function(f){return f.id});
   var sel={prod:1,plan:1,redes:1,cob:1,off:1};
   function brl(v){return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -535,10 +627,17 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
     el.innerHTML='<div class="chk">'+chk+'</div>'+
       (f.base?'<div class="fr-tag base">Base da parceria</div>':(f.extra?'<div class="fr-tag extra">Adicional</div>':''))+
       '<div class="fr-want" id="want-'+f.id+'"></div>'+
-      '<div class="fr-top"><h3>'+f.nome+'</h3><div class="fr-price">'+brl(f.preco)+' <small>/ mês</small></div></div>'+
-      '<p>'+f.desc+'</p><div class="fr-pair" id="pair-'+f.id+'"></div>';
+      '<div class="fr-top"><h3>'+f.nome+'</h3><div class="fr-price">'+brl(f.preco)+' <small>/ mês</small>'+(f.midia?'<span class="plus">+ verba de mídia</span>':'')+'</div></div>'+
+      '<p>'+f.desc+'</p>'+(f.midia?'<div class="fr-midia"><b>+ Verba de mídia:</b> definida em conjunto a cada mês e paga por boleto à parte. Controle total do investimento.</div>':'')+'<div class="fr-pair" id="pair-'+f.id+'"></div>';
     if(!f.base){el.addEventListener('click',function(e){if(e.target.closest('button'))return;toggle(f.id)})}
     list.appendChild(el);
+  });
+  var durEl=document.getElementById('dur');
+  DUR.forEach(function(d){
+    var bt=document.createElement('button');bt.type='button';bt.dataset.m=d.m;
+    bt.innerHTML=(d.flag?'<span class="flag">'+d.flag+'</span>':'')+'<b>'+d.m+' meses</b><small>'+d.nome+'</small>'+(d.pct?'<em>-'+d.pct+'% no mês</em>':'<em class="none">valor base</em>');
+    bt.addEventListener('click',function(){durSel=d.m;render()});
+    durEl.appendChild(bt);
   });
   function toggle(id){ if(sel[id]) delete sel[id]; else sel[id]=1; render(id) }
   function add(id){ sel[id]=1; render(); var el=document.getElementById('fr-'+id); el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse') }
@@ -563,21 +662,47 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
     // resumo
     var gross=0,items='';
     FR.forEach(function(f){ if(f.base||sel[f.id]){ gross+=f.preco; items+='<div><span>'+f.nome+'</span><span>'+brl(f.preco)+'</span></div>' } });
-    var completa=CORE.every(function(id){return byId[id].base||sel[id]});
-    var desc=completa?DESCONTO_COMPLETA:0;
-    var total=gross-desc-ALUGUEL;
+    var n=FR.filter(function(f){return f.base||sel[f.id]}).length;
+    var pct=TIERS[n]||0, maxN=Math.max.apply(null,Object.keys(TIERS).map(Number));
+    var desc=Math.round(gross*pct)/100;
+    var D=DUR.filter(function(d){return d.m===durSel})[0];
+    var ddesc=Math.round((gross-desc)*D.pct)/100;
+    var total=gross-desc-ddesc-ALUGUEL;
+    [].forEach.call(durEl.children,function(b){b.classList.toggle('on',+b.dataset.m===durSel)});
+    document.getElementById('sumDurRow').classList.toggle('show',D.pct>0);
+    document.getElementById('sumDurLbl').textContent='Desconto por prazo ('+D.pct+'%)';
+    document.getElementById('sumDur').textContent='- '+brl(ddesc);
+    document.getElementById('sumNote').innerHTML='Plano '+D.nome.toLowerCase()+', valor fixo por '+D.m+' meses &middot; condomínio por conta da Bourbon Films';
+    var eco=(desc+ddesc)*D.m, sv=document.getElementById('sumSave');
+    sv.classList.toggle('show',eco>0);
+    sv.innerHTML='Economia em '+D.m+' meses: <b>'+brl(eco)+'</b>';
     document.getElementById('sumItems').innerHTML=items;
     document.getElementById('sumGross').textContent=brl(gross);
-    var br=document.getElementById('sumBundleRow');br.classList.toggle('show',completa);
+    var br=document.getElementById('sumBundleRow');br.classList.toggle('show',pct>0);
+    document.getElementById('sumBundleLbl').textContent='Desconto por frentes ('+pct+'%)';
     document.getElementById('sumBundle').textContent='- '+brl(desc);
     document.getElementById('sumTotal').textContent=brl(total);
     document.getElementById('mBarVal').textContent=brl(total);
+    document.getElementById('midiaNote').classList.toggle('show',!!sel.traf);
+    // barra de desconto
+    var tp=document.getElementById('tierPct');
+    if(tp.textContent!==pct+'%'){tp.textContent=pct+'%';tp.classList.remove('bump');void tp.offsetWidth;tp.classList.add('bump')}
+    var bar='';Object.keys(TIERS).map(Number).filter(function(k){return k>2}).forEach(function(k){bar+='<div class="'+(n>=k?'on':'')+(n===k?' cur':'')+'"><i></i><span>'+TIERS[k]+'%</span></div>'});
+    document.getElementById('tierBar').innerHTML=bar;
     var nd=document.getElementById('sumNudge');
-    var faltam=CORE.filter(function(id){return !byId[id].base && !sel[id]});
-    if(completa){ nd.className='sum-nudge ok'; nd.innerHTML='<b>Parceria completa ativa.</b> Todas as frentes trabalhando juntas, com condição especial de '+brl(DESCONTO_COMPLETA)+' a menos por mês.' }
-    else { nd.className='sum-nudge'; nd.innerHTML='Ative '+faltam.map(function(id){return '<b>'+byId[id].nome+'</b>'}).join(' e ')+' para formar a <b>parceria completa</b> e garantir '+brl(DESCONTO_COMPLETA)+' a menos por mês.' }
+    var D24=DUR[DUR.length-1];
+    if(durSel!==D24.m){
+      var t24=gross-desc-Math.round((gross-desc)*D24.pct)/100-ALUGUEL;
+      nd.className='sum-nudge'; nd.innerHTML='No plano de <b>24 meses</b>, o investimento cai para <b>'+brl(t24)+'</b> por mês.';
+    } else if(n>=maxN){ nd.className='sum-nudge ok'; nd.innerHTML='<b>Desconto máximo ativo.</b> Todas as frentes trabalhando juntas, com '+pct+'% de desconto sobre o valor das frentes.' }
+    else {
+      var prox=TIERS[n+1], ganho=Math.round(gross*prox)/100-desc;
+      var sug=FR.filter(function(f){return !f.base&&!sel[f.id]})[0];
+      nd.className='sum-nudge';
+      nd.innerHTML='Adicione mais uma frente e o desconto sobe para <b>'+prox+'%</b>'+(sug?'. Sugestão: <b>'+sug.nome+'</b>.':'.');
+    }
     // whatsapp
-    var txt='Olá! Vi a proposta de parceria Bourbon Films e CityMix. Minha seleção:\n'+FR.filter(function(f){return f.base||sel[f.id]}).map(function(f){return '- '+f.nome}).join('\n')+'\nInvestimento mensal estimado: '+brl(total)+'\nQuero conversar.';
+    var txt='Olá! Vi a proposta de parceria Bourbon Films e CityMix. Minha seleção:\n'+FR.filter(function(f){return f.base||sel[f.id]}).map(function(f){return '- '+f.nome}).join('\n')+'\nPrazo: '+D.m+' meses'+'\nDescontos: '+pct+'% por frentes e '+D.pct+'% por prazo'+'\nInvestimento mensal estimado: '+brl(total)+(sel.traf?' (+ verba de mídia a definir)':'')+'\nQuero conversar.';
     document.getElementById('sumBtn').href='https://wa.me/5583998683878?text='+encodeURIComponent(txt);
   }
   render();
