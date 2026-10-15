@@ -194,6 +194,75 @@ section{padding:140px 56px 110px;max-width:980px;margin:0 auto;position:relative
   footer{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
 }
 
+
+/* ===== seletor de frentes ===== */
+.sel-layout{display:grid;grid-template-columns:1fr 360px;gap:22px;margin-top:40px;align-items:start}
+.sel-list{display:flex;flex-direction:column;gap:12px}
+.fr{position:relative;padding:24px 24px 22px 66px;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s;user-select:none}
+.fr:active{transform:scale(.995)}
+.fr .chk{position:absolute;left:22px;top:24px;width:26px;height:26px;border-radius:8px;border:1.5px solid rgba(232,228,222,.35);display:flex;align-items:center;justify-content:center;transition:all .25s}
+.fr .chk svg{width:14px;height:14px;opacity:0;transform:scale(.6);transition:all .2s;color:#0a0a0a}
+.fr.on{border-color:rgba(245,160,32,.55);border-top-color:rgba(245,160,32,.8)}
+.fr.on .chk{background:var(--grad);border-color:transparent}
+.fr.on .chk svg{opacity:1;transform:none}
+.fr.locked{cursor:default}
+.fr-top{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+.fr h3{font-size:19px;font-weight:700;line-height:1.25}
+.fr-price{font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;color:rgba(232,228,222,.85);white-space:nowrap}
+.fr-price small{font-size:11px;color:var(--muted);font-weight:500}
+.fr-tag{display:inline-block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin-bottom:10px;border:1px solid rgba(245,160,32,.5);color:var(--gold)}
+.fr-tag.base{background:var(--grad);color:#0a0a0a;border-color:transparent;font-weight:700}
+.fr-tag.extra{border-color:rgba(61,220,126,.5);color:#3ddc7e}
+.fr p{font-size:14.5px;color:rgba(232,228,222,.76);line-height:1.75}
+.fr-pair{display:none;margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(245,160,32,.08);border:1px solid rgba(245,160,32,.35);font-size:13px;color:rgba(232,228,222,.9);line-height:1.55}
+.fr-pair.show{display:block;animation:optIn .35s ease}
+.fr-pair b{color:var(--gold);font-weight:600}
+.fr-pair button{margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:var(--grad);color:#0a0a0a;border:0;border-radius:10px;padding:9px 14px;font-family:'Outfit',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.04em;cursor:pointer}
+.fr.pulse{animation:frPulse 1.2s ease 2}
+@keyframes frPulse{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 28px rgba(0,0,0,.3)}50%{box-shadow:0 0 0 2px rgba(245,160,32,.7),0 0 34px rgba(245,160,32,.35)}}
+.fr.wanted:not(.on){border-color:rgba(245,160,32,.55);border-style:dashed}
+.fr-want{display:none;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.fr.wanted:not(.on) .fr-want{display:block}
+
+.sel-summary{position:sticky;top:96px;padding:26px 24px}
+.sum-title{font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;margin-bottom:14px}
+.sum-items{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sum-items div{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:rgba(232,228,222,.85)}
+.sum-items div span:last-child{color:var(--muted);white-space:nowrap}
+.bundle-row{display:none}
+.bundle-row.show{display:flex}
+.bundle-row span:last-child{color:#3ddc7e !important}
+.sum-nudge{margin-top:16px;font-size:13px;line-height:1.55;color:rgba(232,228,222,.85);padding:12px 14px;border-radius:12px;background:rgba(245,160,32,.07);border:1px solid rgba(245,160,32,.3)}
+.sum-nudge:empty{display:none}
+.sum-nudge b{color:var(--gold)}
+.sum-nudge.ok{background:rgba(61,220,126,.07);border-color:rgba(61,220,126,.35)}
+.sum-nudge.ok b{color:#3ddc7e}
+.sum-btn{width:100%;justify-content:center;margin-top:16px}
+.sel-summary .calc-row.total{align-items:center;gap:10px}
+.sel-summary .calc-row.total span:first-child{white-space:nowrap}
+.sel-summary .calc-row.total span:last-child{font-size:25px;white-space:nowrap}
+.m-bar{display:none}
+
+@media(max-width:760px){
+  .sel-layout{grid-template-columns:minmax(0,1fr);gap:16px;margin-top:26px}
+  .sel-list,.sel-summary,.fr{min-width:0}
+  .fr p,.fr h3,.sum-items span{overflow-wrap:anywhere}
+  .grid3.stats .cell p{overflow-wrap:anywhere}
+  .sel-summary .calc-row.total span:last-child{font-size:clamp(20px,6.4vw,25px)}
+  .fr{padding:20px 18px 18px 56px}
+  .fr .chk{left:18px;top:21px;width:24px;height:24px}
+  .fr h3{font-size:17px}
+  .fr p{font-size:14px}
+  .fr-top{flex-direction:column;gap:2px}
+  .sel-summary{position:relative;top:auto;padding:22px 18px}
+  .m-bar{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:121;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;border-radius:16px;background:rgba(14,12,10,.92);border:1px solid rgba(245,160,32,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 12px 30px rgba(0,0,0,.55);transform:translateY(150%);transition:transform .35s cubic-bezier(.16,1,.3,1)}
+  .m-bar.show{transform:none}
+  .m-bar-info{display:flex;flex-direction:column;line-height:1.2}
+  .m-bar-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .m-bar-val{font-family:'Outfit',sans-serif;font-weight:800;font-size:20px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .m-bar-btn{padding:11px 16px;border-radius:11px;background:var(--grad);color:#0a0a0a;font-family:'Outfit',sans-serif;font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+}
+
 /* closing */
 .closing-box{padding:48px 44px;margin-top:36px;position:relative;overflow:hidden}
 .closing-box::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,160,32,.07),transparent 60%);pointer-events:none}
@@ -342,123 +411,34 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
 <div class="divider"></div>
 
 
-<section id="entregas" class="rev">
-  <div class="eyebrow">O que o CityMix recebe</div>
-  <h2 class="section-title">Entregas concretas, <span class="grad">todo mês.</span></h2>
-  <p class="lede">A parceria se traduz em trabalho visível. Este é o núcleo do que o CityMix passa a receber de forma contínua.</p>
-  <div class="deliv-grid swipe">
-    <div class="glass deliv hero-deliv">
-      <div class="deliv-flag">Carro-chefe</div>
-      <h3>Um VT de alto nível por mês</h3>
-      <p>Todo mês, um filme publicitário completo: conceito, roteiro, direção, captação com equipe e equipamento de cinema, trilha, correção de cor e finalização. Cada VT é entregue em versão para televisão e adaptado para redes sociais nos formatos horizontal e vertical, pronto para veicular.</p>
-    </div>
-    <div class="glass deliv">
-      <div class="deliv-num">PLANEJAMENTO</div>
-      <h3>Estratégia e calendário mensal</h3>
-      <p>Planejamento das campanhas, datas comerciais, lançamentos e ações do mês, alinhado com o time de marketing em reunião mensal. Nada é produzido por acaso.</p>
-    </div>
-    <div class="glass deliv">
-      <div class="deliv-num">AÇÕES</div>
-      <h3>Ações e ativações no complexo</h3>
-      <p>Criação e planejamento de ações presenciais para movimentar o CityMix: campanhas sazonais, eventos, ativações com lojistas e datas especiais, com registro de tudo.</p>
-    </div>
-    <div class="glass deliv">
-      <div class="deliv-num">REDES SOCIAIS</div>
-      <h3>Gestão completa das redes</h3>
-      <p>Publicações no feed, conteúdos curtos verticais e stories, com linha editorial, legendas e acompanhamento de desempenho. Uma presença digital constante e coerente.</p>
-    </div>
-    <div class="glass deliv">
-      <div class="deliv-num">MÍDIA OFFLINE</div>
-      <h3>TV, rádio e mídia física</h3>
-      <p>Preparação e envio dos VTs para as emissoras dentro dos padrões técnicos, além da adaptação de peças para rádio, telões, painéis de LED e mídia exterior.</p>
-    </div>
-    <div class="glass deliv">
-      <div class="deliv-num">COBERTURA</div>
-      <h3>Registro de eventos e novidades</h3>
-      <p>Foto e vídeo dos eventos, inaugurações e acontecimentos do complexo, transformados em conteúdo e memória institucional do CityMix.</p>
-    </div>
-    <div class="glass deliv">
-      <div class="deliv-num">ACOMPANHAMENTO</div>
-      <h3>Relatório mensal de resultados</h3>
-      <p>Um resumo objetivo do que foi produzido, publicado e veiculado, com os números do período e os próximos passos.</p>
-    </div>
-  </div>
-  <div class="glass value-box">
-    <p><strong>Na prática:</strong> o CityMix passa a ter uma produtora completa, com estratégia, produção e estúdio dentro do próprio prédio, por um investimento mensal menor do que o valor real das entregas, já que o aluguel da sala é convertido em serviço.</p>
+<section id="monte" class="rev">
+  <div class="eyebrow">Monte a parceria</div>
+  <h2 class="section-title">Escolha as frentes que fazem sentido <span class="grad">para o CityMix.</span></h2>
+  <p class="lede">A parceria é construída por frentes de trabalho. A base garante a produção e a estratégia do mês. As demais ampliam o alcance da comunicação e foram pensadas para funcionar em conjunto.</p>
+
+  <div class="sel-layout">
+    <div class="sel-list" id="selList"></div>
+
+    <aside class="glass sel-summary" id="selSummary">
+      <div class="sum-title">Sua parceria</div>
+      <div class="sum-items" id="sumItems"></div>
+      <div class="sum-rows">
+        <div class="calc-row"><span>Frentes selecionadas</span><span id="sumGross">R$ 0</span></div>
+        <div class="calc-row bundle-row" id="sumBundleRow"><span>Condição parceria completa</span><span id="sumBundle">R$ 0</span></div>
+        <div class="calc-row credit-row"><span>Crédito do aluguel</span><span>- R$ 2.600,00</span></div>
+        <div class="calc-row total"><span>Investimento mensal</span><span id="sumTotal">R$ 0</span></div>
+        <div class="calc-note">valor congelado por 12 meses &middot; condomínio por conta da Bourbon Films</div>
+      </div>
+      <div class="sum-nudge" id="sumNudge"></div>
+      <a class="wpp-btn sum-btn" id="sumBtn" href="#" target="_blank" rel="noopener">Enviar minha seleção</a>
+    </aside>
   </div>
 </section>
 
-<div class="divider"></div>
-
-<section id="opcoes" class="rev">
-  <div class="eyebrow">Os planos</div>
-  <h2 class="section-title">Duas formas de caminhar juntos.</h2>
-  <p class="lede">Os dois planos incluem todas as frentes descritas acima. A diferença está no volume mensal de entregas e no nível de dedicação ao CityMix.</p>
-
-  <div class="plan-toggle" role="tablist"><button type="button" data-plan="1">Estratégico</button><button type="button" data-plan="2" class="on">Premium</button><span class="pt-pill"></span></div>
-  <div class="opt-wrap">
-    <div class="glass opt" data-plan="1">
-      <div class="opt-head">
-        <div class="opt-badge">Plano 1</div>
-        <div class="opt-name">Estratégico</div>
-      </div>
-      <div class="opt-calc">
-        <div class="calc-row"><span>Valor do plano</span><span>R$ 5.500,00</span></div>
-        <div class="calc-row credit-row"><span>Crédito do aluguel</span><span>- R$ 2.600,00</span></div>
-        <div class="calc-row total"><span>Investimento mensal</span><span>R$ 2.900,00</span></div>
-        <div class="calc-note">valor congelado por 12 meses</div>
-      </div>
-      <div class="opt-body">
-        <div class="opt-sub">Entregas mensais</div>
-        <div class="qty-list">
-          <div class="qty-row"><span>VT de alto nível (TV e redes)</span><b>1 por mês</b></div>
-          <div class="qty-row"><span>Planejamento estratégico e reunião</span><b>Mensal</b></div>
-          <div class="qty-row"><span>Publicações no feed</span><b>12</b></div>
-          <div class="qty-row"><span>Conteúdos curtos verticais</span><b>4</b></div>
-          <div class="qty-row"><span>Stories</span><b>Semanais</b></div>
-          <div class="qty-row"><span>Cobertura de evento ou ação</span><b>1</b></div>
-          <div class="qty-row"><span>Planejamento de ações e ativações</span><b>Incluso</b></div>
-          <div class="qty-row"><span>Envio para TV e adaptação offline</span><b>Incluso</b></div>
-          <div class="qty-row"><span>Relatório de resultados</span><b>Mensal</b></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="glass opt featured" data-plan="2">
-      <div class="opt-head">
-        <div class="opt-badge">Plano 2 &middot; Recomendado</div>
-        <div class="opt-name">Premium</div>
-      </div>
-      <div class="opt-calc">
-        <div class="calc-row"><span>Valor do plano</span><span>R$ 6.000,00</span></div>
-        <div class="calc-row credit-row"><span>Crédito do aluguel</span><span>- R$ 2.600,00</span></div>
-        <div class="calc-row total"><span>Investimento mensal</span><span>R$ 3.400,00</span></div>
-        <div class="calc-note">valor congelado por 12 meses</div>
-      </div>
-      <div class="opt-body">
-        <div class="opt-sub">Entregas mensais</div>
-        <div class="qty-list">
-          <div class="qty-row"><span>VT de alto nível (TV e redes)</span><b>1 por mês</b></div>
-          <div class="qty-row"><span>Planejamento estratégico e reunião</span><b>Mensal</b></div>
-          <div class="qty-row plus"><span>Publicações no feed</span><b>16</b></div>
-          <div class="qty-row plus"><span>Conteúdos curtos verticais</span><b>8</b></div>
-          <div class="qty-row"><span>Stories</span><b>Semanais</b></div>
-          <div class="qty-row plus"><span>Cobertura de eventos ou ações</span><b>2</b></div>
-          <div class="qty-row"><span>Planejamento de ações e ativações</span><b>Incluso</b></div>
-          <div class="qty-row"><span>Envio para TV e adaptação offline</span><b>Incluso</b></div>
-          <div class="qty-row plus"><span>Ensaio fotográfico institucional</span><b>1 por trimestre</b></div>
-          <div class="qty-row plus"><span>Filme institucional do CityMix</span><b>1 por ano</b></div>
-          <div class="qty-row plus"><span>Prioridade de agenda</span><b>Incluso</b></div>
-          <div class="qty-row"><span>Relatório de resultados</span><b>Mensal</b></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="glass terms">
-    <p><strong>Em ambos os planos</strong>, o aluguel da sala é integralmente compensado pela parceria, o condomínio é responsabilidade da Bourbon Films e o valor mensal permanece congelado durante os 12 meses do primeiro ciclo.</p>
-  </div>
-</section>
+<div class="m-bar" id="mBar">
+  <div class="m-bar-info"><span class="m-bar-label">Investimento mensal</span><span class="m-bar-val" id="mBarVal">R$ 0</span></div>
+  <a class="m-bar-btn" href="#selSummary">Ver resumo</a>
+</div>
 
 <div class="divider"></div>
 
@@ -518,9 +498,95 @@ footer{padding:28px 56px;border-top:1px solid var(--glass-border);display:flex;j
   // CTA fixo: aparece após o topo e some no encerramento
   var cta=document.getElementById('mCta'),hero=document.getElementById('hero'),close=document.getElementById('closing');
   var heroOut=false,closeIn=false;
-  function ctaUpd(){cta.classList.toggle('show',heroOut&&!closeIn)}
+  function ctaUpd(){cta.classList.toggle('show',heroOut&&!closeIn&&!(window.__inMonte))}
   new IntersectionObserver(function(e){heroOut=!e[0].isIntersecting;ctaUpd()},{threshold:0}).observe(hero);
   new IntersectionObserver(function(e){closeIn=e[0].isIntersecting;ctaUpd()},{threshold:0}).observe(close);
+
+
+  // ===== seletor de frentes =====
+  var ALUGUEL=2600, DESCONTO_COMPLETA=400;
+  var FR=[
+    {id:'prod',nome:'Produção audiovisual',preco:2400,base:true,
+     desc:'Um VT de alto nível por mês: conceito, roteiro, direção, captação com equipe e equipamento de cinema, trilha, correção de cor e finalização. Entregue em versão para televisão e adaptado para redes sociais nos formatos horizontal e vertical.'},
+    {id:'plan',nome:'Planejamento estratégico',preco:1100,base:true,
+     desc:'Estratégia e calendário mensal de comunicação: campanhas, datas comerciais, lançamentos e ações do complexo, alinhados com o time de marketing em reunião mensal, com relatório de resultados.'},
+    {id:'redes',nome:'Gestão de redes sociais',preco:1300,pares:['cob'],
+     desc:'Gestão completa das redes do CityMix, com linha editorial, publicações, conteúdos verticais, stories, legendas e acompanhamento de desempenho.',
+     porque:{cob:'As redes ganham vida com o que acontece dentro do complexo. É a <b>Cobertura de eventos e ações</b> que alimenta o conteúdo com acontecimentos reais.'}},
+    {id:'cob',nome:'Cobertura de eventos e ações',preco:700,pares:['redes'],
+     desc:'Foto e vídeo dos eventos, inaugurações, ativações e novidades do complexo, transformados em conteúdo e memória institucional do CityMix.',
+     porque:{redes:'Sem <b>Gestão de redes sociais</b>, o material registrado não chega ao público na velocidade que o momento pede.'}},
+    {id:'off',nome:'TV e mídia offline',preco:500,pares:['redes'],
+     desc:'Preparação e envio dos VTs para as emissoras dentro dos padrões técnicos, e adaptação das peças para rádio, telões, painéis de LED e mídia exterior.',
+     porque:{redes:'Campanhas na TV e na rua rendem mais quando continuam nas redes. Recomendamos ativar <b>Gestão de redes sociais</b> junto.'}},
+    {id:'site',nome:'Gestão de site',preco:700,extra:true,pares:['redes'],
+     desc:'Gestão e atualização do site do CityMix: novidades, lojas, eventos e campanhas sempre em dia, com a mesma identidade das demais frentes.',
+     porque:{redes:'O site recebe o público que chega pelas redes. Recomendamos ativar <b>Gestão de redes sociais</b> junto para manter tudo conectado.'}}
+  ];
+  var CORE=FR.filter(function(f){return !f.extra}).map(function(f){return f.id});
+  var sel={prod:1,plan:1,redes:1,cob:1,off:1};
+  function brl(v){return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+  var byId={};FR.forEach(function(f){byId[f.id]=f});
+  var list=document.getElementById('selList');
+  var chk='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  FR.forEach(function(f){
+    var el=document.createElement('div');
+    el.className='glass fr'+(f.base?' locked':'');el.id='fr-'+f.id;
+    el.innerHTML='<div class="chk">'+chk+'</div>'+
+      (f.base?'<div class="fr-tag base">Base da parceria</div>':(f.extra?'<div class="fr-tag extra">Adicional</div>':''))+
+      '<div class="fr-want" id="want-'+f.id+'"></div>'+
+      '<div class="fr-top"><h3>'+f.nome+'</h3><div class="fr-price">'+brl(f.preco)+' <small>/ mês</small></div></div>'+
+      '<p>'+f.desc+'</p><div class="fr-pair" id="pair-'+f.id+'"></div>';
+    if(!f.base){el.addEventListener('click',function(e){if(e.target.closest('button'))return;toggle(f.id)})}
+    list.appendChild(el);
+  });
+  function toggle(id){ if(sel[id]) delete sel[id]; else sel[id]=1; render(id) }
+  function add(id){ sel[id]=1; render(); var el=document.getElementById('fr-'+id); el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse') }
+  window.__addFr=add;
+  function render(changed){
+    // cartões
+    FR.forEach(function(f){
+      var el=document.getElementById('fr-'+f.id);
+      el.classList.toggle('on',!!(f.base||sel[f.id]));
+      var pair=document.getElementById('pair-'+f.id);
+      var missing=(f.pares||[]).filter(function(p){return !sel[p]});
+      if(!f.base && sel[f.id] && missing.length){
+        var m=missing[0];
+        pair.innerHTML=f.porque[m]+'<br><button type="button" onclick="__addFr(\''+m+'\')">+ Adicionar '+byId[m].nome+'</button>';
+        pair.classList.add('show');
+      } else { pair.classList.remove('show'); pair.innerHTML='' }
+      // destaque em quem é recomendado
+      var wanters=FR.filter(function(o){return sel[o.id] && (o.pares||[]).indexOf(f.id)>-1});
+      el.classList.toggle('wanted',wanters.length>0 && !sel[f.id] && !f.base);
+      document.getElementById('want-'+f.id).textContent=wanters.length?'Recomendado com '+wanters.map(function(o){return o.nome}).join(' e '):'';
+    });
+    // resumo
+    var gross=0,items='';
+    FR.forEach(function(f){ if(f.base||sel[f.id]){ gross+=f.preco; items+='<div><span>'+f.nome+'</span><span>'+brl(f.preco)+'</span></div>' } });
+    var completa=CORE.every(function(id){return byId[id].base||sel[id]});
+    var desc=completa?DESCONTO_COMPLETA:0;
+    var total=gross-desc-ALUGUEL;
+    document.getElementById('sumItems').innerHTML=items;
+    document.getElementById('sumGross').textContent=brl(gross);
+    var br=document.getElementById('sumBundleRow');br.classList.toggle('show',completa);
+    document.getElementById('sumBundle').textContent='- '+brl(desc);
+    document.getElementById('sumTotal').textContent=brl(total);
+    document.getElementById('mBarVal').textContent=brl(total);
+    var nd=document.getElementById('sumNudge');
+    var faltam=CORE.filter(function(id){return !byId[id].base && !sel[id]});
+    if(completa){ nd.className='sum-nudge ok'; nd.innerHTML='<b>Parceria completa ativa.</b> Todas as frentes trabalhando juntas, com condição especial de '+brl(DESCONTO_COMPLETA)+' a menos por mês.' }
+    else { nd.className='sum-nudge'; nd.innerHTML='Ative '+faltam.map(function(id){return '<b>'+byId[id].nome+'</b>'}).join(' e ')+' para formar a <b>parceria completa</b> e garantir '+brl(DESCONTO_COMPLETA)+' a menos por mês.' }
+    // whatsapp
+    var txt='Olá! Vi a proposta de parceria Bourbon Films e CityMix. Minha seleção:\n'+FR.filter(function(f){return f.base||sel[f.id]}).map(function(f){return '- '+f.nome}).join('\n')+'\nInvestimento mensal estimado: '+brl(total)+'\nQuero conversar.';
+    document.getElementById('sumBtn').href='https://wa.me/5583998683878?text='+encodeURIComponent(txt);
+  }
+  render();
+  // barra mobile do seletor
+  var mBar=document.getElementById('mBar'),monte=document.getElementById('monte'),sumBox=document.getElementById('selSummary');
+  var inMonte=false,sumVis=false;
+  function barUpd(){window.__inMonte=inMonte;mBar.classList.toggle('show',inMonte&&!sumVis);if(inMonte)cta.classList.remove('show')}
+  new IntersectionObserver(function(e){inMonte=e[0].isIntersecting;barUpd();if(!inMonte)ctaUpd()},{threshold:0,rootMargin:'-40% 0px -20% 0px'}).observe(monte);
+  new IntersectionObserver(function(e){sumVis=e[0].isIntersecting;barUpd()},{threshold:.2}).observe(sumBox);
 
   var bg=document.getElementById('bgParallax');
   if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
