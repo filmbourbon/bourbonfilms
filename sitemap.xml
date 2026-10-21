@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://bourbonfilms.com.br/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://bourbonfilms.com.br/briefing.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+  <url><loc>https://bourbonfilms.com.br/</loc><lastmod>2026-10-21</lastmod><priority>1.0</priority></url>
+  <url><loc>https://bourbonfilms.com.br/publicidade.html</loc><lastmod>2026-10-21</lastmod><priority>0.8</priority></url>
+  <url><loc>https://bourbonfilms.com.br/esportes.html</loc><lastmod>2026-10-21</lastmod><priority>0.8</priority></url>
+  <url><loc>https://bourbonfilms.com.br/institucional.html</loc><lastmod>2026-10-21</lastmod><priority>0.8</priority></url>
+  <url><loc>https://bourbonfilms.com.br/ativacoes-de-marca.html</loc><lastmod>2026-10-21</lastmod><priority>0.8</priority></url>
+  <url><loc>https://bourbonfilms.com.br/bourbon-cultural.html</loc><lastmod>2026-10-21</lastmod><priority>0.7</priority></url>
+  <url><loc>https://bourbonfilms.com.br/cabras-do-sol.html</loc><lastmod>2026-10-21</lastmod><priority>0.6</priority></url>
+  <url><loc>https://bourbonfilms.com.br/de-nada-em-nada-tudo.html</loc><lastmod>2026-10-21</lastmod><priority>0.6</priority></url>
+  <url><loc>https://bourbonfilms.com.br/captador-de-recursos.html</loc><lastmod>2026-10-21</lastmod><priority>0.5</priority></url>
+  <url><loc>https://bourbonfilms.com.br/briefing.html</loc><lastmod>2026-10-21</lastmod><priority>0.6</priority></url>
+  <url><loc>https://bourbonfilms.com.br/trabalhe-conosco.html</loc><lastmod>2026-10-21</lastmod><priority>0.4</priority></url>
 </urlset>
