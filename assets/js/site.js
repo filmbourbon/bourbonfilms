@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   var doc=document.documentElement;
-  doc.classList.remove('no-js');
+  doc.classList.remove('no-js');doc.classList.add('js');
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
@@ -27,12 +27,17 @@
     document.addEventListener('keydown',function(e){if(e.key==='Escape'){doc.classList.remove('nav-open');toggle.setAttribute('aria-expanded','false')}});
   }
 
-  /* entrada suave */
+  /* entrada suave: filhos de [data-stagger] entram em sequência */
+  document.querySelectorAll('[data-stagger]').forEach(function(g){
+    [].forEach.call(g.children,function(c,i){c.style.setProperty('--i',i%6)});
+  });
   if('IntersectionObserver' in window&&!reduce){
+    var lo=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('is-in');lo.unobserve(e.target)}})},{threshold:.4});
+    document.querySelectorAll('.steps-line').forEach(function(el){lo.observe(el)});
     var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('is-in');ro.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
     document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el)});
   }else{
-    document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('is-in')});
+    document.querySelectorAll('.reveal,.steps-line').forEach(function(el){el.classList.add('is-in')});
   }
 
   /* vídeos leves do YouTube */
@@ -221,6 +226,65 @@
   });
 
   queueScrub();
+
+
+  /* linha do tempo: progresso da página e seção atual */
+  var tl=document.querySelector('.tl'),tlBar=document.querySelector('.tl-bar');
+  if(tl||tlBar){
+    var links=tl?[].slice.call(tl.querySelectorAll('[data-tl]')):[];
+    var secs=links.map(function(a){return document.getElementById(a.dataset.tl)}).filter(Boolean);
+    var tlTick=false;
+    var tlUpdate=function(){
+      tlTick=false;
+      var h=document.documentElement.scrollHeight-window.innerHeight;
+      var p=h>0?Math.min(1,Math.max(0,window.scrollY/h)):0;
+      if(tl) tl.querySelector('ol').style.setProperty('--tl',p.toFixed(4));
+      if(tlBar) tlBar.style.setProperty('--tl',p.toFixed(4));
+      var mid=window.innerHeight*.4,cur=0;
+      secs.forEach(function(s,i){if(s.getBoundingClientRect().top<=mid) cur=i});
+      if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4) cur=secs.length-1;
+      links.forEach(function(a,i){a.classList.toggle('is-on',i===cur);a.classList.toggle('is-past',i<cur);if(i===cur)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')});
+    };
+    window.addEventListener('scroll',function(){if(!tlTick){tlTick=true;requestAnimationFrame(tlUpdate)}},{passive:true});
+    window.addEventListener('resize',tlUpdate,{passive:true});
+    tlUpdate();
+  }
+
+  /* galeria: ver todos */
+  document.querySelectorAll('[data-more]').forEach(function(b){
+    var g=document.querySelector('[data-gal]');
+    b.addEventListener('click',function(){
+      var open=g.classList.toggle('is-open');
+      b.setAttribute('aria-expanded',open?'true':'false');
+      b.textContent=open?'Mostrar menos':b.dataset.label;
+      if(open){g.querySelectorAll('.reveal:not(.is-in)').forEach(function(el){el.classList.add('is-in')})}
+      else g.scrollIntoView({block:'start'});
+    });
+    b.dataset.label=b.textContent;
+  });
+
+  /* player: abre o filme tocado em tela cheia e para ao fechar */
+  var dlg=document.querySelector('dialog.player');
+  if(dlg){
+    var frame=dlg.querySelector('.player-frame'),opener=null;
+    var close=function(){if(dlg.open) dlg.close()};
+    dlg.addEventListener('close',function(){frame.innerHTML='';document.documentElement.style.overflow='';if(opener) opener.focus()});
+    dlg.addEventListener('click',function(e){if(e.target===dlg) close()});
+    dlg.querySelector('.player-x').addEventListener('click',close);
+    document.querySelectorAll('[data-play]').forEach(function(b){
+      b.addEventListener('click',function(){
+        opener=b;
+        dlg.classList.toggle('is-v',b.hasAttribute('data-vertical'));
+        var f=document.createElement('iframe');
+        f.src=ytSrc(b.dataset.play);f.title=b.getAttribute('aria-label').replace('Assistir: ','');
+        f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;
+        frame.appendChild(f);
+        document.documentElement.style.overflow='hidden';
+        if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
+        dlg.querySelector('.player-x').focus();
+      });
+    });
+  }
 
   /* botão de WhatsApp aparece depois da capa */
   var fab=document.querySelector('.wpp-fab');
