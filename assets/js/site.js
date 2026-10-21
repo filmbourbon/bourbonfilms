@@ -5,6 +5,27 @@
   doc.classList.remove('no-js');
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+
+  /* tema: todo primeiro acesso abre no claro; a escolha só fica guardada depois que a pessoa troca */
+  var meta=document.querySelector('meta[name=theme-color]');
+  function syncTheme(){
+    var dark=doc.dataset.theme==='dark';
+    document.querySelectorAll('[data-theme-toggle]').forEach(function(b){
+      b.setAttribute('aria-pressed',dark?'true':'false');
+      b.setAttribute('aria-label',dark?'Ativar modo diurno':'Ativar modo noturno');
+    });
+    if(meta) meta.content=dark?'#000000':'#FFFFFF';
+  }
+  syncTheme();
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var next=doc.dataset.theme==='dark'?'light':'dark';
+      var apply=function(){doc.dataset.theme=next;syncTheme()};
+      try{localStorage.setItem('bf-tema',next==='dark'?'escuro':'claro')}catch(e){}
+      if(document.startViewTransition&&!reduce) document.startViewTransition(apply); else apply();
+    });
+  });
+
   /* navegação: fundo sólido ao rolar */
   var nav=document.querySelector('.nav');
   var hero=document.querySelector('.hero');
@@ -58,6 +79,13 @@
     if(img) img.src='https://i.ytimg.com/vi/'+box.dataset.id+'/hqdefault.jpg';
   }
   /* capa indisponível: some sem deixar ícone quebrado */
+  /* capa em alta indisponível: usa a versão padrão do YouTube */
+  document.querySelectorAll('img[data-fallback]').forEach(function(img){
+    var swap=function(){if(img.dataset.fallback){img.src=img.dataset.fallback;img.removeAttribute('data-fallback')}};
+    img.addEventListener('load',function(){if(img.naturalWidth<200) swap()});
+    img.addEventListener('error',swap);
+    if(img.complete&&img.naturalWidth===0) swap();
+  });
   document.querySelectorAll('.video-poster,.hero-media img').forEach(function(img){
     var hide=function(){img.style.visibility='hidden'};
     if(img.complete&&img.naturalWidth===0) hide(); else img.addEventListener('error',hide);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="favicon.ico" sizes="any">
@@ -7,7 +7,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gerar Orçamento | Bourbon Films</title>
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#FFFFFF">
 
 <meta name="robots" content="noindex, nofollow">
 <style>
@@ -19,7 +19,7 @@
   --glass:rgba(255,255,255,.09);--glass-border:rgba(255,255,255,.18);
 }
 body{background:var(--ink);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;min-height:100vh}
-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 56px;background:rgba(8,8,8,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-border)}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 56px;background:rgba(var(--bgc),.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-border)}
 .nav-logo img{height:28px;width:auto;object-fit:contain;display:block}
 .nav-back{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
 .nav-back:hover{color:var(--white)}
@@ -28,20 +28,20 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
 h1{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(28px,4.5vw,42px);font-weight:800;margin-bottom:12px}
-.sub{font-size:14px;color:rgba(232,228,222,.5);margin-bottom:36px;line-height:1.6}
+.sub{font-size:14px;color:rgba(var(--fg),.5);margin-bottom:36px;line-height:1.6}
 
 .tab-row{display:flex;gap:10px;margin-bottom:32px;border-bottom:1px solid var(--glass-border)}
-.tab{padding:12px 4px;margin-right:20px;font-size:13px;color:rgba(232,228,222,.5);cursor:pointer;border-bottom:2px solid transparent}
+.tab{padding:12px 4px;margin-right:20px;font-size:13px;color:rgba(var(--fg),.5);cursor:pointer;border-bottom:2px solid transparent}
 .tab.active{color:var(--gold);border-bottom-color:var(--gold)}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
 .toggle-row{display:flex;gap:10px;margin-bottom:32px}
-.toggle-opt{flex:1;padding:13px;text-align:center;border:1px solid var(--glass-border);cursor:pointer;font-size:13px;color:rgba(232,228,222,.6);transition:all .2s}
+.toggle-opt{flex:1;padding:13px;text-align:center;border:1px solid var(--glass-border);cursor:pointer;font-size:13px;color:rgba(var(--fg),.6);transition:all .2s}
 .toggle-opt.active{border-color:var(--gold);color:var(--gold);background:rgba(245,160,32,.06)}
 
 .field{margin-bottom:18px}
-.field label{display:block;font-size:13px;color:rgba(232,228,222,.7);margin-bottom:7px}
+.field label{display:block;font-size:13px;color:rgba(var(--fg),.7);margin-bottom:7px}
 .field .hint{display:block;font-size:11px;color:var(--muted);margin-top:4px}
 input,textarea,select{width:100%;padding:12px 14px;background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%);border:1px solid var(--glass-border);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;outline:none}
 input:focus,textarea:focus,select:focus{border-color:rgba(245,160,32,.5)}
@@ -58,15 +58,15 @@ textarea{resize:vertical;min-height:80px}
 .link-box input{flex:1;font-size:12px;color:var(--gold)}
 .copy-btn{flex-shrink:0;padding:0 18px;background:none;border:1px solid rgba(245,160,32,.4);color:var(--gold);cursor:pointer;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 .copy-btn.copied{border-color:#25D366;color:#25D366}
-.preview-link{display:inline-block;font-size:12px;color:rgba(232,228,222,.55);text-decoration:none;border-bottom:1px solid rgba(232,228,222,.2)}
+.preview-link{display:inline-block;font-size:12px;color:rgba(var(--fg),.55);text-decoration:none;border-bottom:1px solid rgba(var(--fg),.2)}
 .preview-link:hover{color:var(--gold);border-color:var(--gold)}
 
 /* CALCULADORA */
-.calc-warn{padding:14px 18px;background:rgba(232,92,26,.08);border-left:2px solid rgba(232,92,26,.4);font-size:12.5px;color:rgba(232,228,222,.65);line-height:1.6;margin-bottom:28px}
+.calc-warn{padding:14px 18px;background:rgba(232,92,26,.08);border-left:2px solid rgba(232,92,26,.4);font-size:12.5px;color:rgba(var(--fg),.65);line-height:1.6;margin-bottom:28px}
 .calc-warn strong{color:var(--orange)}
 .calc-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12.5px}
 .calc-table th{text-align:left;padding:8px 6px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--glass-border)}
-.calc-table td{padding:6px;border-bottom:1px solid rgba(232,228,222,.05)}
+.calc-table td{padding:6px;border-bottom:1px solid rgba(var(--fg),.05)}
 .calc-table input{padding:7px 8px;font-size:12.5px}
 .calc-table input.item-name{width:100%}
 .calc-table input.item-val{width:90px}
@@ -75,10 +75,10 @@ textarea{resize:vertical;min-height:80px}
 .calc-add{font-size:12px;color:var(--gold);background:none;border:1px dashed rgba(245,160,32,.4);padding:9px 16px;cursor:pointer;margin-bottom:24px}
 .calc-add:hover{background:rgba(245,160,32,.06)}
 .calc-tier-select{display:flex;gap:10px;margin-bottom:24px}
-.calc-tier-opt{flex:1;padding:11px;text-align:center;border:1px solid var(--glass-border);cursor:pointer;font-size:12.5px;color:rgba(232,228,222,.6)}
+.calc-tier-opt{flex:1;padding:11px;text-align:center;border:1px solid var(--glass-border);cursor:pointer;font-size:12.5px;color:rgba(var(--fg),.6)}
 .calc-tier-opt.active{border-color:var(--gold);color:var(--gold);background:rgba(245,160,32,.06)}
 .calc-summary{padding:20px 22px;background:rgba(245,160,32,.05);border:1px solid rgba(245,160,32,.25)}
-.calc-line{display:flex;justify-content:space-between;font-size:13px;color:rgba(232,228,222,.65);padding:5px 0}
+.calc-line{display:flex;justify-content:space-between;font-size:13px;color:rgba(var(--fg),.65);padding:5px 0}
 .calc-line.total{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-weight:800;font-size:17px;color:var(--gold);border-top:1px solid rgba(245,160,32,.25);margin-top:8px;padding-top:12px}
 .calc-fee-imposto{display:flex;gap:10px;margin-bottom:18px}
 .calc-fee-imposto .field{flex:1;margin-bottom:0}
@@ -89,7 +89,7 @@ textarea{resize:vertical;min-height:80px}
 /* ajuste visual 2026: mesmo padrão do site */
 @media screen{
   :root{--ink:#000000;--surface:#161618;--white:#F5F5F7;--muted:#8A847D;--s:#161618;--s2:#232326;--w:#F5F5F7;--m:#8A847D}
-  body{background:#000000;-webkit-font-smoothing:antialiased}
+  body{background:var(--ink);-webkit-font-smoothing:antialiased}
   body::before{display:none!important}
   .big-title,h1,h2{letter-spacing:-.025em}
   .btn,.pdf-btn,.hero-cta,.btn-cta,.copy-btn,.gen-btn,.prev-btn,.add-btn,.q-btn,.btn-submit,.btn-wpp,.btn-pdf,.q-skip,#gate-submit-btn{border-radius:999px!important}
@@ -98,6 +98,15 @@ textarea{resize:vertical;min-height:80px}
   .calc-table .item-name{min-width:140px}
   .btn.primary,.q-btn,.btn-submit,.btn-wpp,#gate-submit-btn{background:#F5A020!important;color:#000000!important}
 }
+</style>
+<meta name="color-scheme" content="light dark"><script>try{if(localStorage.getItem("bf-tema")==="escuro")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<style id="bf-tema">
+:root{--fg:29,29,31;--bgc:255,255,255;--acc:#A35C00}
+:root[data-theme="dark"]{--fg:232,228,222;--bgc:8,8,8;--acc:#F5A020}
+:root:not([data-theme="dark"]){--ink:#FFFFFF;--surface:#F5F5F7;--s:#F5F5F7;--s2:#E8E8ED;--white:#1D1D1F;--w:#1D1D1F;--muted:#6E6E73;--m:#6E6E73;--b:rgba(0,0,0,.1);color-scheme:light}
+:root:not([data-theme="dark"]) body{background:#FFFFFF;color:#1D1D1F}
+:root:not([data-theme="dark"]) img[src*="logo.svg"]{filter:invert(1) brightness(.35)}
+:root:not([data-theme="dark"]) input,:root:not([data-theme="dark"]) textarea,:root:not([data-theme="dark"]) select{color:#1D1D1F}
 </style>
 </head>
 <body>
@@ -147,7 +156,7 @@ textarea{resize:vertical;min-height:80px}
       </div>
     </div>
 
-    <label style="display:block;font-size:13px;color:rgba(232,228,222,.7);margin-bottom:10px">Qual coluna usar como base do orçamento</label>
+    <label style="display:block;font-size:13px;color:rgba(var(--fg),.7);margin-bottom:10px">Qual coluna usar como base do orçamento</label>
     <div class="calc-tier-select">
       <div class="calc-tier-opt" data-tier="min" onclick="setTier('min')">Mín. viável</div>
       <div class="calc-tier-opt" data-tier="cheio" onclick="setTier('cheio')">Cheio</div>
