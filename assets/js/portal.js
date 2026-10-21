@@ -1,5 +1,5 @@
 /* Bourbon Films · área do cliente e painel interno (Firebase) */
-import { firebaseConfig, ADMIN_EMAILS } from './firebase-config.js?v=20261021';
+import { firebaseConfig, ADMIN_EMAILS } from './firebase-config.js?v=20261021d';
 const FB = 'https://www.gstatic.com/firebasejs/10.14.1/';
 let initializeApp, getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
   sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
@@ -37,8 +37,20 @@ function erroAmigavel(e) {
   if (c.includes('invalid-email')) return 'Confira o e-mail digitado.';
   if (c.includes('popup-closed')) return 'A janela do Google foi fechada antes de concluir.';
   if (c.includes('too-many-requests')) return 'Muitas tentativas. Aguarde alguns minutos.';
-  if (c.includes('unauthorized-domain')) return 'Este endereço ainda não foi autorizado no Firebase.';
-  return 'Não foi possível entrar agora. Tente de novo.';
+  if (c.includes('unauthorized-domain')) return 'Este endereço ainda não foi autorizado no Firebase (Authentication > Configurações > Domínios autorizados). [' + c + ']';
+  if (c.includes('operation-not-allowed')) return 'Este método de login ainda não foi ativado no Firebase (Authentication > Método de login). [' + c + ']';
+  if (c.includes('configuration-not-found')) return 'O login ainda não foi ativado no Firebase (Authentication > Vamos começar). [' + c + ']';
+  if (c.includes('api-key')) return 'Chave do Firebase inválida no firebase-config.js. [' + c + ']';
+  if (c.includes('network-request-failed')) return 'Sem conexão com o Firebase. Desative bloqueadores (Brave Shields) para este site e tente de novo. [' + c + ']';
+  return 'Não foi possível entrar agora. [' + (c || (e && e.message) || 'erro') + ']';
+}
+
+function erroBanco(e) {
+  const c = (e && e.code) || '';
+  if (c.includes('permission-denied')) return 'Sem permissão no banco. Confira se as regras do Firestore foram publicadas. [' + c + ']';
+  if (c.includes('not-found') || c.includes('failed-precondition')) return 'O banco Firestore ainda não foi criado neste projeto. [' + c + ']';
+  if (c.includes('unavailable')) return 'Banco indisponível agora. Verifique a conexão ou bloqueadores. [' + c + ']';
+  return 'Não foi possível carregar. [' + (c || (e && e.message) || 'erro') + ']';
 }
 
 function start() {
@@ -107,7 +119,7 @@ function start() {
     if (!user.emailVerified) { $('#verifyEmail').textContent = user.email; show('verify'); return; }
     document.querySelectorAll('[data-user]').forEach(el => { el.textContent = user.displayName || user.email; });
     if (MODE === 'admin') {
-      if (!ADMIN_EMAILS.map(x => x.toLowerCase()).includes(user.email.toLowerCase())) { show('negado'); return; }
+      if (!ADMIN_EMAILS.map(x => x.toLowerCase()).includes(user.email.toLowerCase())) { const n = $('[data-view="negado"] .muted'); if (n) n.textContent = 'Você entrou como ' + user.email + '. Este painel é só para a equipe da Bourbon Films.'; show('negado'); return; }
       show('painel'); carregarAdmin(db);
     } else {
       show('painel'); carregarCliente(db, user.email.toLowerCase());
@@ -145,7 +157,7 @@ async function carregarCliente(db, email) {
       </article>`;
     }).join('');
   } catch (e) {
-    box.innerHTML = '<p class="form-msg">Não foi possível carregar seus projetos agora. Tente de novo em instantes.</p>';
+    box.innerHTML = '<p class="form-msg">' + esc(erroBanco(e)) + '</p>';
   }
 }
 
@@ -205,7 +217,7 @@ async function carregarAdmin(db) {
       if (form.dataset.id) await updateDoc(doc(db, 'projetos', form.dataset.id), dados);
       else await addDoc(collection(db, 'projetos'), { ...dados, criadoEm: serverTimestamp() });
       show('painel'); await listar();
-    } catch (e) { alert('Não foi possível salvar. Confira se o seu e-mail está nas regras de admin.'); }
+    } catch (e) { alert('Não foi possível salvar. [' + (e.code || e.message) + ']'); }
     b.disabled = false; b.textContent = 'Salvar';
   };
   $('#btnExcluir').onclick = async () => {
@@ -223,7 +235,7 @@ async function carregarAdmin(db) {
           <span><b>${esc(p.titulo)}</b><small>${esc(p.clienteNome || '')} · ${esc(p.clienteEmail)}</small></span>
           <span class="tag">${esc(ETAPAS[p.status] || ETAPAS[0])}</span></button>`).join('');
       lista.querySelectorAll('.pt-row').forEach(b => b.addEventListener('click', () => abrir(CACHE[+b.dataset.i])));
-    } catch (e) { lista.innerHTML = '<p class="form-msg">Sem permissão para listar. Confira as regras do Firestore.</p>'; }
+    } catch (e) { lista.innerHTML = '<p class="form-msg">' + esc(erroBanco(e)) + '</p>'; }
   }
   listar();
 }
