@@ -228,26 +228,57 @@
   queueScrub();
 
 
-  /* linha do tempo: progresso da página e seção atual */
-  var tl=document.querySelector('.tl'),tlBar=document.querySelector('.tl-bar');
-  if(tl||tlBar){
-    var links=tl?[].slice.call(tl.querySelectorAll('[data-tl]')):[];
-    var secs=links.map(function(a){return document.getElementById(a.dataset.tl)}).filter(Boolean);
-    var tlTick=false;
-    var tlUpdate=function(){
-      tlTick=false;
-      var h=document.documentElement.scrollHeight-window.innerHeight;
-      var p=h>0?Math.min(1,Math.max(0,window.scrollY/h)):0;
-      if(tl) tl.querySelector('ol').style.setProperty('--tl',p.toFixed(4));
-      if(tlBar) tlBar.style.setProperty('--tl',p.toFixed(4));
-      var mid=window.innerHeight*.4,cur=0;
-      secs.forEach(function(s,i){if(s.getBoundingClientRect().top<=mid) cur=i});
-      if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4) cur=secs.length-1;
-      links.forEach(function(a,i){a.classList.toggle('is-on',i===cur);a.classList.toggle('is-past',i<cur);if(i===cur)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')});
+  /* linha do tempo de edição: playhead, timecode e clipes acompanham a leitura */
+  var nle=document.querySelector('.nle');
+  if(nle){
+    doc.classList.add('has-nle');
+    var track=nle.querySelector('.nle-track'),head=nle.querySelector('.nle-head'),tcEl=nle.querySelector('.nle-tc');
+    var clips=[].slice.call(nle.querySelectorAll('[data-clip]'));
+    var secs=clips.map(function(li){return document.getElementById(li.dataset.clip)});
+    var DUR=90,FPS=24,tops=[],start=0,end=1,tw=1,curClip=-1,nleTick=false;
+    var tcf=function(sec){var f=Math.round(sec*FPS),z=function(n){return (n<10?'0':'')+n};return '00:'+z(Math.floor(f/FPS/60))+':'+z(Math.floor(f/FPS)%60)+':'+z(f%FPS)};
+    var measure=function(){
+      tops=secs.map(function(s){return s.getBoundingClientRect().top+window.scrollY});
+      var last=secs[secs.length-1];
+      start=tops[0];end=Math.max(start+1,document.documentElement.scrollHeight);
+      clips.forEach(function(li,i){var h=(i<secs.length-1?tops[i+1]:end)-tops[i];li.style.flexGrow=Math.max(h,1)});
+      tw=track.clientWidth;
     };
-    window.addEventListener('scroll',function(){if(!tlTick){tlTick=true;requestAnimationFrame(tlUpdate)}},{passive:true});
-    window.addEventListener('resize',tlUpdate,{passive:true});
-    tlUpdate();
+    var frac=function(){
+      /* ponto de leitura: 40% da altura da tela; no fim da página, o playhead chega ao fim */
+      var maxY=document.documentElement.scrollHeight-window.innerHeight;
+      var y=window.scrollY+window.innerHeight*.4;
+      var f=(y-start)/(end-start);
+      if(window.scrollY>=maxY-2) f=1;
+      if(window.scrollY<=0) f=0;
+      return Math.min(1,Math.max(0,f));
+    };
+    var paint=function(){
+      nleTick=false;
+      var f=frac();
+      head.style.setProperty('--x',(f*tw).toFixed(1)+'px');
+      tcEl.textContent=tcf(f*DUR);
+      var y=start+f*(end-start),c=0;
+      tops.forEach(function(t,i){if(y>=t) c=i});
+      if(c!==curClip){curClip=c;clips.forEach(function(li,i){li.classList.toggle('is-on',i===c);li.classList.toggle('is-past',i<c);var a=li.querySelector('a');if(i===c)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')})}
+    };
+    var queue=function(){if(!nleTick){nleTick=true;requestAnimationFrame(paint)}};
+    window.addEventListener('scroll',queue,{passive:true});
+    window.addEventListener('resize',function(){measure();paint()},{passive:true});
+    window.addEventListener('load',function(){measure();paint()});
+    measure();paint();
+    /* arrastar na trilha procura o trecho, como na edição (mouse e caneta; no toque, os clipes são links) */
+    var seek=function(ev){
+      var r=track.getBoundingClientRect(),f=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width));
+      window.scrollTo({top:start+f*(end-start)-window.innerHeight*.4,behavior:'auto'});
+    };
+    track.addEventListener('pointerdown',function(ev){
+      if(ev.pointerType==='touch') return;
+      ev.preventDefault();track.setPointerCapture(ev.pointerId);nle.classList.add('is-scrub');doc.style.scrollBehavior='auto';seek(ev);
+      var mv=function(e){seek(e)},up=function(){track.removeEventListener('pointermove',mv);track.removeEventListener('pointerup',up);track.removeEventListener('pointercancel',up);nle.classList.remove('is-scrub');doc.style.scrollBehavior=''};
+      track.addEventListener('pointermove',mv);track.addEventListener('pointerup',up);track.addEventListener('pointercancel',up);
+    });
+    track.addEventListener('click',function(ev){if(ev.pointerType&&ev.pointerType!=='touch'&&ev.detail) ev.preventDefault()});
   }
 
   /* galeria: ver todos */
