@@ -6,26 +6,6 @@
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
-  /* tema: todo primeiro acesso abre no claro; a escolha só fica guardada depois que a pessoa troca */
-  var meta=document.querySelector('meta[name=theme-color]');
-  function syncTheme(){
-    var dark=doc.dataset.theme==='dark';
-    document.querySelectorAll('[data-theme-toggle]').forEach(function(b){
-      b.setAttribute('aria-pressed',dark?'true':'false');
-      b.setAttribute('aria-label',dark?'Ativar modo diurno':'Ativar modo noturno');
-    });
-    if(meta) meta.content=dark?'#000000':'#FFFFFF';
-  }
-  syncTheme();
-  document.querySelectorAll('[data-theme-toggle]').forEach(function(b){
-    b.addEventListener('click',function(){
-      var next=doc.dataset.theme==='dark'?'light':'dark';
-      var apply=function(){doc.dataset.theme=next;syncTheme()};
-      try{localStorage.setItem('bf-tema',next==='dark'?'escuro':'claro')}catch(e){}
-      if(document.startViewTransition&&!reduce) document.startViewTransition(apply); else apply();
-    });
-  });
-
   /* navegação: fundo sólido ao rolar */
   var nav=document.querySelector('.nav');
   var hero=document.querySelector('.hero');
@@ -266,7 +246,7 @@
       fd.append('subject',(form.dataset.subject||'Contato pelo site')+' | '+(form.querySelector('[data-label]').value||''));
       fd.append('from_name','Site Bourbon Films');
       fd.append('message',lines.join('\n'));
-      btn.disabled=true;btn.textContent='Enviando...';if(msg) msg.textContent='';
+      btn.disabled=true;btn.textContent='Enviando…';if(msg) msg.textContent='';
       fetch('https://api.web3forms.com/submit',{method:'POST',body:fd,headers:{Accept:'application/json'}})
         .then(function(r){return r.json()})
         .then(function(j){

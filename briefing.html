@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Briefing | Bourbon Films</title>
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#100D0A">
 <link rel="icon" href="favicon.ico" sizes="any"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="description" content="Conte o seu projeto para a Bourbon Films e receba uma proposta sob medida.">
 <meta name="robots" content="index, follow">
@@ -22,7 +22,7 @@ fbq('set','autoConfig',false,'880805848416367');fbq('init','880805848416367');fb
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--ink:#080808;--s:#101010;--s2:#161616;--w:#E8E4DE;--m:#6B6560;--b:rgba(232,228,222,.1);--g:#F5A020;--o:#E85C1A;--e:#8B2800;--grad:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800)}
 html{scroll-behavior:smooth}
-body{background:var(--ink);color:var(--w);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;min-height:100vh;overflow-x:hidden}
+body{background:var(--ink);color:var(--w);font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;min-height:100vh;overflow-x:hidden}
 nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(var(--bgc),.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--b)}
 .nav-logo img{height:32px;width:auto;object-fit:contain;display:block}
 .nav-back{color:var(--m);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:7px;transition:color .2s}
@@ -34,45 +34,45 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .form-hero{margin-bottom:60px}
 .form-hero-ey{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .form-hero-ey::before{content:'';width:20px;height:1px;background:var(--g)}
-.form-hero h1{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(30px,4.5vw,56px);font-weight:800;line-height:.95;letter-spacing:-.02em;margin-bottom:14px}
+.form-hero h1{font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(30px,4.5vw,56px);font-weight:800;line-height:.95;letter-spacing:-.02em;margin-bottom:14px}
 .gt{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.form-hero p{font-size:16px;color:rgba(var(--fg),.48);line-height:1.65;max-width:480px}
+.form-hero p{font-size:16px;color:rgba(var(--fg),.62);line-height:1.65;max-width:480px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 .q-card{opacity:0;transform:translateY(18px);pointer-events:auto;animation:none}
 .q-card.visible{opacity:1;transform:translateY(0);pointer-events:auto;animation:fadeUp .45s cubic-bezier(.16,1,.3,1) forwards}
 .q-card.answered{opacity:.42;cursor:pointer}
 .q-card.answered:hover{opacity:.75}
 .q-card+.q-card{margin-top:52px}
-.q-num{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.q-num{font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .q-num::before{content:'';width:14px;height:1px;background:var(--g)}
-.q-text{display:block;font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(19px,2.8vw,28px);font-weight:700;line-height:1.2;margin-bottom:7px;color:var(--w)}
+.q-text{display:block;font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(19px,2.8vw,28px);font-weight:700;line-height:1.2;margin-bottom:7px;color:var(--w)}
 .q-hint{font-size:13px;color:var(--m);margin-bottom:16px;line-height:1.55;font-style:italic}
-.q-note{display:flex;gap:10px;padding:11px 15px;background:rgba(245,160,32,.06);border-left:2px solid rgba(245,160,32,.3);font-size:13px;color:rgba(var(--fg),.58);line-height:1.55;margin-bottom:14px}
+.q-note{display:flex;gap:10px;padding:11px 15px;background:rgba(245,160,32,.06);border-left:2px solid rgba(245,160,32,.3);font-size:13px;color:rgba(var(--fg),.62);line-height:1.55;margin-bottom:14px}
 .q-note strong{color:var(--acc)}
-.q-answered-val{display:none;font-size:14px;color:rgba(var(--fg),.45);margin-top:5px;font-style:italic}
+.q-answered-val{display:none;font-size:14px;color:rgba(var(--fg),.62);margin-top:5px;font-style:italic}
 .q-card.answered .q-answered-val{display:block}
 .q-card.answered .q-input{display:none}
-input[type=text],input[type=tel],input[type=date],input[type=url],input[type=email],textarea{width:100%;padding:13px 15px;background:var(--s2);border:1px solid var(--b);color:var(--w);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:16px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s,box-shadow .2s}
+input[type=text],input[type=tel],input[type=date],input[type=url],input[type=email],textarea{width:100%;padding:13px 15px;background:var(--s2);border:1px solid var(--b);color:var(--w);font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:16px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s,box-shadow .2s}
 input:focus,textarea:focus{border-color:rgba(245,160,32,.5);box-shadow:0 0 0 3px rgba(245,160,32,.07)}
 input.err,textarea.err{border-color:var(--o)}
 input::placeholder,textarea::placeholder{color:var(--m);opacity:.6}
 textarea{resize:vertical;min-height:100px}
 .opts{display:flex;flex-direction:column;gap:7px}
-.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 15px;border:1px solid var(--b);background:var(--s);cursor:pointer;transition:all .18s;font-size:15px;color:rgba(var(--fg),.7);line-height:1.4}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 15px;border:1px solid var(--b);background:var(--s);cursor:pointer;transition:border-color,background-color,color,opacity,transform,box-shadow .18s;font-size:15px;color:rgba(var(--fg),.70);line-height:1.4}
 .opt:hover{border-color:rgba(245,160,32,.35);color:var(--w)}
 .opt.selected{border-color:rgba(245,160,32,.55);background:rgba(245,160,32,.06);color:var(--w)}
 .opt-label{flex:1}
 .opt-note{display:block;font-size:11px;color:var(--m);margin-top:2px;font-style:italic}
-.q-btn{margin-top:12px;padding:13px 28px;background:var(--grad);color:#000;font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:9px;transition:opacity .2s,box-shadow .2s,transform .2s;opacity:.35;pointer-events:none}
+.q-btn{margin-top:12px;padding:13px 28px;background:var(--grad);color:#000;font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:9px;transition:opacity .2s,box-shadow .2s,transform .2s;opacity:.35;pointer-events:none}
 .q-btn.ready{opacity:1;pointer-events:auto}
 .q-btn.ready:hover{opacity:.85;box-shadow:0 8px 24px rgba(232,92,26,.3);transform:translateY(-1px)}
 .q-btn svg{transition:transform .2s}
 .q-btn.ready:hover svg{transform:translateX(3px)}
 #submit-area{display:none;margin-top:60px;padding:44px;border:1px solid var(--b);background:var(--s);text-align:center;animation:fin .6s ease}
 @keyframes fin{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-#submit-area h3{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:26px;font-weight:800;margin-bottom:8px}
-#submit-area p{color:rgba(var(--fg),.45);font-size:15px;margin-bottom:28px}
-.btn-submit{padding:17px 44px;background:var(--grad);color:#000;font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:11px}
+#submit-area h3{font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:26px;font-weight:800;margin-bottom:8px}
+#submit-area p{color:rgba(var(--fg),.62);font-size:15px;margin-bottom:28px}
+.btn-submit{padding:17px 44px;background:var(--grad);color:#000;font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;border:none;cursor:pointer;transition:border-color,background-color,color,opacity,transform,box-shadow .2s;display:inline-flex;align-items:center;gap:11px}
 .btn-submit:hover{opacity:.85;box-shadow:0 12px 36px rgba(232,92,26,.38);transform:translateY(-2px)}
 .spinner{display:none;width:17px;height:17px;border:2px solid rgba(0,0,0,.22);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -81,8 +81,8 @@ textarea{resize:vertical;min-height:100px}
 #receipt{display:none;max-width:720px;margin:0 auto;padding:60px 40px 120px}
 .rec-top{text-align:center;padding:44px 0;border-bottom:2px solid rgba(245,160,32,.2);margin-bottom:40px}
 .rec-check{font-size:40px;margin-bottom:12px}
-.rec-title{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:36px;font-weight:800;margin-bottom:6px}
-.rec-sub{color:rgba(var(--fg),.42);font-size:16px}
+.rec-title{font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:36px;font-weight:800;margin-bottom:6px}
+.rec-sub{color:rgba(var(--fg),.62);font-size:16px}
 .rec-sect{margin-bottom:26px;padding-bottom:26px;border-bottom:1px solid var(--b)}
 .rec-sect:last-of-type{border-bottom:none}
 .rec-sect-title{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(245,160,32,.12)}
@@ -90,15 +90,15 @@ textarea{resize:vertical;min-height:100px}
 .rec-row dt{color:var(--m);min-width:140px;flex-shrink:0}
 .rec-row dd{color:var(--w);line-height:1.5}
 .rec-actions{display:flex;gap:10px;margin-top:40px;flex-wrap:wrap}
-.btn-wpp{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;background:var(--grad);color:#000;font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-wpp{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;background:var(--grad);color:#000;font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;text-decoration:none;transition:border-color,background-color,color,opacity,transform,box-shadow .2s}
 .btn-wpp:hover{opacity:.84;box-shadow:0 8px 28px rgba(232,92,26,.3)}
-.btn-pdf{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border:1px solid var(--b);color:var(--w);background:transparent;font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-pdf{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border:1px solid var(--b);color:var(--w);background:transparent;font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:border-color,background-color,color,opacity,transform,box-shadow .2s}
 .btn-pdf:hover{border-color:rgba(var(--fg),.3)}
-.save-chip{position:fixed;bottom:20px;right:20px;display:flex;align-items:center;gap:6px;padding:5px 11px;background:rgba(var(--bgc),.9);border:1px solid rgba(76,175,80,.25);font-size:11px;color:rgba(var(--fg),.45);opacity:0;transition:opacity .3s;pointer-events:none}
+.save-chip{position:fixed;bottom:20px;right:20px;display:flex;align-items:center;gap:6px;padding:5px 11px;background:rgba(var(--bgc),.9);border:1px solid rgba(76,175,80,.25);font-size:11px;color:rgba(var(--fg),.62);opacity:0;transition:opacity .3s;pointer-events:none}
 .save-chip.show{opacity:1}
 .save-dot{width:5px;height:5px;border-radius:50%;background:#4CAF50}
 @media print{
-body{background:var(--ink)!important;color:var(--w)!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;margin:0;font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif}
+body{background:var(--ink)!important;color:var(--w)!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;margin:0;font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif}
 nav,#prog-line,#gate-screen,#form-area,.save-chip,.rec-actions,#submit-area,#wpp-send-section,.rec-check,.rec-sub{display:none!important}
 #receipt{display:block!important;background:var(--ink);color:var(--w);padding:0;max-width:100%}
 .rec-body-wrap{padding:24px 36px}
@@ -106,25 +106,25 @@ nav,#prog-line,#gate-screen,#form-area,.save-chip,.rec-actions,#submit-area,#wpp
 .rec-sect:last-of-type{border-bottom:none}
 .rec-sect-title{font-size:7.5pt;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);font-weight:700;margin:0 0 10px;padding-bottom:5px;border-bottom:1px solid rgba(245,160,32,.18)}
 .rec-row{display:grid;grid-template-columns:155px 1fr;gap:6px 12px;margin-bottom:5px;font-size:9.5pt;align-items:start}
-.rec-row dt{color:rgba(var(--fg),.42);font-weight:500;padding-top:1px}
+.rec-row dt{color:rgba(var(--fg),.62);font-weight:500;padding-top:1px}
 .rec-row dd{color:var(--w);word-break:break-word;margin:0}
-.rec-footer{padding:14px 36px;border-top:1px solid rgba(var(--fg),.08);font-size:8pt;color:rgba(var(--fg),.2);display:flex;justify-content:space-between}
+.rec-footer{padding:14px 36px;border-top:1px solid rgba(var(--fg),.08);font-size:8pt;color:rgba(var(--fg),.62);display:flex;justify-content:space-between}
 .rec-top{background:linear-gradient(135deg,#111 0%,var(--ink) 100%);border-bottom:2px solid #F5A020;padding:28px 36px;display:flex;align-items:center;gap:18px;margin-bottom:0}
 .rec-top img{height:34px;width:auto}
-.rec-top-text h1{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:18pt;font-weight:800;color:#fff;margin:0;letter-spacing:-.02em}
-.rec-top-text p{font-size:9pt;color:rgba(var(--fg),.4);margin:4px 0 0;letter-spacing:.12em;text-transform:uppercase}
+.rec-top-text h1{font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:18pt;font-weight:800;color:#fff;margin:0;letter-spacing:-.02em}
+.rec-top-text p{font-size:9pt;color:rgba(var(--fg),.62);margin:4px 0 0;letter-spacing:.12em;text-transform:uppercase}
 .rec-body-wrap{padding:28px 36px}
 .rec-sect{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid rgba(var(--fg),.08);page-break-inside:avoid}
 .rec-sect-title{font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin:0 0 12px;font-weight:700;padding-bottom:6px;border-bottom:1px solid rgba(245,160,32,.2)}
 .rec-row{display:flex;gap:16px;margin-bottom:7px;font-size:10pt}
-.rec-row dt{color:rgba(var(--fg),.45);min-width:150px;flex-shrink:0;font-weight:500}
+.rec-row dt{color:rgba(var(--fg),.62);min-width:150px;flex-shrink:0;font-weight:500}
 .rec-row dd{color:var(--w);word-break:break-word}
-.rec-footer{padding:16px 36px;border-top:1px solid rgba(var(--fg),.08);margin-top:8px;font-size:8.5pt;color:rgba(var(--fg),.25);display:flex;justify-content:space-between;align-items:center}
+.rec-footer{padding:16px 36px;border-top:1px solid rgba(var(--fg),.08);margin-top:8px;font-size:8.5pt;color:rgba(var(--fg),.62);display:flex;justify-content:space-between;align-items:center}
 .rec-check,.rec-sub,.rec-actions{display:none}
 }
 @media(max-width:640px){nav{padding:12px 20px}#form-area{padding:40px 20px 160px}.q-text{font-size:20px}.rec-row{flex-direction:column;gap:3px}.rec-row dt{min-width:auto}.rec-actions{flex-direction:column}.btn-wpp,.btn-pdf{justify-content:center}#submit-area{padding:28px 20px}}
 
-.q-skip{margin-top:8px;margin-left:8px;padding:13px 20px;background:transparent;border:1px solid rgba(var(--fg),.18);color:rgba(var(--fg),.38);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.q-skip{margin-top:8px;margin-left:8px;padding:13px 20px;background:transparent;border:1px solid rgba(var(--fg),.18);color:rgba(var(--fg),.62);font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:border-color,background-color,color,opacity,transform,box-shadow .2s}
 .q-skip:hover{border-color:rgba(var(--fg),.35);color:rgba(var(--fg),.65)}
 .q-btn-row{display:flex;align-items:center;flex-wrap:wrap;gap:0}
 
@@ -154,13 +154,28 @@ nav,#prog-line,#gate-screen,#form-area,.save-chip,.rec-actions,#submit-area,#wpp
 :root:not([data-theme="dark"]) img[src*="logo.svg"]{filter:invert(1) brightness(.35)}
 :root:not([data-theme="dark"]) input,:root:not([data-theme="dark"]) textarea,:root:not([data-theme="dark"]) select{color:#1D1D1F}
 </style>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<style id="bf-premium">
+:root,:root[data-theme="dark"]{--fg:239,230,216;--bgc:16,13,10;--acc:#F0A63A;--ink:#100D0A;--surface:#1D1813;--s:#1D1813;--s2:#28211A;--white:#EFE6D8;--w:#EFE6D8;--muted:#9C8F7E;--m:#9C8F7E;--b:rgba(239,230,216,.12);color-scheme:dark}
+body{background:#100D0A!important;color:#EFE6D8}
+</style>
+<style id="bf-premium2">
+h1,h2,.rec-title{font-family:"Bodoni Moda",Georgia,serif!important;font-weight:400!important;letter-spacing:-.015em!important;line-height:1.05!important}
+.gt{background:none!important;-webkit-text-fill-color:currentColor!important;color:inherit!important}
+body *{text-transform:none!important}
+body *:not(h1):not(h2):not(.rec-title){letter-spacing:.005em!important}
+button,a[class*=btn],[class*=btn]{border-radius:4px!important}
+#gate-submit-btn,.q-btn,.btn-submit,.btn.primary{background:#F5A020!important;color:#1A1208!important;font-weight:600!important}
+input,textarea,select{border-radius:4px!important}
+</style>
+<style id="bf-inputs">@media (max-width:900px){input,textarea,select{font-size:16px!important}}</style>
 </head>
 <body>
 
 <div id="prog-line"></div>
 
 <nav>
-  <a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="bourbon" style="height:32px;width:auto"></a>
+  <a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="Bourbon Films" width="37" height="32" style="height:32px;width:auto"></a>
   <a href="index.html" class="nav-back">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     Voltar ao site
@@ -170,38 +185,38 @@ nav,#prog-line,#gate-screen,#form-area,.save-chip,.rec-actions,#submit-area,#wpp
 
 <div id="gate-screen" style="min-height:calc(100vh - 57px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;text-align:center">
   <p style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);margin-bottom:16px;display:flex;align-items:center;gap:10px"><span style="display:inline-block;width:20px;height:1px;background:#F5A020"></span>Bourbon Films</p>
-  <h1 style="font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(28px,4vw,52px);font-weight:800;line-height:.96;letter-spacing:-.02em;margin-bottom:14px">Antes de come&ccedil;ar,<br><span style="background:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);-webkit-background-clip:text;-webkit-text-fill-color:transparent">precisamos te identificar.</span></h1>
-  <p style="font-size:15px;color:rgba(var(--fg),.45);max-width:480px;line-height:1.65;margin-bottom:48px">Para acessar, informe ao menos uma das opções abaixo.</p>
+  <h1 style="font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(28px,4vw,52px);font-weight:800;line-height:.96;letter-spacing:-.02em;margin-bottom:14px">Antes de come&ccedil;ar,<br><span>precisamos te identificar.</span></h1>
+  <p style="font-size:15px;color:rgba(var(--fg),.62);max-width:480px;line-height:1.65;margin-bottom:48px">Para acessar, informe ao menos uma das opções abaixo.</p>
   <div style="width:100%;max-width:500px;text-align:left">
     <div class="field" style="margin-bottom:20px">
-      <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:rgba(var(--fg),.7)">E-mail</label>
-      <input type="email" id="gate-email" placeholder="seu@email.com" style="width:100%;padding:13px 15px;background:var(--s);border:1px solid rgba(var(--fg),.1);color:var(--w);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s" onfocus="this.style.borderColor='rgba(245,160,32,.5)'" onblur="this.style.borderColor='rgba(232,228,222,.1)'">
+      <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:rgba(var(--fg),.70)">E-mail</label>
+      <input type="email" id="gate-email" autocomplete="email" spellcheck="false" placeholder="seu@email.com" style="width:100%;padding:13px 15px;background:var(--s);border:1px solid rgba(var(--fg),.1);color:var(--w);font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s" onfocus="this.style.borderColor='rgba(245,160,32,.5)'" onblur="this.style.borderColor='rgba(232,228,222,.1)'">
     </div>
-    <div style="display:flex;align-items:center;gap:12px;margin:20px 0;color:rgba(var(--fg),.25);font-size:12px;letter-spacing:.1em;text-transform:uppercase">
+    <div style="display:flex;align-items:center;gap:12px;margin:20px 0;color:rgba(var(--fg),.62);font-size:12px;letter-spacing:.1em;text-transform:uppercase">
       <span style="flex:1;height:1px;background:rgba(var(--fg),.1)"></span>e/ou<span style="flex:1;height:1px;background:rgba(var(--fg),.1)"></span>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
       <div>
-        <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:rgba(var(--fg),.7)">WhatsApp</label>
-        <input type="tel" id="gate-phone" placeholder="(83) 99999-9999" inputmode="numeric" style="width:100%;padding:13px 15px;background:var(--s);border:1px solid rgba(var(--fg),.1);color:var(--w);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s"  onfocus="this.style.borderColor='rgba(245,160,32,.5)'" onblur="this.style.borderColor='rgba(232,228,222,.1)'">
+        <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:rgba(var(--fg),.70)">WhatsApp</label>
+        <input type="tel" id="gate-phone" placeholder="(83) 99999-9999" inputmode="numeric" style="width:100%;padding:13px 15px;background:var(--s);border:1px solid rgba(var(--fg),.1);color:var(--w);font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s"  onfocus="this.style.borderColor='rgba(245,160,32,.5)'" onblur="this.style.borderColor='rgba(232,228,222,.1)'">
       </div>
       <div>
-        <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:rgba(var(--fg),.7)">CPF</label>
-        <input type="text" id="gate-cpf" placeholder="000.000.000-00" inputmode="numeric" style="width:100%;padding:13px 15px;background:var(--s);border:1px solid rgba(var(--fg),.1);color:var(--w);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s"  onfocus="this.style.borderColor='rgba(245,160,32,.5)'" onblur="this.style.borderColor='rgba(232,228,222,.1)'">
+        <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:rgba(var(--fg),.70)">CPF</label>
+        <input type="text" id="gate-cpf" placeholder="000.000.000-00" inputmode="numeric" style="width:100%;padding:13px 15px;background:var(--s);border:1px solid rgba(var(--fg),.1);color:var(--w);font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s"  onfocus="this.style.borderColor='rgba(245,160,32,.5)'" onblur="this.style.borderColor='rgba(232,228,222,.1)'">
       </div>
     </div>
-    <div id="gate-error" style="display:none;padding:12px 16px;background:rgba(232,92,26,.1);border-left:2px solid #E85C1A;color:rgba(var(--fg),.8);font-size:13px;margin-bottom:20px"></div>
+    <div id="gate-error" style="display:none;padding:12px 16px;background:rgba(232,92,26,.1);border-left:2px solid #E85C1A;color:rgba(var(--fg),.80);font-size:13px;margin-bottom:20px"></div>
     <div style="padding:18px;border:1px solid rgba(245,160,32,.2);background:rgba(245,160,32,.03);margin-bottom:28px">
       <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;font-size:14px;color:rgba(var(--fg),.72);line-height:1.55">
         <input type="checkbox" id="gate-auth" style="flex-shrink:0;margin-top:2px;accent-color:#F5A020;width:16px;height:16px;cursor:pointer">
         <span>Autorizo a Bourbon Films a utilizar estas informa&ccedil;&otilde;es para fins de contato e elabora&ccedil;&atilde;o de proposta. <span style="color:var(--acc)">*</span></span>
       </label>
     </div>
-    <button id="gate-submit-btn" style="width:100%;padding:17px 32px;background:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);color:#000;font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity .2s">
-      Come&ccedil;ar briefing &rarr;
+    <button id="gate-submit-btn" style="width:100%;padding:17px 32px;background:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);color:#000;font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity .2s">
+      Come&ccedil;ar briefing
     </button>
   </div>
-  <p style="font-size:12px;color:rgba(var(--fg),.55);margin-top:28px;line-height:1.6">Seus dados viajam criptografados e s&atilde;o usados s&oacute; pela Bourbon Films. O CPF &eacute; embaralhado no seu aparelho antes do envio: ningu&eacute;m consegue ler o n&uacute;mero, nem a Bourbon. <a href="privacidade.html" style="color:var(--acc)">Como protegemos seus dados</a></p>
+  <p style="font-size:12px;color:rgba(var(--fg),.62);margin-top:28px;line-height:1.6">Seus dados viajam criptografados e s&atilde;o usados s&oacute; pela Bourbon Films. O CPF &eacute; embaralhado no seu aparelho antes do envio: ningu&eacute;m consegue ler o n&uacute;mero, nem a Bourbon. <a href="privacidade.html" style="color:var(--acc)">Como protegemos seus dados</a></p>
 </div>
 
 <div id="form-area" style="display:none">
@@ -227,7 +242,7 @@ nav,#prog-line,#gate-screen,#form-area,.save-chip,.rec-actions,#submit-area,#wpp
 </div>
 
 <div id="receipt" style="display:none">
-  <div class="rec-top"><img src="assets/img/logo.svg" alt="Bourbon" style="height:30px"><div class="rec-top-text">
+  <div class="rec-top"><img src="assets/img/logo.svg" alt="Bourbon Films" width="34" height="30" style="height:30px;width:auto"><div class="rec-top-text">
     <div class="rec-check">&#10003;</div>
     <h1 class="rec-title">Recebemos.</h1>
     <p class="rec-sub">Em breve a Bourbon entra em contato.</p>
@@ -236,8 +251,8 @@ nav,#prog-line,#gate-screen,#form-area,.save-chip,.rec-actions,#submit-area,#wpp
   <div class="rec-actions">
           <div id="wpp-send-section" style="margin-bottom:28px;border:1px solid rgba(37,211,102,.2);background:rgba(37,211,102,.04);padding:20px">
             <p style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(37,211,102,.7);margin-bottom:12px">Enviar via WhatsApp</p>
-            <p style="font-size:13px;color:rgba(var(--fg),.5);margin-bottom:14px;line-height:1.5">Clique no botão abaixo para abrir o WhatsApp com o briefing pronto para enviar.</p>
-            <pre id="wpp-preview" style="font-family:monospace;font-size:11px;color:rgba(var(--fg),.4);white-space:pre-wrap;max-height:180px;overflow:auto;background:rgba(0,0,0,.3);padding:12px;margin-bottom:16px;line-height:1.5;border:1px solid rgba(var(--fg),.06)"></pre>
+            <p style="font-size:13px;color:rgba(var(--fg),.62);margin-bottom:14px;line-height:1.5">Clique no botão abaixo para abrir o WhatsApp com o briefing pronto para enviar.</p>
+            <pre id="wpp-preview" style="font-family:monospace;font-size:11px;color:rgba(var(--fg),.62);white-space:pre-wrap;max-height:180px;overflow:auto;background:rgba(0,0,0,.3);padding:12px;margin-bottom:16px;line-height:1.5;border:1px solid rgba(var(--fg),.06)"></pre>
           </div>
     <button class="btn-wpp" id="btn-wpp">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
@@ -768,10 +783,10 @@ function renderLinks(id,card){
     var row=document.createElement('div');row.className='link-row';row.style.cssText='display:flex;gap:8px;margin-bottom:8px';
     var inp=document.createElement('input');
     inp.type='url';inp.placeholder='https://...';
-    inp.style.cssText="flex:1;padding:13px 15px;background:var(--s);border:1px solid rgba(var(--fg),.1);color:var(--w);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;outline:none";
+    inp.style.cssText="flex:1;padding:13px 15px;background:var(--s);border:1px solid rgba(var(--fg),.1);color:var(--w);font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;outline:none";
     var rm=document.createElement('button');
     rm.type='button';rm.textContent='✕';
-    rm.style.cssText="padding:0 14px;background:transparent;border:1px solid rgba(var(--fg),.1);color:rgba(var(--fg),.4);cursor:pointer;font-size:16px";
+    rm.style.cssText="padding:0 14px;background:transparent;border:1px solid rgba(var(--fg),.1);color:rgba(var(--fg),.62);cursor:pointer;font-size:16px";
     rm.onclick=function(e){e.stopPropagation();if(wrap.querySelectorAll('.link-row').length>1)row.remove();syncLinks(id,wrap);};
     inp.oninput=function(){
       syncLinks(id,wrap);
@@ -783,7 +798,7 @@ function renderLinks(id,card){
     return inp;
   };
   addLink();
-  var si=document.createElement('p');si.style.cssText='font-size:12px;color:rgba(var(--fg),.3);margin-top:6px';
+  var si=document.createElement('p');si.style.cssText='font-size:12px;color:rgba(var(--fg),.62);margin-top:6px';
   si.textContent='Um link por linha. Nova caixa abre automaticamente ao preencher.';
   wrap.appendChild(si);
   card.appendChild(wrap);
@@ -1005,8 +1020,8 @@ function buildReceipt(){
   html+='<div style="display:flex;align-items:center;gap:20px;border-bottom:3px solid #F5A020;padding-bottom:24px;margin-bottom:32px">';
   html+='<img src=BOURBON_ICON_B64 style="height:40px;flex-shrink:0">';;
   html+='<div>';
-  html+='<div style="font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:20pt;font-weight:800;color:#fff;letter-spacing:-.03em;line-height:1">BOURBON FILMS</div>';
-  html+='<div style="font-size:8pt;color:rgba(var(--fg),.35);letter-spacing:.25em;text-transform:uppercase;margin-top:5px">Briefing de Projeto , Documento Confidencial</div>';
+  html+='<div style="font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:20pt;font-weight:800;color:#fff;letter-spacing:-.03em;line-height:1">BOURBON FILMS</div>';
+  html+='<div style="font-size:8pt;color:rgba(var(--fg),.62);letter-spacing:.25em;text-transform:uppercase;margin-top:5px">Briefing de Projeto , Documento Confidencial</div>';
   html+='</div></div>';
 
   /* ── IDENTIFICAÇÃO ── */
@@ -1161,7 +1176,7 @@ function buildReceipt(){
   ]);
 
   /* ── RODAPÉ ── */
-  html+='<div style="margin-top:32px;padding-top:16px;border-top:1px solid rgba(var(--fg),.1);display:flex;justify-content:space-between;align-items:center;font-size:8pt;color:rgba(var(--fg),.2)">';
+  html+='<div style="margin-top:32px;padding-top:16px;border-top:1px solid rgba(var(--fg),.1);display:flex;justify-content:space-between;align-items:center;font-size:8pt;color:rgba(var(--fg),.62)">';
   html+='<span>bourbonfilms.com.br &nbsp;|&nbsp; @bourbonfilm</span>';
   html+='<span>83 99868-3878</span>';
   html+='</div>';

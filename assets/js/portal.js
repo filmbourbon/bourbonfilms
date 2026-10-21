@@ -139,7 +139,7 @@ function entregasHTML(list) {
 }
 async function carregarCliente(db, email) {
   const box = $('#projetos');
-  box.innerHTML = '<p class="muted">Carregando seus projetos...</p>';
+  box.innerHTML = '<p class="muted">Carregando seus projetos…</p>';
   try {
     const snap = await getDocs(query(collection(db, 'projetos'), where('clienteEmail', '==', email)));
     const itens = snap.docs.map(d => d.data()).sort((a, b) => (b.atualizadoEm?.seconds || 0) - (a.atualizadoEm?.seconds || 0));
@@ -212,7 +212,7 @@ async function carregarAdmin(db) {
       entregas,
       atualizadoEm: serverTimestamp()
     };
-    const b = $('#salvar'); b.disabled = true; b.textContent = 'Salvando...';
+    const b = $('#salvar'); b.disabled = true; b.textContent = 'Salvando…';
     try {
       if (form.dataset.id) await updateDoc(doc(db, 'projetos', form.dataset.id), dados);
       else await addDoc(collection(db, 'projetos'), { ...dados, criadoEm: serverTimestamp() });
@@ -226,7 +226,7 @@ async function carregarAdmin(db) {
   };
 
   async function listar() {
-    lista.innerHTML = '<p class="muted">Carregando...</p>';
+    lista.innerHTML = '<p class="muted">Carregando…</p>';
     try {
       const snap = await getDocs(collection(db, 'projetos'));
       CACHE = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.atualizadoEm?.seconds || 0) - (a.atualizadoEm?.seconds || 0));
