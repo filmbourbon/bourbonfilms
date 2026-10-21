@@ -102,20 +102,29 @@
     else window.addEventListener('load',function(){setTimeout(startHero,200)});
   }
 
-  /* galeria horizontal: arrastar com mouse e setas */
-  document.querySelectorAll('.reel').forEach(function(reel){
-    var down=false,sx=0,sl=0,moved=false;
-    reel.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse')return;down=true;moved=false;sx=e.clientX;sl=reel.scrollLeft;reel.style.scrollSnapType='none'});
-    window.addEventListener('pointermove',function(e){if(!down)return;var dx=e.clientX-sx;if(Math.abs(dx)>3)moved=true;reel.scrollLeft=sl-dx});
-    window.addEventListener('pointerup',function(){if(!down)return;down=false;reel.style.scrollSnapType=''});
-    reel.addEventListener('click',function(e){if(moved){e.preventDefault();e.stopPropagation()}},true);
-    var ctr=document.querySelector('[data-reel="'+reel.id+'"]');
-    if(ctr){
-      ctr.querySelectorAll('button').forEach(function(b){
-        b.addEventListener('click',function(){reel.scrollBy({left:(b.dataset.dir==='next'?1:-1)*reel.clientWidth*.8,behavior:reduce?'auto':'smooth'})});
-      });
+  /* mosaico de bastidores: entrada e movimento sutil das colunas ao rolar */
+  var mz=document.querySelector('.mz');
+  if(mz){
+    var cols=[].slice.call(mz.querySelectorAll('.mz-col'));
+    if('IntersectionObserver' in window){
+      var mo=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){mz.classList.add('is-in');mo.disconnect()}})},{threshold:.15});
+      mo.observe(mz);
+      cols.forEach(function(c){c.querySelectorAll('img').forEach(function(i){i.loading='eager'})});
+    }else mz.classList.add('is-in');
+    if(!reduce){
+      var mzTick=false;
+      var mzMove=function(){
+        var r=mz.getBoundingClientRect(),vh=window.innerHeight;
+        if(r.bottom>0&&r.top<vh){
+          var p=(vh-r.top)/(vh+r.height)-.5;
+          cols.forEach(function(c,i){c.style.transform='translate3d(0,'+(p*(i%2?-70:70))+'px,0)'});
+        }
+        mzTick=false;
+      };
+      window.addEventListener('scroll',function(){if(!mzTick){requestAnimationFrame(mzMove);mzTick=true}},{passive:true});
+      mzMove();
     }
-  });
+  }
 
   /* botão de WhatsApp aparece depois da capa */
   var fab=document.querySelector('.wpp-fab');
