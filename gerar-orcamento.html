@@ -7,10 +7,9 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gerar Orçamento | Bourbon Films</title>
-<meta name="theme-color" content="#0A0908">
+<meta name="theme-color" content="#000000">
 
 <meta name="robots" content="noindex, nofollow">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Outfit:wght@300;400;500;600;700;800&display=swap">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -19,7 +18,7 @@
   --grad:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);
   --glass:rgba(255,255,255,.09);--glass-border:rgba(255,255,255,.18);
 }
-body{background:var(--ink);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh}
+body{background:var(--ink);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;min-height:100vh}
 nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 56px;background:rgba(8,8,8,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-border)}
 .nav-logo img{height:28px;width:auto;object-fit:contain;display:block}
 .nav-back{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
@@ -28,7 +27,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 #area{max-width:720px;margin:0 auto;padding:60px 24px 100px}
 .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
-h1{font-family:'Outfit',sans-serif;font-size:clamp(28px,4.5vw,42px);font-weight:800;margin-bottom:12px}
+h1{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(28px,4.5vw,42px);font-weight:800;margin-bottom:12px}
 .sub{font-size:14px;color:rgba(232,228,222,.5);margin-bottom:36px;line-height:1.6}
 
 .tab-row{display:flex;gap:10px;margin-bottom:32px;border-bottom:1px solid var(--glass-border)}
@@ -44,17 +43,17 @@ h1{font-family:'Outfit',sans-serif;font-size:clamp(28px,4.5vw,42px);font-weight:
 .field{margin-bottom:18px}
 .field label{display:block;font-size:13px;color:rgba(232,228,222,.7);margin-bottom:7px}
 .field .hint{display:block;font-size:11px;color:var(--muted);margin-top:4px}
-input,textarea,select{width:100%;padding:12px 14px;background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%);border:1px solid var(--glass-border);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none}
+input,textarea,select{width:100%;padding:12px 14px;background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%);border:1px solid var(--glass-border);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;outline:none}
 input:focus,textarea:focus,select:focus{border-color:rgba(245,160,32,.5)}
 textarea{resize:vertical;min-height:80px}
 
-.btn{width:100%;padding:16px;margin-top:10px;background:var(--grad);color:#000;font-family:'Outfit',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer}
+.btn{width:100%;padding:16px;margin-top:10px;background:var(--grad);color:#000;font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer}
 .btn:hover{opacity:.85}
 .btn.ghost{background:none;border:1px solid var(--glass-border);color:var(--white)}
 .btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
 
 #result{display:none;margin-top:36px;padding:24px;background:var(--glass);border:1px solid var(--glass-border)}
-#result h3{font-family:'Outfit',sans-serif;font-size:16px;margin-bottom:12px}
+#result h3{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:16px;margin-bottom:12px}
 .link-box{display:flex;gap:8px;margin-bottom:14px}
 .link-box input{flex:1;font-size:12px;color:var(--gold)}
 .copy-btn{flex-shrink:0;padding:0 18px;background:none;border:1px solid rgba(245,160,32,.4);color:var(--gold);cursor:pointer;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
@@ -80,7 +79,7 @@ textarea{resize:vertical;min-height:80px}
 .calc-tier-opt.active{border-color:var(--gold);color:var(--gold);background:rgba(245,160,32,.06)}
 .calc-summary{padding:20px 22px;background:rgba(245,160,32,.05);border:1px solid rgba(245,160,32,.25)}
 .calc-line{display:flex;justify-content:space-between;font-size:13px;color:rgba(232,228,222,.65);padding:5px 0}
-.calc-line.total{font-family:'Outfit',sans-serif;font-weight:800;font-size:17px;color:var(--gold);border-top:1px solid rgba(245,160,32,.25);margin-top:8px;padding-top:12px}
+.calc-line.total{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-weight:800;font-size:17px;color:var(--gold);border-top:1px solid rgba(245,160,32,.25);margin-top:8px;padding-top:12px}
 .calc-fee-imposto{display:flex;gap:10px;margin-bottom:18px}
 .calc-fee-imposto .field{flex:1;margin-bottom:0}
 
@@ -89,15 +88,15 @@ textarea{resize:vertical;min-height:80px}
 @media (max-width:700px){.calc-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}}
 /* ajuste visual 2026: mesmo padrão do site */
 @media screen{
-  :root{--ink:#0A0908;--surface:#11100E;--white:#ECE8E1;--muted:#8A847D;--s:#11100E;--s2:#191714;--w:#ECE8E1;--m:#8A847D}
-  body{background:#0A0908;-webkit-font-smoothing:antialiased}
+  :root{--ink:#000000;--surface:#161618;--white:#F5F5F7;--muted:#8A847D;--s:#161618;--s2:#232326;--w:#F5F5F7;--m:#8A847D}
+  body{background:#000000;-webkit-font-smoothing:antialiased}
   body::before{display:none!important}
   .big-title,h1,h2{letter-spacing:-.025em}
   .btn,.pdf-btn,.hero-cta,.btn-cta,.copy-btn,.gen-btn,.prev-btn,.add-btn,.q-btn,.btn-submit,.btn-wpp,.btn-pdf,.q-skip,#gate-submit-btn{border-radius:999px!important}
   .ref-card,.invest-box,.card,.box,.panel,section .block,.opt,.q-card{border-radius:12px}
   input,select,textarea{border-radius:8px!important}
   .calc-table .item-name{min-width:140px}
-  .btn.primary,.q-btn,.btn-submit,.btn-wpp,#gate-submit-btn{background:#F5A020!important;color:#0A0908!important}
+  .btn.primary,.q-btn,.btn-submit,.btn-wpp,#gate-submit-btn{background:#F5A020!important;color:#000000!important}
 }
 </style>
 </head>
