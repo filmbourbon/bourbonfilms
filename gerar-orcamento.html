@@ -7,7 +7,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gerar Orçamento | Bourbon Films</title>
-<meta name="theme-color" content="#100D0A">
+<meta name="theme-color" content="#000000">
 
 <meta name="robots" content="noindex, nofollow">
 <style>
@@ -18,7 +18,7 @@
   --grad:linear-gradient(90deg,#F5A020,#E85C1A,#8B2800);
   --glass:rgba(255,255,255,.09);--glass-border:rgba(255,255,255,.18);
 }
-body{background:var(--ink);color:var(--white);font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;min-height:100vh}
+body{background:var(--ink);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;min-height:100vh}
 nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 56px;background:rgba(var(--bgc),.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-border)}
 .nav-logo img{height:28px;width:auto;object-fit:contain;display:block}
 .nav-back{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
@@ -27,7 +27,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 #area{max-width:720px;margin:0 auto;padding:60px 24px 100px}
 .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
-h1{font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(28px,4.5vw,42px);font-weight:800;margin-bottom:12px}
+h1{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:clamp(28px,4.5vw,42px);font-weight:800;margin-bottom:12px}
 .sub{font-size:14px;color:rgba(var(--fg),.62);margin-bottom:36px;line-height:1.6}
 
 .tab-row{display:flex;gap:10px;margin-bottom:32px;border-bottom:1px solid var(--glass-border)}
@@ -43,17 +43,17 @@ h1{font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display
 .field{margin-bottom:18px}
 .field label{display:block;font-size:13px;color:rgba(var(--fg),.70);margin-bottom:7px}
 .field .hint{display:block;font-size:11px;color:var(--muted);margin-top:4px}
-input,textarea,select{width:100%;padding:12px 14px;background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%);border:1px solid var(--glass-border);color:var(--white);font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;outline:none}
+input,textarea,select{width:100%;padding:12px 14px;background:linear-gradient(to bottom, transparent 0, var(--surface) 140px, var(--surface) calc(100% - 140px), transparent 100%);border:1px solid var(--glass-border);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;outline:none}
 input:focus,textarea:focus,select:focus{border-color:rgba(245,160,32,.5)}
 textarea{resize:vertical;min-height:80px}
 
-.btn{width:100%;padding:16px;margin-top:10px;background:var(--grad);color:#000;font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer}
+.btn{width:100%;padding:16px;margin-top:10px;background:var(--grad);color:#000;font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer}
 .btn:hover{opacity:.85}
 .btn.ghost{background:none;border:1px solid var(--glass-border);color:var(--white)}
 .btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
 
 #result{display:none;margin-top:36px;padding:24px;background:var(--glass);border:1px solid var(--glass-border)}
-#result h3{font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:16px;margin-bottom:12px}
+#result h3{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:16px;margin-bottom:12px}
 .link-box{display:flex;gap:8px;margin-bottom:14px}
 .link-box input{flex:1;font-size:12px;color:var(--gold)}
 .copy-btn{flex-shrink:0;padding:0 18px;background:none;border:1px solid rgba(245,160,32,.4);color:var(--gold);cursor:pointer;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
@@ -79,7 +79,7 @@ textarea{resize:vertical;min-height:80px}
 .calc-tier-opt.active{border-color:var(--gold);color:var(--gold);background:rgba(245,160,32,.06)}
 .calc-summary{padding:20px 22px;background:rgba(245,160,32,.05);border:1px solid rgba(245,160,32,.25)}
 .calc-line{display:flex;justify-content:space-between;font-size:13px;color:rgba(var(--fg),.65);padding:5px 0}
-.calc-line.total{font-family:Schibsted Grotesk,-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-weight:800;font-size:17px;color:var(--gold);border-top:1px solid rgba(245,160,32,.25);margin-top:8px;padding-top:12px}
+.calc-line.total{font-family:-apple-system,BlinkMacSystemFont,SF Pro Display,system-ui,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-weight:800;font-size:17px;color:var(--gold);border-top:1px solid rgba(245,160,32,.25);margin-top:8px;padding-top:12px}
 .calc-fee-imposto{display:flex;gap:10px;margin-bottom:18px}
 .calc-fee-imposto .field{flex:1;margin-bottom:0}
 
@@ -108,19 +108,18 @@ textarea{resize:vertical;min-height:80px}
 :root:not([data-theme="dark"]) img[src*="logo.svg"]{filter:invert(1) brightness(.35)}
 :root:not([data-theme="dark"]) input,:root:not([data-theme="dark"]) textarea,:root:not([data-theme="dark"]) select{color:#1D1D1F}
 </style>
-<link rel="stylesheet" href="assets/css/fonts.css">
 <style id="bf-premium">
-:root,:root[data-theme="dark"]{--fg:239,230,216;--bgc:16,13,10;--acc:#F0A63A;--ink:#100D0A;--surface:#1D1813;--s:#1D1813;--s2:#28211A;--white:#EFE6D8;--w:#EFE6D8;--muted:#9C8F7E;--m:#9C8F7E;--b:rgba(239,230,216,.12);color-scheme:dark}
-body{background:#100D0A!important;color:#EFE6D8}
+:root,:root[data-theme="dark"]{--fg:245,245,247;--bgc:0,0,0;--acc:#F5A020;--ink:#000000;--surface:#161617;--s:#161617;--s2:#232325;--white:#F5F5F7;--w:#F5F5F7;--muted:#86868B;--m:#86868B;--b:rgba(255,255,255,.1);color-scheme:dark}
+body{background:#000!important;color:#F5F5F7}
 </style>
 <style id="bf-premium2">
-h1,h2,.rec-title{font-family:"Bodoni Moda",Georgia,serif!important;font-weight:400!important;letter-spacing:-.015em!important;line-height:1.05!important}
+h1,h2,.rec-title{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif!important;font-weight:700!important;letter-spacing:-.035em!important;line-height:1.07!important}
 .gt{background:none!important;-webkit-text-fill-color:currentColor!important;color:inherit!important}
 body *{text-transform:none!important}
 body *:not(h1):not(h2):not(.rec-title){letter-spacing:.005em!important}
-button,a[class*=btn],[class*=btn]{border-radius:4px!important}
-#gate-submit-btn,.q-btn,.btn-submit,.btn.primary{background:#F5A020!important;color:#1A1208!important;font-weight:600!important}
-input,textarea,select{border-radius:4px!important}
+button,a[class*=btn],[class*=btn]{border-radius:999px!important}
+#gate-submit-btn,.q-btn,.btn-submit,.btn.primary{background:#F5A020!important;color:#000!important;font-weight:500!important}
+input,textarea,select{border-radius:12px!important}
 </style>
 <style id="bf-inputs">@media (max-width:900px){input,textarea,select{font-size:16px!important}}</style>
 </head>

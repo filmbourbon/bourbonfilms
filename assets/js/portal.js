@@ -1,136 +1,179 @@
 /* Bourbon Films · área do cliente e painel interno (Firebase) */
-import { firebaseConfig, ADMIN_EMAILS } from './firebase-config.js?v=20261021e';
+import { firebaseConfig, ADMIN_EMAILS } from './firebase-config.js?v=20261021q';
 const FB = 'https://www.gstatic.com/firebasejs/10.14.1/';
-let initializeApp, getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
-  sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
-  signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification,
-  getFirestore, collection, query, where, getDocs, doc, addDoc, updateDoc, deleteDoc, serverTimestamp;
+let A, U, F; // módulos do Firebase (app, auth, firestore)
 
 const ETAPAS = ['Briefing', 'Roteiro', 'Gravação', 'Edição', 'Revisão', 'Entregue'];
+/* Clientes da casa: aparecem no painel para consulta interna */
+const CLIENTES_BASE = ['Academia Korpus', 'Fazenda Coruja', 'Instituto Pachu', 'Matuta', "L'Oréal Paris", 'Assaí Atacadista', 'Unifip', 'Redepharma', 'CityMix'];
 const MODE = document.body.dataset.portal; // "cliente" ou "admin"
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const safeUrl = (u) => /^https:\/\//i.test(u || '') ? u : '#';
+const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 const show = (id) => document.querySelectorAll('[data-view]').forEach(v => { v.hidden = v.dataset.view !== id; });
 const msg = (text, ok) => { const m = $('#authMsg'); if (m) { m.textContent = text || ''; m.classList.toggle('ok', !!ok); } };
+const isAdminEmail = (e) => ADMIN_EMAILS.map(x => x.toLowerCase()).includes(String(e || '').toLowerCase());
 
 if (!firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith('COLE')) {
   show('setup');
 } else {
   Promise.all([import(FB + 'firebase-app.js'), import(FB + 'firebase-auth.js'), import(FB + 'firebase-firestore.js')])
-    .then(([A, U, F]) => {
-      ({ initializeApp } = A);
-      ({ getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
-        sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
-        signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification } = U);
-      ({ getFirestore, collection, query, where, getDocs, doc, addDoc, updateDoc, deleteDoc, serverTimestamp } = F);
-      start();
-    })
+    .then(([a, u, f]) => { A = a; U = u; F = f; start(); })
     .catch(() => { show('login'); msg('Não foi possível carregar o acesso. Verifique sua conexão e atualize a página.'); });
 }
 
 function erroAmigavel(e) {
   const c = (e && e.code) || '';
-  if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found')) return 'E-mail ou senha incorretos.';
-  if (c.includes('email-already-in-use')) return 'Este e-mail já tem conta. Use "Entrar" ou receba um link de acesso.';
-  if (c.includes('weak-password')) return 'A senha precisa ter pelo menos 6 caracteres.';
+  if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found')) return 'E-mail ou senha incorretos. Confira os dados ou use "Esqueci minha senha".';
+  if (c.includes('email-already-in-use')) return 'Este e-mail já tem conta. Use a aba "Entrar" ou "Continuar com o Google".';
+  if (c.includes('weak-password')) return 'Escolha uma senha com pelo menos 8 caracteres.';
   if (c.includes('invalid-email')) return 'Confira o e-mail digitado.';
-  if (c.includes('popup-closed')) return 'A janela do Google foi fechada antes de concluir.';
-  if (c.includes('too-many-requests')) return 'Muitas tentativas. Aguarde alguns minutos.';
+  if (c.includes('popup-closed') || c.includes('cancelled-popup')) return 'A janela do Google foi fechada antes de concluir. Tente de novo.';
+  if (c.includes('too-many-requests')) return 'Muitas tentativas seguidas. Aguarde alguns minutos e tente de novo.';
   if (c.includes('unauthorized-domain')) return 'Este endereço ainda não foi autorizado no Firebase (Authentication > Configurações > Domínios autorizados). [' + c + ']';
   if (c.includes('operation-not-allowed')) return 'Este método de login ainda não foi ativado no Firebase (Authentication > Método de login). [' + c + ']';
   if (c.includes('configuration-not-found')) return 'O login ainda não foi ativado no Firebase (Authentication > Vamos começar). [' + c + ']';
-  if (c.includes('api-key')) return 'Chave do Firebase inválida no firebase-config.js. [' + c + ']';
-  if (c.includes('network-request-failed')) return 'Sem conexão com o Firebase. Desative bloqueadores (Brave Shields) para este site e tente de novo. [' + c + ']';
-  return 'Não foi possível entrar agora. [' + (c || (e && e.message) || 'erro') + ']';
+  if (c.includes('network-request-failed')) return 'Sem conexão com o servidor de login. Desative bloqueadores (Brave Shields) para este site e tente de novo. [' + c + ']';
+  return 'Não foi possível concluir agora. Tente de novo. [' + (c || (e && e.message) || 'erro') + ']';
 }
-
 function erroBanco(e) {
   const c = (e && e.code) || '';
-  if (c.includes('permission-denied')) return 'Sem permissão no banco. Confira se as regras do Firestore foram publicadas. [' + c + ']';
+  if (c.includes('permission-denied')) return 'Sem permissão no banco. Publique as regras novas do Firestore. [' + c + ']';
   if (c.includes('not-found') || c.includes('failed-precondition')) return 'O banco Firestore ainda não foi criado neste projeto. [' + c + ']';
   if (c.includes('unavailable')) return 'Banco indisponível agora. Verifique a conexão ou bloqueadores. [' + c + ']';
   return 'Não foi possível carregar. [' + (c || (e && e.message) || 'erro') + ']';
 }
 
+/* abas acessíveis (setas do teclado trocam a aba) */
+function tabs(list, onChange) {
+  const btns = [...list.querySelectorAll('[role=tab]')];
+  const select = (b, focus) => {
+    btns.forEach(x => {
+      const on = x === b;
+      x.setAttribute('aria-selected', on ? 'true' : 'false');
+      x.tabIndex = on ? 0 : -1;
+      const p = document.getElementById(x.getAttribute('aria-controls'));
+      if (p) p.hidden = !on;
+    });
+    if (focus) b.focus();
+    if (onChange) onChange(b);
+  };
+  btns.forEach((b, i) => {
+    b.tabIndex = b.getAttribute('aria-selected') === 'true' ? 0 : -1;
+    b.addEventListener('click', () => select(b));
+    b.addEventListener('keydown', (ev) => {
+      if (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft') {
+        ev.preventDefault();
+        select(btns[(i + (ev.key === 'ArrowRight' ? 1 : btns.length - 1)) % btns.length], true);
+      }
+    });
+  });
+  return select;
+}
+
+/* abas Entrar / Criar conta funcionam mesmo antes do Firebase carregar */
+const tabList = $('.pt-tabs[aria-label="Acesso"]');
+if (tabList) tabs(tabList, () => msg(''));
+
 function start() {
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  const app = A.initializeApp(firebaseConfig);
+  const auth = U.getAuth(app);
   auth.languageCode = 'pt';
-  const db = getFirestore(app);
+  const db = F.getFirestore(app);
   const here = location.origin + location.pathname;
 
-  /* volta do link enviado por e-mail */
-  if (isSignInWithEmailLink(auth, location.href)) {
-    let email = '';
-    try { email = localStorage.getItem('bf-email-link') || ''; } catch (e) {}
-    if (!email) email = window.prompt('Confirme o e-mail em que você recebeu o link:') || '';
-    if (email) {
-      signInWithEmailLink(auth, email.trim(), location.href)
-        .then(() => { try { localStorage.removeItem('bf-email-link'); } catch (e) {} history.replaceState(null, '', here); })
-        .catch(e => { show('login'); msg(erroAmigavel(e)); });
-    }
-  }
-
-  const emailEl = $('#authEmail'), passEl = $('#authPass');
-  const getEmail = () => (emailEl.value || '').trim();
-
-  $('#btnLink').addEventListener('click', async () => {
-    const email = getEmail();
-    if (!email) return msg('Digite seu e-mail.');
-    try {
-      await sendSignInLinkToEmail(auth, email, { url: here, handleCodeInApp: true });
-      try { localStorage.setItem('bf-email-link', email); } catch (e) {}
-      msg('Pronto. Abra o link que enviamos para ' + email + '. Confira também o spam.', true);
-    } catch (e) { msg(erroAmigavel(e)); }
-  });
-
+  /* Google */
   $('#btnGoogle').addEventListener('click', async () => {
-    const p = new GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' });
-    try { await signInWithPopup(auth, p); }
+    const p = new U.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' });
+    msg('');
+    try { await U.signInWithPopup(auth, p); }
     catch (e) {
-      if ((e.code || '').includes('popup-blocked')) return signInWithRedirect(auth, p);
+      if ((e.code || '').includes('popup-blocked')) return U.signInWithRedirect(auth, p);
       msg(erroAmigavel(e));
     }
   });
 
-  $('#btnEntrar').addEventListener('click', async () => {
-    try { await signInWithEmailAndPassword(auth, getEmail(), passEl.value); } catch (e) { msg(erroAmigavel(e)); }
-  });
-  $('#btnCriar').addEventListener('click', async () => {
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, getEmail(), passEl.value);
-      await sendEmailVerification(cred.user, { url: here });
-    } catch (e) { msg(erroAmigavel(e)); }
+  /* entrar com e-mail e senha */
+  $('#pane-entrar').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const email = $('#authEmail').value.trim(), pass = $('#authPass').value;
+    if (!email || !pass) { msg('Preencha e-mail e senha.'); (email ? $('#authPass') : $('#authEmail')).focus(); return; }
+    const b = ev.submitter || $('#pane-entrar [type=submit]'); b.disabled = true; b.textContent = 'Entrando…';
+    try { await U.signInWithEmailAndPassword(auth, email, pass); }
+    catch (e) { msg(erroAmigavel(e)); }
+    b.disabled = false; b.textContent = 'Entrar';
   });
   $('#btnEsqueci').addEventListener('click', async () => {
-    const email = getEmail();
-    if (!email) return msg('Digite seu e-mail para receber o link de nova senha.');
-    try { await sendPasswordResetEmail(auth, email); msg('Enviamos um link para criar uma nova senha.', true); }
+    const email = $('#authEmail').value.trim();
+    if (!email) { msg('Digite seu e-mail acima para receber o link de nova senha.'); $('#authEmail').focus(); return; }
+    try { await U.sendPasswordResetEmail(auth, email); msg('Enviamos um link para criar uma nova senha. Confira também o spam.', true); }
     catch (e) { msg(erroAmigavel(e)); }
   });
-  $('#btnReenviar').addEventListener('click', async () => {
-    try { await sendEmailVerification(auth.currentUser, { url: here }); $('#verifyMsg').textContent = 'Enviado. Confira sua caixa de entrada.'; } catch (e) {}
-  });
-  document.querySelectorAll('[data-sair]').forEach(b => b.addEventListener('click', () => signOut(auth)));
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) { show('login'); return; }
-    if (!user.emailVerified) { $('#verifyEmail').textContent = user.email; show('verify'); return; }
-    document.querySelectorAll('[data-user]').forEach(el => { el.textContent = user.displayName || user.email; });
+  /* criar conta do zero */
+  const criar = $('#pane-criar');
+  if (criar) criar.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const nome = $('#cNome').value.trim(), email = $('#cEmail').value.trim();
+    const s1 = $('#cPass').value, s2 = $('#cPass2').value;
+    if (!nome) { msg('Digite seu nome completo.'); $('#cNome').focus(); return; }
+    if (!email) { msg('Digite seu e-mail.'); $('#cEmail').focus(); return; }
+    if (s1.length < 8) { msg('Escolha uma senha com pelo menos 8 caracteres.'); $('#cPass').focus(); return; }
+    if (s1 !== s2) { msg('As senhas não conferem.'); $('#cPass2').focus(); return; }
+    if (!$('#cAceite').checked) { msg('Para criar a conta, aceite a Política de Privacidade.'); $('#cAceite').focus(); return; }
+    const b = ev.submitter || criar.querySelector('[type=submit]'); b.disabled = true; b.textContent = 'Criando conta…';
+    try {
+      const cred = await U.createUserWithEmailAndPassword(auth, email, s1);
+      await U.updateProfile(cred.user, { displayName: nome });
+      try { await F.setDoc(F.doc(db, 'usuarios', cred.user.uid), { nome, email: email.toLowerCase(), criadoEm: F.serverTimestamp() }); } catch (e) {}
+      await U.sendEmailVerification(cred.user, { url: here });
+    } catch (e) { msg(erroAmigavel(e)); }
+    b.disabled = false; b.textContent = 'Criar conta';
+  });
+
+  /* confirmação de e-mail */
+  $('#btnReenviar').addEventListener('click', async () => {
+    try { await U.sendEmailVerification(auth.currentUser, { url: here }); $('#verifyMsg').textContent = 'Enviado. Confira sua caixa de entrada e o spam.'; }
+    catch (e) { $('#verifyMsg').textContent = erroAmigavel(e); }
+  });
+  $('#btnJaConfirmei').addEventListener('click', async () => {
+    try { await auth.currentUser.reload(); } catch (e) {}
+    if (auth.currentUser && auth.currentUser.emailVerified) { await auth.currentUser.getIdToken(true); entrar(auth.currentUser); }
+    else $('#verifyMsg').textContent = 'Ainda não identificamos a confirmação. Abra o link do e-mail e tente de novo.';
+  });
+  document.querySelectorAll('[data-sair]').forEach(b => b.addEventListener('click', () => U.signOut(auth)));
+
+  const entrar = async (user) => {
+    document.querySelectorAll('[data-user]').forEach(el => { el.textContent = (user.displayName || user.email).split(' ')[0]; });
     if (MODE === 'admin') {
-      if (!ADMIN_EMAILS.map(x => x.toLowerCase()).includes(user.email.toLowerCase())) { const n = $('[data-view="negado"] .muted'); if (n) n.textContent = 'Você entrou como ' + user.email + '. Este painel é só para a equipe da Bourbon Films.'; show('negado'); return; }
+      if (!isAdminEmail(user.email)) {
+        const n = $('[data-view="negado"] .muted'); if (n) n.textContent = 'Você entrou como ' + user.email + '. Este painel é só para a equipe da Bourbon Films.';
+        show('negado'); return;
+      }
       show('painel'); carregarAdmin(db);
     } else {
+      /* registra o perfil de quem entra pelo Google pela primeira vez */
+      try {
+        const ref = F.doc(db, 'usuarios', user.uid);
+        const snap = await F.getDoc(ref);
+        if (!snap.exists()) await F.setDoc(ref, { nome: user.displayName || '', email: (user.email || '').toLowerCase(), criadoEm: F.serverTimestamp() });
+      } catch (e) {}
       show('painel'); carregarCliente(db, user.email.toLowerCase());
     }
+  };
+
+  U.onAuthStateChanged(auth, (user) => {
+    if (!user) { show('login'); return; }
+    if (!user.emailVerified) { $('#verifyEmail').textContent = user.email; show('verify'); return; }
+    entrar(user);
   });
 }
 
 /* ---------- área do cliente ---------- */
 function etapasHTML(status) {
   return '<ol class="pt-steps" aria-label="Andamento">' + ETAPAS.map((e, i) =>
-    `<li class="${i < status ? 'done' : ''}${i === status ? ' now' : ''}"><span>${esc(e)}</span></li>`).join('') + '</ol>';
+    `<li class="${i < status ? 'done' : ''}${i === status ? ' now' : ''}"${i === status ? ' aria-current="step"' : ''}><span>${esc(e)}</span></li>`).join('') + '</ol>';
 }
 function entregasHTML(list) {
   if (!list || !list.length) return '<p class="pt-empty-line">As entregas aparecem aqui assim que estiverem prontas.</p>';
@@ -141,10 +184,10 @@ async function carregarCliente(db, email) {
   const box = $('#projetos');
   box.innerHTML = '<p class="muted">Carregando seus projetos…</p>';
   try {
-    const snap = await getDocs(query(collection(db, 'projetos'), where('clienteEmail', '==', email)));
+    const snap = await F.getDocs(F.query(F.collection(db, 'projetos'), F.where('clienteEmail', '==', email)));
     const itens = snap.docs.map(d => d.data()).sort((a, b) => (b.atualizadoEm?.seconds || 0) - (a.atualizadoEm?.seconds || 0));
     if (!itens.length) {
-      box.innerHTML = `<div class="pt-empty"><h2 class="h3">Nenhum projeto por aqui ainda.</h2><p class="muted">Se você já fechou um projeto com a gente, ele aparece aqui em breve.</p></div>`;
+      box.innerHTML = `<div class="pt-empty"><h2 class="h3">Nenhum projeto por aqui ainda.</h2><p class="muted">Assim que seu projeto começar, ele aparece aqui com etapas, prazo e entregas.</p></div>`;
       return;
     }
     box.innerHTML = itens.map(p => {
@@ -162,34 +205,41 @@ async function carregarCliente(db, email) {
 }
 
 /* ---------- painel interno ---------- */
-let CACHE = [];
+let CACHE = [], CLIENTES = [];
 async function carregarAdmin(db) {
   const lista = $('#projetos');
   const form = $('#projForm');
   const filesBox = $('#fFiles');
 
+  tabs($('.pt-tabs--admin'), (b) => { if (b.id === 'tabCli') listarClientes(); });
+
   const addFileRow = (f = {}) => {
     const row = document.createElement('div');
     row.className = 'pt-file-row';
-    row.innerHTML = `<input placeholder="Nome da entrega (ex.: Filme final)" value="${esc(f.titulo)}" data-k="titulo">
-      <input placeholder="Link do Google Drive" value="${esc(f.url)}" data-k="url" inputmode="url">
-      <input placeholder="Data" value="${esc(f.data)}" data-k="data">
+    row.innerHTML = `<input placeholder="Nome da entrega…" aria-label="Nome da entrega" value="${esc(f.titulo)}" data-k="titulo">
+      <input placeholder="https://drive.google.com/…" aria-label="Link do Google Drive" value="${esc(f.url)}" data-k="url" inputmode="url" spellcheck="false">
+      <input placeholder="Data…" aria-label="Data da entrega" value="${esc(f.data)}" data-k="data">
       <button type="button" class="icon-btn" aria-label="Remover entrega">×</button>`;
     row.querySelector('button').addEventListener('click', () => row.remove());
     filesBox.appendChild(row);
   };
   $('#addFile').onclick = () => addFileRow();
 
-  const abrir = (p) => {
+  const abrir = (p, nomeCliente) => {
     form.reset(); filesBox.innerHTML = '';
     form.dataset.id = p ? p.id : '';
     $('#formTitulo').textContent = p ? 'Editar projeto' : 'Novo projeto';
     $('#btnExcluir').hidden = !p;
+    $('#listaClientes').innerHTML = CLIENTES.map(c => `<option value="${esc(c.nome)}">`).join('');
     if (p) {
       form.clienteNome.value = p.clienteNome || ''; form.clienteEmail.value = p.clienteEmail || '';
       form.titulo.value = p.titulo || ''; form.status.value = String(p.status || 0);
       form.prazo.value = p.prazo || ''; form.observacao.value = p.observacao || '';
       (p.entregas || []).forEach(addFileRow);
+    } else if (nomeCliente) {
+      form.clienteNome.value = nomeCliente;
+      const c = CLIENTES.find(x => norm(x.nome) === norm(nomeCliente));
+      if (c && c.email) form.clienteEmail.value = c.email;
     }
     if (!filesBox.children.length) addFileRow();
     show('editor'); window.scrollTo(0, 0);
@@ -210,32 +260,67 @@ async function carregarAdmin(db) {
       prazo: form.prazo.value.trim(),
       observacao: form.observacao.value.trim(),
       entregas,
-      atualizadoEm: serverTimestamp()
+      atualizadoEm: F.serverTimestamp()
     };
     const b = $('#salvar'); b.disabled = true; b.textContent = 'Salvando…';
     try {
-      if (form.dataset.id) await updateDoc(doc(db, 'projetos', form.dataset.id), dados);
-      else await addDoc(collection(db, 'projetos'), { ...dados, criadoEm: serverTimestamp() });
+      if (form.dataset.id) await F.updateDoc(F.doc(db, 'projetos', form.dataset.id), dados);
+      else await F.addDoc(F.collection(db, 'projetos'), { ...dados, criadoEm: F.serverTimestamp() });
       show('painel'); await listar();
     } catch (e) { alert('Não foi possível salvar. [' + (e.code || e.message) + ']'); }
-    b.disabled = false; b.textContent = 'Salvar';
+    b.disabled = false; b.textContent = 'Salvar projeto';
   };
   $('#btnExcluir').onclick = async () => {
     if (!form.dataset.id || !confirm('Excluir este projeto? Isso não pode ser desfeito.')) return;
-    await deleteDoc(doc(db, 'projetos', form.dataset.id)); show('painel'); await listar();
+    await F.deleteDoc(F.doc(db, 'projetos', form.dataset.id)); show('painel'); await listar();
   };
 
   async function listar() {
     lista.innerHTML = '<p class="muted">Carregando…</p>';
     try {
-      const snap = await getDocs(collection(db, 'projetos'));
+      const snap = await F.getDocs(F.collection(db, 'projetos'));
       CACHE = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.atualizadoEm?.seconds || 0) - (a.atualizadoEm?.seconds || 0));
-      if (!CACHE.length) { lista.innerHTML = '<p class="muted">Nenhum projeto cadastrado. Clique em "Novo projeto".</p>'; return; }
+      if (!CACHE.length) { lista.innerHTML = '<p class="muted">Nenhum projeto cadastrado. Toque em "Novo projeto" para começar.</p>'; return; }
       lista.innerHTML = CACHE.map((p, i) => `<button type="button" class="pt-row" data-i="${i}">
-          <span><b>${esc(p.titulo)}</b><small>${esc(p.clienteNome || '')} · ${esc(p.clienteEmail)}</small></span>
+          <span><b>${esc(p.titulo)}</b><small>${esc(p.clienteNome || '')}${p.clienteEmail ? ', ' + esc(p.clienteEmail) : ''}</small></span>
           <span class="tag">${esc(ETAPAS[p.status] || ETAPAS[0])}</span></button>`).join('');
       lista.querySelectorAll('.pt-row').forEach(b => b.addEventListener('click', () => abrir(CACHE[+b.dataset.i])));
     } catch (e) { lista.innerHTML = '<p class="form-msg">' + esc(erroBanco(e)) + '</p>'; }
   }
-  listar();
+
+  /* clientes: os da casa (cadastrados uma vez) + quem criou conta no site */
+  async function listarClientes() {
+    const box = $('#clientes');
+    box.innerHTML = '<p class="muted">Carregando…</p>';
+    try {
+      let snap = await F.getDocs(F.collection(db, 'clientes'));
+      if (snap.empty) {
+        const batch = F.writeBatch(db);
+        CLIENTES_BASE.forEach(nome => batch.set(F.doc(F.collection(db, 'clientes')), { nome, origem: 'casa', criadoEm: F.serverTimestamp() }));
+        await batch.commit();
+        snap = await F.getDocs(F.collection(db, 'clientes'));
+      }
+      const casa = snap.docs.map(d => ({ id: d.id, ...d.data(), tipo: 'casa' }));
+      let contas = [];
+      try { contas = (await F.getDocs(F.collection(db, 'usuarios'))).docs.map(d => ({ id: d.id, ...d.data(), tipo: 'conta' })); } catch (e) {}
+      CLIENTES = [...casa, ...contas.filter(u => !isAdminEmail(u.email))].sort((a, b) => norm(a.nome || a.email).localeCompare(norm(b.nome || b.email)));
+      const nProj = (c) => CACHE.filter(p => (c.email && p.clienteEmail === c.email) || norm(p.clienteNome) === norm(c.nome)).length;
+      box.innerHTML = CLIENTES.map((c, i) => {
+        const n = nProj(c);
+        return `<button type="button" class="pt-row" data-c="${i}">
+          <span><b>${esc(c.nome || c.email)}</b><small>${c.tipo === 'casa' ? 'Cliente Bourbon' : 'Conta criada no site'}${c.email ? ', ' + esc(c.email) : ''}. ${n} ${n === 1 ? 'projeto' : 'projetos'} no painel.</small></span>
+          <span class="tag${c.tipo === 'casa' ? ' tag--casa' : ''}">${c.tipo === 'casa' ? 'Da casa' : 'Conta'}</span></button>`;
+      }).join('');
+      box.querySelectorAll('[data-c]').forEach(b => b.addEventListener('click', () => abrir(null, CLIENTES[+b.dataset.c].nome || '')));
+    } catch (e) { box.innerHTML = '<p class="form-msg">' + esc(erroBanco(e)) + '</p>'; }
+  }
+  $('#novoCliente').onsubmit = async (ev) => {
+    ev.preventDefault();
+    const nome = $('#ncNome').value.trim(); if (!nome) return;
+    try { await F.addDoc(F.collection(db, 'clientes'), { nome, origem: 'casa', criadoEm: F.serverTimestamp() }); $('#ncNome').value = ''; listarClientes(); }
+    catch (e) { alert('Não foi possível adicionar. [' + (e.code || e.message) + ']'); }
+  };
+
+  await listar();
+  listarClientes();
 }
