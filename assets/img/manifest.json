@@ -1,0 +1,213 @@
+{
+ "logos": [
+  {
+   "name": "clientes/redepharma",
+   "w": 229,
+   "h": 80,
+   "kb": 4,
+   "alt": "Redepharma"
+  },
+  {
+   "name": "clientes/loreal",
+   "w": 64,
+   "h": 12,
+   "kb": 0,
+   "alt": "L'Oréal"
+  },
+  {
+   "name": "clientes/matuta",
+   "w": 183,
+   "h": 80,
+   "kb": 3,
+   "alt": "Unifip"
+  },
+  {
+   "name": "clientes/sua-musica",
+   "w": 73,
+   "h": 26,
+   "kb": 1,
+   "alt": "Sua Música"
+  },
+  {
+   "name": "clientes/pixbet",
+   "w": 231,
+   "h": 80,
+   "kb": 4,
+   "alt": "Pixbet"
+  },
+  {
+   "name": "clientes/vaidebet",
+   "w": 332,
+   "h": 80,
+   "kb": 2,
+   "alt": "Vai de Bet"
+  },
+  {
+   "name": "clientes/korpus",
+   "w": 205,
+   "h": 80,
+   "kb": 4,
+   "alt": "Korpus"
+  },
+  {
+   "name": "clientes/coollab",
+   "w": 330,
+   "h": 80,
+   "kb": 5,
+   "alt": "Coollab"
+  },
+  {
+   "name": "clientes/fazenda-coruja",
+   "w": 500,
+   "h": 484,
+   "kb": 33,
+   "alt": "Fazenda Coruja"
+  }
+ ],
+ "mosaic": [
+  {
+   "name": "mosaico/m01",
+   "w": 540,
+   "h": 720,
+   "kb": 63
+  },
+  {
+   "name": "mosaico/m02",
+   "w": 720,
+   "h": 480,
+   "kb": 10
+  },
+  {
+   "name": "mosaico/m03",
+   "w": 720,
+   "h": 480,
+   "kb": 36
+  },
+  {
+   "name": "mosaico/m04",
+   "w": 720,
+   "h": 480,
+   "kb": 22
+  },
+  {
+   "name": "mosaico/m05",
+   "w": 720,
+   "h": 479,
+   "kb": 16
+  },
+  {
+   "name": "mosaico/m06",
+   "w": 720,
+   "h": 479,
+   "kb": 43
+  },
+  {
+   "name": "mosaico/m07",
+   "w": 720,
+   "h": 479,
+   "kb": 27
+  },
+  {
+   "name": "mosaico/m08",
+   "w": 480,
+   "h": 720,
+   "kb": 34
+  },
+  {
+   "name": "mosaico/m09",
+   "w": 720,
+   "h": 479,
+   "kb": 50
+  },
+  {
+   "name": "mosaico/m10",
+   "w": 269,
+   "h": 480,
+   "kb": 17
+  },
+  {
+   "name": "mosaico/m11",
+   "w": 269,
+   "h": 480,
+   "kb": 18
+  },
+  {
+   "name": "mosaico/m12",
+   "w": 269,
+   "h": 480,
+   "kb": 15
+  },
+  {
+   "name": "mosaico/m13",
+   "w": 269,
+   "h": 480,
+   "kb": 13
+  },
+  {
+   "name": "mosaico/m14",
+   "w": 269,
+   "h": 480,
+   "kb": 13
+  },
+  {
+   "name": "mosaico/m15",
+   "w": 269,
+   "h": 480,
+   "kb": 8
+  },
+  {
+   "name": "mosaico/m16",
+   "w": 269,
+   "h": 480,
+   "kb": 13
+  },
+  {
+   "name": "mosaico/m17",
+   "w": 269,
+   "h": 480,
+   "kb": 4
+  },
+  {
+   "name": "mosaico/m18",
+   "w": 269,
+   "h": 480,
+   "kb": 7
+  },
+  {
+   "name": "mosaico/m19",
+   "w": 269,
+   "h": 480,
+   "kb": 17
+  },
+  {
+   "name": "mosaico/m20",
+   "w": 269,
+   "h": 480,
+   "kb": 39
+  },
+  {
+   "name": "mosaico/m21",
+   "w": 269,
+   "h": 480,
+   "kb": 7
+  },
+  {
+   "name": "mosaico/m22",
+   "w": 480,
+   "h": 269,
+   "kb": 6
+  },
+  {
+   "name": "mosaico/m23",
+   "w": 480,
+   "h": 269,
+   "kb": 11
+  },
+  {
+   "name": "mosaico/m24",
+   "w": 480,
+   "h": 269,
+   "kb": 6
+  }
+ ]
+}

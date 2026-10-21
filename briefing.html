@@ -15,7 +15,7 @@
 <meta property="og:type" content="website">
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq('init','880805848416367');fbq('track','PageView');
+fbq('set','autoConfig',false,'880805848416367');fbq('init','880805848416367');fbq('track','PageView');
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Outfit:wght@300;400;500;600;700;800&display=swap">
@@ -193,7 +193,7 @@ nav,#prog-line,#gate-screen,#form-area,.save-chip,.rec-actions,#submit-area,#wpp
       Come&ccedil;ar briefing &rarr;
     </button>
   </div>
-  <p style="font-size:11px;color:rgba(232,228,222,.2);margin-top:28px">Seus dados s&atilde;o utilizados exclusivamente pela Bourbon Films.</p>
+  <p style="font-size:12px;color:rgba(236,232,225,.55);margin-top:28px;line-height:1.6">Seus dados viajam criptografados e s&atilde;o usados s&oacute; pela Bourbon Films. O CPF &eacute; embaralhado no seu aparelho antes do envio: ningu&eacute;m consegue ler o n&uacute;mero, nem a Bourbon. <a href="privacidade.html" style="color:#F5A020">Como protegemos seus dados</a></p>
 </div>
 
 <div id="form-area" style="display:none">
@@ -279,10 +279,30 @@ function showGateError(msg) {
   var el = document.getElementById('gate-error');
   if (el) { el.textContent = msg; el.style.display = 'block'; }
 }
+/* CPF embaralhado no aparelho da pessoa (PBKDF2, 310 mil rodadas): o número nunca sai do navegador */
+async function protegerCPF(cpf) {
+  var d = cpf.replace(/\D/g,'');
+  var enc = new TextEncoder();
+  var key = await crypto.subtle.importKey('raw', enc.encode(d), 'PBKDF2', false, ['deriveBits']);
+  var bits = await crypto.subtle.deriveBits({name:'PBKDF2', salt: enc.encode('bourbonfilms:cpf:v1'), iterations: 310000, hash:'SHA-256'}, key, 128);
+  var hex = Array.prototype.map.call(new Uint8Array(bits), function(b){return ('0'+b.toString(16)).slice(-2)}).join('');
+  return 'protegido:' + hex.match(/.{4}/g).join('-');
+}
 function gateSubmit() {
+  var raw = (document.getElementById('gate-cpf').value||'').trim();
+  if (raw && validarCPFGate(raw) && window.crypto && crypto.subtle) {
+    var b = document.getElementById('gate-submit-btn'); if (b) { b.disabled = true; b.style.opacity = '.6'; }
+    protegerCPF(raw).then(function(p){ document.getElementById('gate-cpf').value = ''; gateSubmitCore(p, raw); })
+      .catch(function(){ gateSubmitCore('', raw); })
+      .then(function(){ if (b) { b.disabled = false; b.style.opacity = ''; } });
+  } else {
+    gateSubmitCore(null, raw);
+  }
+}
+function gateSubmitCore(cpfProt, cpfRaw) {
   var email = (document.getElementById('gate-email').value||'').trim();
   var phone = (document.getElementById('gate-phone').value||'').trim();
-  var cpf   = (document.getElementById('gate-cpf').value||'').trim();
+  var cpf   = (cpfRaw||'').trim();
   var auth  = document.getElementById('gate-auth').checked;
   var err   = document.getElementById('gate-error');
   if (err) err.style.display = 'none';
@@ -292,6 +312,7 @@ function gateSubmit() {
   if (cpf && cpf.replace(/\D/g,'').length > 0 && !validarCPFGate(cpf)) { showGateError('CPF inv\u00e1lido.'); return; }
   if (!auth) { showGateError('Autorize o contato para continuar.'); return; }
 
+  if (cpf) cpf = cpfProt || 'protegido';
   // Store in window for main script
   window._gateData = { email: email, phone: phone, cpf: cpf };
 
