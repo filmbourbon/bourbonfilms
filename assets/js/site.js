@@ -281,17 +281,22 @@
     track.addEventListener('click',function(ev){if(ev.pointerType&&ev.pointerType!=='touch'&&ev.detail) ev.preventDefault()});
   }
 
-  /* galeria: ver todos */
+  /* galeria: ordem embaralhada a cada visita (Fisher-Yates) e botão "ver todos" */
+  document.querySelectorAll('[data-gal]').forEach(function(g){
+    var items=[].slice.call(g.children);
+    for(var i=items.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=items[i];items[i]=items[j];items[j]=t}
+    items.forEach(function(li){g.appendChild(li)});
+  });
   document.querySelectorAll('[data-more]').forEach(function(b){
-    var g=document.querySelector('[data-gal]');
+    var g=document.getElementById(b.dataset.more);if(!g) return;
+    b.dataset.label=b.textContent;
     b.addEventListener('click',function(){
       var open=g.classList.toggle('is-open');
       b.setAttribute('aria-expanded',open?'true':'false');
       b.textContent=open?'Mostrar menos':b.dataset.label;
-      if(open){g.querySelectorAll('.reveal:not(.is-in)').forEach(function(el){el.classList.add('is-in')})}
-      else g.scrollIntoView({block:'start'});
+      if(!open) g.scrollIntoView({block:'start'});
+      window.dispatchEvent(new Event('resize'));
     });
-    b.dataset.label=b.textContent;
   });
 
   /* player: abre o filme tocado em tela cheia e para ao fechar */
