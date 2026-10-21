@@ -1,5 +1,5 @@
 /* Bourbon Films · área do cliente e painel interno (Firebase) */
-import { firebaseConfig, ADMIN_EMAILS } from './firebase-config.js?v=20261021d';
+import { firebaseConfig, ADMIN_EMAILS } from './firebase-config.js?v=20261021e';
 const FB = 'https://www.gstatic.com/firebasejs/10.14.1/';
 let initializeApp, getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
   sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
