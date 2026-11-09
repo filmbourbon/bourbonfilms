@@ -405,7 +405,8 @@ async function registrarIdentificacao(){
         await f.setDoc(f.doc(db, 'pedidos', reg.id), {
           schema: SCHEMA, id: reg.id, versao: 1, status: 'identificado', origem: 'site/montar-projeto',
           uid: reg.uid, criadoEm: f.serverTimestamp(), atualizadoEm: f.serverTimestamp(),
-          escolhas: { ...estado, producao: [...estado.producao], pos: [...estado.pos] }, contexto: { cidade: '', prazo: '', notas: '' }, contato: { ...contato }
+          escolhas: { ...estado, producao: [...estado.producao], pos: [...estado.pos] }, contexto: { cidade: '', prazo: '', notas: '' }, contato: { ...contato },
+          ...(window.bfOrigem && window.bfOrigem() ? { atribuicao: window.bfOrigem() } : {})
         });
         reg.salvo = true;
       } else {
@@ -1130,6 +1131,7 @@ async function enviar(){
     contexto: { cidade: $('#f-cidade').value.trim(), prazo: $('#f-prazo').value, notas: $('#f-notas').value.trim() },
     contato: { ...contato }
   };
+  const origemV = window.bfOrigem ? window.bfOrigem() : null;
   const codigo = b64url(projeto);
   const texto = [
     `Novo projeto pelo site: ${projeto.id}`, '',
@@ -1138,6 +1140,7 @@ async function enviar(){
     `Objetivo: ${ROTULOS.objetivo[estado.objetivo] || 'Não informado'}`,
     `Formato: ${ROTULOS.formato[estado.formato] || 'Não informado'}`,
     `Quantidade: ${ROTULOS.quantidade[estado.quantidade] || 'Não informado'}`,
+    `Origem: ${origemV ? 'primeira ' + origemV.primeira.canal + (origemV.primeira.campanha ? ' (' + origemV.primeira.campanha + ')' : '') + ', última ' + origemV.ultima.canal : 'desconhecida'}`,
     `Produção: ${estado.producao.length ? estado.producao.map(v => ROTULOS.producao[v]).join(', ') : 'Vocês decidem'}`,
     `Acabamento: ${estado.pos.length ? estado.pos.map(v => ROTULOS.pos[v]).join(', ') : 'Vocês decidem'}`,
     `Cidade: ${projeto.contexto.cidade || 'Não informada'}`, `Prazo: ${ROTULOS.prazo[projeto.contexto.prazo]}`,
@@ -1152,7 +1155,7 @@ async function enviar(){
       const { f, db } = await firebase();
       const dados = { status: 'novo', escolhas: projeto.escolhas, contexto: projeto.contexto, contato: projeto.contato, enviadoEm: f.serverTimestamp(), atualizadoEm: f.serverTimestamp() };
       if (reg.salvo) await f.updateDoc(f.doc(db, 'pedidos', reg.id), dados);
-      else await f.setDoc(f.doc(db, 'pedidos', reg.id), { schema: SCHEMA, id: reg.id, versao: 1, origem: 'site/montar-projeto', criadoEm: f.serverTimestamp(), ...dados });
+      else await f.setDoc(f.doc(db, 'pedidos', reg.id), { schema: SCHEMA, id: reg.id, versao: 1, origem: 'site/montar-projeto', criadoEm: f.serverTimestamp(), ...(origemV ? { atribuicao: origemV } : {}), ...dados });
     })());
     noBanco = true;
   } catch {}
@@ -1163,7 +1166,7 @@ async function enviar(){
     fd.append('subject', `Projeto pelo site | ${contato.empresa || contato.nome} | ${projeto.id}`);
     fd.append('from_name', 'Bourbon Films | Monte seu projeto');
     fd.append('replyto', contato.email);
-    fd.append('message', texto + (noBanco ? '\n\nRegistrado no Command Center, em Comercial.' : '\n\nATENÇÃO: não foi registrado no Command Center. Use o código acima.'));
+    fd.append('message', texto + (noBanco ? '\n\nRegistrado na Central Bourbon, em Comercial.' : '\n\nATENÇÃO: não foi registrado na Central Bourbon. Use o código acima.'));
     fd.append('botcheck', '');
     const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
     const j = await r.json().catch(() => ({}));
