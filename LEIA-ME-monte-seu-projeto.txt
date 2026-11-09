@@ -1,0 +1,34 @@
+MONTE SEU PROJETO, VERSÃO COMPLETA
+
+O QUE MUDOU
+- Página nova: montar-projeto.html (3D sóbrio, 5 etapas, sem cadastro e sem CPF).
+- Todos os botões "Iniciar projeto" do site agora levam para ela. O briefing antigo continua no ar, com link discreto no fim da página nova.
+- Cada pedido é gravado no painel (Firebase) e também chega por e-mail.
+- Painel admin: aba nova "Pedidos" com filtro, detalhe, situação, link da proposta, anotação interna e histórico.
+- Botão "Montar orçamento" abre o gerador já preenchido.
+- Botão "Criar projeto no painel" marca o pedido como aprovado e abre o cadastro do projeto do cliente.
+- Política de privacidade atualizada.
+
+PARA FUNCIONAR, PUBLIQUE AS REGRAS NOVAS DO FIREBASE (uma vez)
+1. Abra console.firebase.google.com e entre no projeto Bourbon Films.
+2. Menu da esquerda: Firestore Database.
+3. Clique na aba Regras.
+4. Apague tudo o que está lá.
+5. Abra o arquivo firestore.rules deste ZIP, copie tudo e cole.
+6. Clique em Publicar.
+Sem esse passo, o pedido ainda chega por e-mail, mas não aparece na aba Pedidos.
+
+PARA PUBLICAR O SITE
+1. Abra o repositório do site no GitHub.
+2. Clique em Add file, depois Upload files.
+3. Arraste todo o conteúdo deste ZIP (não a pasta, o conteúdo).
+4. Clique em Commit changes.
+
+SITUAÇÕES DO PEDIDO
+Novo, Em análise, Aguardando cliente, Proposta enviada, Aprovado, Arquivado.
+"Em aberto" mostra tudo que não está aprovado nem arquivado.
+
+LIMITES CONHECIDOS
+- O site não mostra preço ao visitante.
+- Proteção contra spam: campo invisível e regras que só aceitam pedidos no formato certo. Para travar robôs de vez, o próximo passo é ativar o App Check do Firebase (gratuito no volume da Bourbon).
+- Pedidos que não viram projeto devem ser apagados em até 12 meses (está escrito na política de privacidade).

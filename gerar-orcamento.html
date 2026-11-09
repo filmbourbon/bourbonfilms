@@ -196,6 +196,12 @@ input,textarea,select{border-radius:12px!important}
       <div class="toggle-opt" id="optAnimacao" onclick="setTipo(true)">Animação</div>
     </div>
 
+    <div class="field" id="importBox" style="border:1px dashed rgba(245,160,32,.5);border-radius:12px;padding:14px">
+      <label for="importCode">Importar projeto do site (opcional)</label>
+      <input type="text" id="importCode" placeholder="Cole aqui o código que chegou no e-mail do Monte seu projeto" autocomplete="off" spellcheck="false">
+      <button type="button" class="btn" style="margin-top:10px" onclick="importarProjeto()">Importar</button>
+      <span class="hint" id="importMsg">Preenche cliente, projeto e um rascunho de objetivo. Nada é enviado ao cliente.</span>
+    </div>
     <form id="form">
       <div class="field">
         <label>Nome do cliente</label>
@@ -452,6 +458,38 @@ document.getElementById('copyBtn').addEventListener('click', function(){
 
 document.getElementById('feePct').addEventListener('input', calcAll);
 document.getElementById('impostoPct').addEventListener('input', calcAll);
+
+// ---------- IMPORTAR PROJETO DO SITE (montar-projeto.html, schema bf.projeto/1) ----------
+const ROT_IMP={objetivo:{marca:'apresentar a marca',produto:'anunciar um produto ou serviço',evento:'cobrir um evento',historia:'contar uma história real',recorrente:'produzir conteúdo todo mês',campanha:'lançar uma campanha',institucional:'produzir um filme institucional','nao-sei':'definir o melhor formato audiovisual'},
+formato:{horizontal:'no formato horizontal',vertical:'no formato vertical',ambos:'nos formatos horizontal e vertical','nao-sei':''},
+quantidade:{'1':'com um filme principal','2-4':'com um conjunto de 2 a 4 peças','5+':'com uma série de 5 ou mais peças','nao-sei':''}};
+function importarProjeto(){
+  const msg=document.getElementById('importMsg');
+  try{
+    let c=document.getElementById('importCode').value.trim().replace(/-/g,'+').replace(/_/g,'/');
+    while(c.length%4)c+='=';
+    const bin=atob(c); const bytes=Uint8Array.from(bin,ch=>ch.charCodeAt(0));
+    const p=JSON.parse(new TextDecoder().decode(bytes));
+    if(!p||p.schema!=='bf.projeto/1')throw new Error('schema');
+    const e=p.escolhas||{}, ct=p.contato||{};
+    document.getElementById('cliente').value=ct.empresa||ct.nome||'';
+    const obj=ROT_IMP.objetivo[e.objetivo]||'produzir um projeto audiovisual';
+    document.getElementById('projeto').value=(obj.charAt(0).toUpperCase()+obj.slice(1))+' | '+p.id;
+    const partes=['Produzir um trabalho audiovisual para '+obj,ROT_IMP.formato[e.formato]||'',ROT_IMP.quantidade[e.quantidade]||''].filter(Boolean);
+    let o=partes.join(', ')+'.';
+    if(p.contexto&&p.contexto.notas)o+='\n\nObservações do cliente: '+p.contexto.notas;
+    document.getElementById('objetivo').value=o;
+    msg.textContent='Importado: '+p.id+'. Revise o objetivo antes de gerar o link.';
+  }catch(err){ msg.textContent='Código inválido. Copie o código inteiro do e-mail.'; }
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  const m=location.hash.match(/^#importar=([A-Za-z0-9_-]+)$/);
+  if(!m)return;
+  try{showTab('prop')}catch(e){}
+  document.getElementById('importCode').value=m[1];
+  importarProjeto();
+  history.replaceState(null,'',location.pathname);
+});
 </script>
 </body>
 </html>

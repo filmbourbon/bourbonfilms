@@ -20,6 +20,28 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['nome', 'email', 'criadoEm']);
       allow delete: if isAdmin();
     }
+    // pedidos do "Monte seu projeto": qualquer visitante cria uma vez, só a equipe lê e altera
+    match /pedidos/{id} {
+      function texto(v, max) { return v is string && v.size() <= max; }
+      function pedidoValido(d) {
+        return d.keys().hasOnly(['schema', 'id', 'versao', 'status', 'origem', 'criadoEm', 'escolhas', 'contexto', 'contato'])
+          && d.schema == 'bf.projeto/1' && d.id == id && d.versao == 1 && d.status == 'novo'
+          && d.origem == 'site/montar-projeto' && d.criadoEm == request.time
+          && d.escolhas is map && d.escolhas.keys().hasOnly(['objetivo', 'formato', 'quantidade', 'pos'])
+          && (d.escolhas.objetivo == null || texto(d.escolhas.objetivo, 20))
+          && (d.escolhas.formato == null || texto(d.escolhas.formato, 20))
+          && (d.escolhas.quantidade == null || texto(d.escolhas.quantidade, 10))
+          && d.escolhas.pos is list && d.escolhas.pos.size() <= 6
+          && d.contexto is map && d.contexto.keys().hasOnly(['cidade', 'prazo', 'notas'])
+          && texto(d.contexto.cidade, 120) && texto(d.contexto.prazo, 20) && texto(d.contexto.notas, 2000)
+          && d.contato is map && d.contato.keys().hasOnly(['nome', 'empresa', 'whatsapp', 'email'])
+          && texto(d.contato.nome, 120) && d.contato.nome.size() > 0
+          && texto(d.contato.empresa, 120) && texto(d.contato.whatsapp, 30) && texto(d.contato.email, 160)
+          && (d.contato.whatsapp.size() > 0 || d.contato.email.size() > 0);
+      }
+      allow create: if id.matches('^BF-[0-9]{6}-[A-Z0-9]{4}$') && pedidoValido(request.resource.data);
+      allow read, update, delete: if isAdmin();
+    }
     match /{document=**} { allow read, write: if false; }
   }
 }
