@@ -1,0 +1,144 @@
+BOURBON FILMS | CENTRAL BOURBON | REGRAS DE CICLO DE VIDA DOS REGISTROS
+Versão de 09/11/2026
+
+==================================================
+LINGUAGEM PADRÃO (o mesmo nome significa a mesma coisa em todo o sistema)
+==================================================
+Editar ............. muda dados. "Salvar alterações" grava. "Cancelar" descarta sem gravar.
+Concluir ........... o trabalho terminou bem (projeto, demanda). Registra data e quem concluiu.
+Reabrir ............ volta um item concluído ou cancelado para andamento. Pede motivo e fica no histórico.
+Cancelar ........... interrompe sem concluir (projeto, proposta). Pede motivo. Não é o mesmo que concluir.
+Arquivar ........... tira das listas principais e do site, sem apagar. "Desarquivar" traz de volta.
+Excluir ............ manda para a LIXEIRA. Sai das listas, do site e da área do cliente. Recuperável por 30 dias.
+Restaurar .......... traz da Lixeira de volta. Conteúdo que estava no site volta como rascunho, para você revisar antes de publicar.
+Excluir definitivamente .. só dentro da Lixeira, só proprietário ou administrador, exige digitar EXCLUIR. Não tem volta.
+
+==================================================
+MATRIZ POR TIPO DE REGISTRO
+==================================================
+Formato: estados · ações · quem pode · regra de exclusão
+
+CLIENTES E CONTATOS
+- Estados: Ativo, Inativo, Relacionamento encerrado. Arquivado é independente.
+- Ações: criar, editar, cancelar, marcar inativo, reativar, encerrar relacionamento (com motivo), arquivar e desarquivar, versões, excluir, eliminar dados pessoais (LGPD).
+- Em lote: arquivar, reativar, marcar inativo, excluir.
+- Quem pode: Comercial, Administrador, Proprietário. A eliminação LGPD é só do Proprietário.
+- Exclusão:
+  - Com proposta aceita ou contrato, ou com projeto em andamento, a exclusão é bloqueada e o sistema oferece arquivar.
+  - Pedidos, propostas e projetos nunca são apagados junto. Eles continuam com o nome do cliente.
+- LGPD:
+  - Apaga nome de contato, e-mail, WhatsApp, cidade e notas do cadastro. É irreversível.
+  - Documentos comerciais e fiscais ficam enquanto a lei exigir.
+
+PEDIDOS
+- Estados: Identificado, Novo, Em análise, Orçamento, Proposta enviada, Negociação, Aprovado, Recusado, Arquivado.
+- Ações: editar, mudar etapa, arquivar, excluir para a Lixeira (com desfazer).
+- Quem pode: Comercial, Administrador, Proprietário.
+- Exclusão: propostas ligadas não são apagadas.
+
+PROPOSTAS
+- Estados: Rascunho, Enviada, Aceite registrado, Contrato, Recusada, Cancelada. Arquivada é independente.
+- Ações: criar, editar, nova versão, duplicar, registrar envio, aceite e contrato, cancelar (com motivo), reabrir, arquivar e desarquivar, excluir.
+- Depois de enviada, título, cliente, validade e condições ficam travados. Mudança só como nova versão, e o que o cliente recebeu fica no histórico.
+- Exclusão: proposta aceita ou com contrato não pode ser excluída. O sistema oferece arquivar.
+
+PROJETOS
+- Estados: Planejado, Em andamento, Pausado, Em revisão, Aguardando aprovação, Concluído, Cancelado. Arquivado só para concluídos e cancelados.
+- Transições:
+  - Planejado: em andamento ou cancelado.
+  - Em andamento: revisão, aguardando, pausado, concluído ou cancelado.
+  - Pausado: retomar ou cancelar.
+  - Revisão: andamento, aguardando ou concluído.
+  - Aguardando: andamento ou concluído.
+  - Concluído ou cancelado: reabrir (com motivo).
+- Concluir registra data e responsável. Reabrir não muda prazo acordado nem prorrogação: o cálculo de pontualidade continua com os dados registrados.
+- Toda mudança de situação fica em "Histórico de situações".
+- Excluir: o cliente deixa de ver o projeto e as entregas na área do cliente. Restaurar devolve o acesso.
+- Quem pode: Operacional, Comercial, Administrador, Proprietário.
+
+DEMANDAS
+- Estados: A fazer, Em andamento, Em revisão, Concluída.
+- Ações: criar, editar, cancelar edição, concluir, reabrir, excluir para a Lixeira.
+- Quem pode: Operacional, Administrador, Proprietário.
+
+TRABALHOS (portfólio)
+- Estados: Rascunho, Publicado, Arquivado.
+- Ações: criar, editar, duplicar, publicar, despublicar, arquivar e desarquivar, versões, excluir.
+- Exclusão: depoimentos vinculados perdem o link no site até o trabalho voltar. Nenhum link quebrado é exibido.
+
+MARCAS
+- Estados: Publicada, Oculta, Na Lixeira.
+- Ações: adicionar, enviar vários, editar, trocar imagem, publicar, ocultar (com desfazer), reordenar, excluir, restaurar, excluir definitivamente.
+- Exclusão: nenhuma outra informação é apagada junto.
+
+DEPOIMENTOS
+- Estados: Rascunho (revisão), Publicado, Arquivado.
+- Ações: criar, editar, vincular a trabalho, publicar (aprovar), despublicar, arquivar e desarquivar, versões, excluir.
+
+DIÁRIO DE PRODUÇÃO
+- Estados: Rascunho, Programado, Publicado, Arquivado.
+- Ações: criar, editar, publicar (exige autorização do cliente), programar, despublicar, arquivar, duplicar, versões, gerar Story, excluir.
+- Exclusão: avisa quantos depoimentos apontam para a matéria. O link deles some até ela voltar.
+
+BIBLIOTECA DE MÍDIA
+- Estados: Privada, No site.
+- Ações: enviar, editar legenda e crédito, excluir.
+- Exclusão: avisa em quais matérias a foto é usada.
+
+INSTAGRAM (curadoria)
+- Estados: Rascunho, Publicado.
+- Ações: criar, editar, publicar, excluir para a Lixeira.
+
+EDITOR DO SITE
+- Ações:
+  - editar;
+  - salvar, descartar e cancelar rascunho;
+  - publicar;
+  - desfazer a última publicação da página;
+  - voltar a página ao texto original;
+  - comparar e restaurar campo a campo em Alterações da equipe.
+- Não há exclusão. Toda publicação e toda reversão viram registro novo. Nada é sobrescrito no histórico.
+
+EQUIPE E CONVITES
+- Convite: criar, copiar mensagem, enviar pelo WhatsApp ou pelo seu e-mail, renovar, cancelar.
+- Colaborador: editar função, permissões personalizadas, restaurar permissões padrão, suspender, reativar, revogar acesso, histórico.
+- Revogar apaga só a autorização na Central. A conta Google da pessoa não é tocada.
+- O proprietário é definido nas regras do banco e não pode ser removido pela interface.
+- Ninguém altera a própria ficha (sem autoelevação).
+
+ALTERAÇÕES DA EQUIPE E AUDITORIA
+- Só leitura. Ninguém edita nem apaga, nem o proprietário.
+- Restaurar uma alteração cria um novo registro.
+- Itens na Lixeira precisam ser restaurados pela Lixeira, e não campo a campo.
+
+==================================================
+SEGURANÇA (aplicada no servidor do Google, não só na tela)
+==================================================
+- A exclusão definitiva no banco só é aceita se o registro já estiver na Lixeira E quem pede for proprietário ou administrador ativo.
+- Cada módulo exige o papel certo para ler e alterar. Esconder botão é só conforto: a regra do banco recusa de qualquer forma.
+- Duas pessoas editando o mesmo item: ao salvar, o sistema detecta que outra pessoa gravou depois e pergunta antes de substituir. A versão substituída fica em Versões.
+- Clique duplo em Excluir: a segunda ação é ignorada enquanto a primeira está em curso.
+- Falha de conexão: nada é gravado pela metade (cada operação é uma gravação única). A tela avisa e o registro fica como estava.
+
+==================================================
+NAVEGAÇÃO
+==================================================
+- Toda tela interna tem "← Voltar" para a lista correspondente, mesmo quando aberta direto pelo link.
+- Todo formulário tem "Cancelar".
+- Sair com alterações não salvas abre o aviso com três opções: Continuar editando, Salvar ou Descartar alterações.
+- Se nada foi alterado, não há aviso.
+
+==================================================
+RETENÇÃO
+==================================================
+- Lixeira: 30 dias para restaurar. Depois disso o item continua lá, marcado como vencido, até alguém autorizado excluir definitivamente.
+  A remoção automática exigiria servidor (plano pago).
+- Versões: cópia de consulta de cada estado anterior, visível só para administração.
+- Pedidos só com identificação, sem briefing: apagados pelo proprietário em "Dados e backup" após 90 dias.
+
+==================================================
+LIMITE DO QUE FOI TESTADO
+==================================================
+- Testes automatizados em navegador (1440 e 390 px) com banco simulado.
+- As regras do servidor foram escritas, mas não executadas contra o Firebase real (o emulador está bloqueado neste ambiente).
+- Antes de publicar, publique o firestore.rules novo.

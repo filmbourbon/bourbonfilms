@@ -202,7 +202,7 @@ body.cc{min-height:100svh;color:var(--text);-webkit-font-smoothing:antialiased}
 .cc-sheet-foot .cc-spacer{flex:1}
 
 /* confirmação */
-.cc-confirm{border:0;padding:0;border-radius:18px;background:var(--cc-panel);color:var(--text);width:min(420px,calc(100vw - 32px));box-shadow:0 30px 80px rgba(0,0,0,.7),inset 0 0 0 1px var(--cc-line-2)}
+.cc-confirm{margin:auto;max-height:calc(100svh - 32px);overflow:auto;border:0;padding:0;border-radius:18px;background:var(--cc-panel);color:var(--text);width:min(420px,calc(100vw - 32px));box-shadow:0 30px 80px rgba(0,0,0,.7),inset 0 0 0 1px var(--cc-line-2)}
 .cc-confirm::backdrop{background:rgba(0,0,0,.6)}
 .cc-confirm form{padding:22px;display:grid;gap:14px}
 .cc-confirm h2{font-size:1.125rem;letter-spacing:-.02em}
@@ -500,6 +500,32 @@ body.cc{min-height:100svh;color:var(--text);-webkit-font-smoothing:antialiased}
 .cc-row>.cc-num{margin-left:auto;text-align:right;flex:none;max-width:55%}
 @media (max-width:520px){.cc-row>.cc-num{white-space:normal;font-size:.8125rem}}
 
+/* ciclo de vida */
+.cc-spacer{flex:1 1 auto}
+.lx-lote{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--cc-panel);border:1px solid var(--gold);border-radius:12px;padding:8px 12px;margin-bottom:10px}
+.lx-lote b{font-size:.875rem;margin-right:4px}
+.lx-row,.cli-row{flex-wrap:wrap}
+.lx-ck{display:grid;place-items:center;width:28px;flex:none}
+.lx-ck input{width:20px;height:20px}
+.lx-row>span:nth-child(2){flex:1 1 220px;min-width:0}
+.lx-row small{display:block}
+.lx-venc{color:var(--gold)}
+.lx-acts{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.cc .lx-acts .btn,.cc .cli-abrir{min-height:36px;padding:0 12px;font-size:.8125rem}
+.lx-def{color:var(--bad)}
+.cli-a{flex:1 1 220px;min-width:0;text-decoration:none;color:inherit;display:grid;gap:2px}
+.cli-a small{color:var(--text-3)}
+.cli-pills{display:flex;flex-wrap:wrap;gap:6px}
+.cc-perigo{border-color:rgba(255,69,58,.35)}
+.pj-ciclo{max-width:820px;margin-bottom:14px}
+.cc-sujo-acts{flex-wrap:wrap}
+@media (max-width:520px){.lx-row>span:nth-child(2){flex:1 1 calc(100% - 44px)}.lx-acts{margin-left:0;width:100%;padding-left:36px;box-sizing:border-box}.cc .lx-acts .btn{flex:1 1 0}.cli-abrir{display:none}.cc .lx-lote .btn{flex:1 1 calc(50% - 8px)}}
+
+.lx-row small,.cli-a small{white-space:normal;overflow:visible;text-overflow:clip}
+.lx-row,.cli-row{min-width:0;max-width:100%;box-sizing:border-box}
+.cc-chips i{font-style:normal;opacity:.6;margin-left:4px}
+@media (max-width:520px){.cli-pills{flex:1 1 100%;padding-left:36px;box-sizing:border-box}.cli-a{flex-basis:calc(100% - 44px)}}
+
 </style>
 </head>
 <body class="cc" data-portal="admin">
@@ -660,6 +686,7 @@ const safeUrl = (u) => /^https:\/\//i.test(String(u || '').trim()) ? String(u).t
 
 /* ---------- interface ---------- */
 function toast(msg, ruim = false, acao = null) {
+  if (!ruim && /salv|criad|publicad|atualizad|arquivad|restaurad|conclu|reabert|enviad|cancelad|registrad|importad|excluíd|Lixeira|Pronto/i.test(msg)) { try { sujo = false; } catch {} }
   const t = document.createElement('div'); t.className = 'cc-toast' + (ruim ? ' is-bad' : ''); t.setAttribute('role', 'status');
   const s = document.createElement('span'); s.textContent = msg; t.appendChild(s);
   if (acao) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cc-toast-btn'; b.textContent = acao.rotulo; b.onclick = async () => { b.disabled = true; t.remove(); try { await acao.fn(); toast('Desfeito.'); } catch (e) { falha(e); } }; t.appendChild(b); }
@@ -672,7 +699,7 @@ function erroTxt(e) {
   if (c.includes('resource-exhausted')) return 'O limite gratuito diário do Firebase foi atingido. Tente amanhã ou revise o volume. [resource-exhausted]';
   return 'Algo deu errado. [' + (c || (e && e.message) || 'erro') + ']';
 }
-function falha(e) { console.error(e); toast(erroTxt(e), true); }
+function falha(e) { if (e && e.code === 'cancelado') return; console.error(e); toast(e && e.code === 'nao-existe' ? e.message : erroTxt(e), true); }
 function confirmar({ titulo, texto, ok = 'Confirmar', perigo = false, digitar = '', campo = '' }) {
   return new Promise(res => {
     const d = $('#cc-confirm'); $('#cf-t').textContent = titulo; $('#cf-p').textContent = texto || '';
@@ -711,11 +738,11 @@ async function carregarFirebase() {
 }
 const col = (n) => S.F.collection(S.db, n);
 const docRef = (n, id) => S.F.doc(S.db, n, id);
-async function listar(n, forcar = false) {
-  if (!forcar && S.cache[n]) return S.cache[n];
+async function listar(n, forcar = false, comExcluidos = false) {
+  if (!forcar && S.cache[n]) return comExcluidos ? S.cache[n] : S.cache[n].filter(x => !x.excluido);
   const snap = await S.F.getDocs(col(n));
   S.cache[n] = snap.docs.map(d => ({ ...d.data(), _id: d.id }));
-  return S.cache[n];
+  return comExcluidos ? S.cache[n] : S.cache[n].filter(x => !x.excluido);
 }
 const limparCache = (...ns) => ns.forEach(n => delete S.cache[n]);
 async function auditar(acao, alvo = '', detalhe = '') {
@@ -732,12 +759,18 @@ async function salvarDoc(colecao, id, dados, acao, rotulo) {
   let ant = null;
   if (id) {
     ant = (S.cache[colecao] || []).find(x => x._id === id);
-    if (!ant) { try { const sn = await F.getDoc(docRef(colecao, id)); if (sn.exists()) ant = { ...sn.data(), _id: id }; } catch {} }
+    let fresco = null; try { const sn = await F.getDoc(docRef(colecao, id)); if (sn.exists()) fresco = { ...sn.data(), _id: id }; } catch {}
+    if (ant && fresco && tsMs(fresco.atualizadoEm) > tsMs(ant.atualizadoEm) + 1000 && !dados.excluido && dados.excluido !== false) {
+      const quem = (fresco.atualizadoPor || 'outra pessoa').split('@')[0];
+      if (!(await confirmar({ titulo: 'Alguém salvou este item depois que você abriu', texto: `${quem} salvou às ${new Date(tsMs(fresco.atualizadoEm)).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}. Se você salvar agora, a versão dele é substituída pela sua (ela fica guardada em Versões).`, ok: 'Salvar por cima', perigo: true }))) { limparCache(colecao); throw Object.assign(new Error('cancelado'), { code: 'cancelado' }); }
+    }
+    if (fresco) ant = fresco;
     if (ant) { const { _id, ...resto } = ant; await guardarVersao(colecao, id, resto); }
     ref = docRef(colecao, id); await F.setDoc(ref, payload, { merge: true });
   } else {
     ref = await F.addDoc(col(colecao), { ...payload, criadoEm: F.serverTimestamp(), criadoPor: S.email });
   }
+  sujo = false;
   registrarAlteracoes(colecao, ref.id, ant, dados, rotulo, ant ? (dados.status === 'publicado' && ant.status !== 'publicado' ? 'publicou' : 'editou') : 'criou');
   limparCache(colecao);
   auditar(acao || (id ? 'editou' : 'criou'), `${colecao}/${ref.id}`, rotulo || '');
@@ -755,6 +788,7 @@ async function excluirDoc(colecao, id, rotulo) {
 /* ---------- ícones ---------- */
 const I = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const ICON = {
+  lixeira: I('<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/>'),
   alteracoes: I('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 3"/>'),
   editor: I('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'),
   diario: I('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/>'),
@@ -784,7 +818,7 @@ const ICON = {
 /* ---------- módulos e rotas ---------- */
 const ROTAS = {};
 function modulo(def) { ROTAS[def.id] = def; S.modulos.push(def); }
-const GRUPOS = [['Visão', ['painel', 'estatisticas', 'alteracoes']], ['Comercial', ['comercial', 'propostas', 'clientes', 'indicacoes']], ['Operação', ['projetos', 'demandas', 'entregas']], ['Site', ['editor', 'diario', 'marcas', 'trabalhos', 'depoimentos', 'midia', 'instagram', 'site', 'saude']], ['Divulgação', ['estudio']], ['Gestão', ['equipe', 'auditoria', 'integracoes', 'dados']]];
+const GRUPOS = [['Visão', ['painel', 'estatisticas', 'alteracoes']], ['Comercial', ['comercial', 'propostas', 'clientes', 'indicacoes']], ['Operação', ['projetos', 'demandas', 'entregas']], ['Site', ['editor', 'diario', 'marcas', 'trabalhos', 'depoimentos', 'midia', 'instagram', 'site', 'saude']], ['Divulgação', ['estudio']], ['Gestão', ['lixeira', 'equipe', 'auditoria', 'integracoes', 'dados']]];
 function montarNav() {
   const nav = $('#cc-nav');
   nav.innerHTML = GRUPOS.map(([g, ids]) => {
@@ -800,6 +834,7 @@ function contador(id, n) {
 }
 let rotaAtual = '';
 async function navegar() {
+  hashAtual = location.hash;
   const h = location.hash.replace(/^#\/?/, '') || 'painel';
   const [id, ...params] = h.split('/');
   let m = ROTAS[id];
@@ -811,10 +846,10 @@ async function navegar() {
   fecharMenu();
   sheetClose = null; if ($('#cc-sheet').open) $('#cc-sheet').close(); if ($('#cc-palette').open) $('#cc-palette').close();
   const v = $('#cc-view'); v.innerHTML = '<p class="cc-note">Carregando…</p>';
-  try { await m.render(v, params.map(decodeURIComponent)); } catch (e) { console.error(e); v.innerHTML = `<div class="cc-empty"><b>Não foi possível abrir esta área.</b>${esc(erroTxt(e))}</div>`; }
+  try { await m.render(v, params.map(decodeURIComponent)); completarVista(m, params); } catch (e) { console.error(e); v.innerHTML = `<div class="cc-empty"><b>Não foi possível abrir esta área.</b>${esc(erroTxt(e))}</div>`; }
   v.focus({ preventScroll: true }); window.scrollTo(0, 0);
 }
-addEventListener('hashchange', () => { if (S.user) navegar(); });
+addEventListener('hashchange', async () => { if (S.user && await guardaNavegacao()) navegar(); });
 const ir = (r) => { if (location.hash === '#/' + r) navegar(); else location.hash = '#/' + r; };
 
 /* menu no celular */
@@ -1093,7 +1128,8 @@ modulo({
    Restaurar também gera um novo registro. */
 const AREA = { trabalhos: 'Trabalhos', marcas: 'Marcas', depoimentos: 'Depoimentos', instagram: 'Instagram', diario: 'Diário de Produção', midia: 'Biblioteca de mídia', 'site/textos': 'Textos do site', 'site/layout': 'Layout do site', site: 'Números e SEO', pedidos: 'Pedidos', propostas: 'Propostas', clientes: 'Clientes e contatos', projetos: 'Projetos', tarefas: 'Demandas', entregas: 'Entregas', indicacoes: 'Indicações', equipe: 'Equipe', integracoes: 'Integrações' };
 const CAMPO = { titulo: 'Título', subtitulo: 'Subtítulo', nome: 'Nome', texto: 'Texto', autor: 'Autor', status: 'Situação', cliente: 'Cliente', legenda: 'Legenda', link: 'Link', encerramento: 'Encerramento', creditos: 'Créditos', ordem: 'Ordem', vinculo: 'Trabalho vinculado', valor: 'Valor', prazo: 'Prazo', responsavel: 'Responsável' };
-const IGNORAR = new Set(['atualizadoEm', 'atualizadoPor', 'criadoEm', 'criadoPor', 'em', 'por']);
+const IGNORAR = new Set(['atualizadoEm', 'atualizadoPor', 'criadoEm', 'criadoPor', 'em', 'por', 'excluidoEm', 'excluidoPor', 'estadoAntes']);
+const SO_LIXEIRA = new Set(['excluido', 'motivoExclusao']);
 const ehImagem = (v) => typeof v === 'string' && /^data:/.test(v);
 const resumoLayout = (v) => Object.entries(v || {}).map(([pg, L]) => `${(typeof PAG_NOME !== 'undefined' && PAG_NOME[pg]) || pg}: ordem ${(L.ordem || []).join(', ') || 'original'}${(L.ocultas || []).length ? '; ocultas: ' + L.ocultas.join(', ') : ''}${Object.keys(L.alinhar || {}).length ? '; centralizadas: ' + Object.keys(L.alinhar).join(', ') : ''}`).join('\n');
 const comoTexto = (v, k) => k === 'paginas' ? resumoLayout(v) : v == null ? '' : ehImagem(v) ? '[imagem]' : typeof v === 'string' ? v : (v && v.toMillis) ? quando(v) : JSON.stringify(v);
@@ -1113,7 +1149,8 @@ function registrarAlteracoes(colecao, docId, ant, dados, rotulo, tipo) {
         const a = ant ? ant[k] : undefined;
         if (JSON.stringify(a ?? null) === JSON.stringify(d ?? null)) continue;
         if (!ant && (d === '' || d == null || (Array.isArray(d) && !d.length))) continue;
-        const reg = { ...base, elemento: k, rotuloCampo: k === 'paginas' ? 'Layout das páginas' : (CAMPO[k] || k), antes: comoTexto(a, k).slice(0, 4000), depois: comoTexto(d, k).slice(0, 4000), restauravel: !!ant && cabe(a) && cabe(d) };
+        const reg = { ...base, elemento: k, rotuloCampo: k === 'paginas' ? 'Layout das páginas' : (CAMPO[k] || k), antes: comoTexto(a, k).slice(0, 4000), depois: comoTexto(d, k).slice(0, 4000), restauravel: !!ant && cabe(a) && cabe(d) && !SO_LIXEIRA.has(k) };
+        if (k === 'excluido') { reg.rotuloCampo = d ? 'Enviado para a Lixeira' : 'Restaurado da Lixeira'; reg.antes = a ? 'na Lixeira' : 'ativo'; reg.depois = d ? 'na Lixeira' : 'ativo'; }
         if (reg.restauravel) { reg.antesV = a === undefined ? null : a; reg.depoisV = d; }
         lote.set(S.F.doc(col('alteracoes')), reg); n++;
       }
@@ -1148,8 +1185,9 @@ async function valorAtual(r) {
   return s.data()[r.elemento] ?? null;
 }
 async function restaurarAlteracao(r) {
+  if (r.colecao !== 'site/textos') { const sn = await S.F.getDoc(docRef(r.colecao, r.docId)); if (sn.exists() && sn.data().excluido) return toast('Este item está na Lixeira. Restaure o item primeiro.', true); }
   const atual = await valorAtual(r);
-  if (atual === undefined) return toast('Este item foi excluído. Use "Restaurar item" na alteração de exclusão.', true);
+  if (atual === undefined) return toast('Este item foi excluído definitivamente. Não há versão compatível para restaurar aqui.', true);
   const alvo = r.colecao === 'site/textos' ? r.antes : r.antesV;
   const mudouDepois = JSON.stringify(atual ?? null) !== JSON.stringify((r.colecao === 'site/textos' ? r.depois : r.depoisV) ?? null);
   const ok = await confirmar(mudouDepois
@@ -1188,7 +1226,7 @@ function cartaoAlteracao(r, pode) {
     <div class="alt-diff" hidden><span>Diferenças</span><p>${diferencas(r.antes, r.depois)}</p></div>`}
     <div class="alt-acts">${r.inteiro ? '' : '<button type="button" class="btn btn--ghost" data-a="diff">Ver diferenças</button>'}
       ${pode && r.restauravel ? '<button type="button" class="btn btn--ghost" data-a="restaurar">Restaurar versão anterior</button>' : ''}
-      ${pode && r.tipo === 'excluiu' ? '<button type="button" class="btn btn--ghost" data-a="excluido">Restaurar item</button>' : ''}
+      ${r.tipo === 'excluiu' ? '<span class="cc-note">Excluído definitivamente: não pode ser restaurado.</span>' : ''}${r.elemento === 'excluido' ? '<a class="btn btn--ghost" href="#/lixeira">Abrir Lixeira</a>' : ''}
       <button type="button" class="btn btn--ghost" data-a="hist">Consultar histórico</button></div>
   </article>`;
 }
@@ -1406,26 +1444,28 @@ async function detalhePedido(v, id) {
   };
   $('#pd-proj').onclick = () => { sessionStorage.setItem('cc-novo-proj', JSON.stringify({ clienteNome: c.empresa || c.nome, clienteEmail: c.email || '', titulo: ROT_OBJ[e.objetivo] || 'Projeto', pedidoId: id })); ir('projetos/novo'); };
   $('#pd-del').onclick = async () => {
-    if (!(await confirmar({ titulo: 'Excluir este pedido?', texto: 'Os dados do cliente saem do banco. Uma cópia fica no histórico de versões, acessível ao proprietário.', ok: 'Excluir', perigo: true, digitar: 'EXCLUIR' }))) return;
-    try { await excluirDoc('pedidos', id, nomeLead(p)); toast('Pedido excluído.'); ir('comercial'); } catch (er) { falha(er); }
+    if (!(await confirmar({ titulo: 'Excluir este pedido?', texto: `O pedido sai do funil e vai para a Lixeira, onde pode ser restaurado por ${RETENCAO} dias. Propostas ligadas a ele não são apagadas.`, ok: 'Excluir pedido', perigo: true }))) return;
+    try { if (await paraLixeira('pedidos', p, { silencioso: true })) { toast('Pedido na Lixeira.', false, { rotulo: 'Desfazer', fn: async () => { await restaurar('pedidos', p); navegar(); } }); ir('comercial'); } } catch (er) { falha(er); }
   };
 }
 
 /* ---------- propostas ---------- */
-const ST_PROP = { rascunho: ['Rascunho', 'mute'], enviada: ['Enviada', 'warn'], aceita: ['Aceite registrado', 'ok'], contrato: ['Contrato formalizado', 'ok'], recusada: ['Recusada', 'bad'], expirada: ['Expirada', 'mute'], arquivada: ['Arquivada', 'mute'] };
+const ST_PROP = { cancelada: ['Cancelada', 'bad'], rascunho: ['Rascunho', 'mute'], enviada: ['Enviada', 'warn'], aceita: ['Aceite registrado', 'ok'], contrato: ['Contrato formalizado', 'ok'], recusada: ['Recusada', 'bad'], expirada: ['Expirada', 'mute'], arquivada: ['Arquivada', 'mute'] };
 const pillProposta = (p) => { const s = (p.status === 'enviada' && p.validade && Date.parse(p.validade) < Date.now()) ? 'expirada' : p.status; const x = ST_PROP[s] || ST_PROP.rascunho; return pill(x[0], x[1]); };
 modulo({
   id: 'propostas', titulo: 'Propostas', mod: 'crm',
   async render(v, [id, pedidoId]) {
     if (id === 'nova') return editarProposta(v, null, pedidoId);
     if (id) return editarProposta(v, id);
-    const lista = (await listar('propostas')).sort((a, b) => tsMs(b.atualizadoEm || b.criadoEm) - tsMs(a.atualizadoEm || a.criadoEm));
-    v.innerHTML = `<div class="cc-head"><div><h2>Propostas</h2><p>Cada proposta tem versões, validade e estados separados: criada, enviada, aceite registrado e contrato.</p></div><div class="cc-actions">${edita('crm') ? '<a class="btn btn--primary" href="#/propostas/nova">Nova proposta</a>' : ''}</div></div>
+    const todasP = (await listar('propostas')).sort((a, b) => tsMs(b.atualizadoEm || b.criadoEm) - tsMs(a.atualizadoEm || a.criadoEm));
+    const verArq = sessionStorage.getItem('cc-pp-arq') === '1', lista = todasP.filter(p => !!p.arquivado === verArq);
+    v.innerHTML = `<div class="cc-head"><div><h2>Propostas</h2><p>Cada proposta tem versões, validade e estados separados: criada, enviada, aceite registrado e contrato.</p></div><div class="cc-actions"><button class="btn btn--ghost" type="button" onclick="sessionStorage.setItem('cc-pp-arq', sessionStorage.getItem('cc-pp-arq') === '1' ? '0' : '1');dispatchEvent(new HashChangeEvent('hashchange'))">${verArq ? 'Ver ativas' : `Arquivadas (${todasP.filter(p => p.arquivado).length})`}</button>${edita('crm') ? '<a class="btn btn--primary" href="#/propostas/nova">Nova proposta</a>' : ''}</div></div>
     ${lista.length ? `<div class="cc-table-wrap"><table class="cc-table"><thead><tr><th>Proposta</th><th>Situação</th><th class="cc-num">Valor</th><th>Validade</th><th>Atualizada</th></tr></thead><tbody>${lista.map(p => `<tr data-href="#/propostas/${attr(p._id)}" tabindex="0"><td><b>${esc(p.titulo)}</b><small>${esc(p.cliente || '')} · versão ${(p.versoes || []).length || 1}</small></td><td>${pillProposta(p)}</td><td class="cc-num">${p.valor ? BRL.format(p.valor) : '·'}</td><td class="cc-num">${p.validade ? esc(dia(Date.parse(p.validade))) : '·'}</td><td class="cc-num">${esc(relativo(p.atualizadoEm || p.criadoEm))}</td></tr>`).join('')}</tbody></table></div>`
     : '<div class="cc-empty"><b>Nenhuma proposta ainda.</b>Abra um pedido e clique em Nova proposta, ou crie uma aqui.</div>'}`;
     $$('tr[data-href]', v).forEach(tr => { tr.onclick = () => location.hash = tr.dataset.href; tr.onkeydown = (e) => { if (e.key === 'Enter') location.hash = tr.dataset.href; }; });
   }
 });
+const p0Trava = (id) => id && (S.cache.propostas || []).find(x => x._id === id);
 async function editarProposta(v, id, pedidoId) {
   const lista = await listar('propostas');
   const p = id ? lista.find(x => x._id === id) : null;
@@ -1434,22 +1474,23 @@ async function editarProposta(v, id, pedidoId) {
   const ped = peds.find(x => x._id === (p?.pedidoId || pedidoId));
   const versoes = p?.versoes || [];
   const ro = !edita('crm');
+  const travada = !!(p0Trava(id) && ['enviada', 'aceita', 'contrato'].includes(p0Trava(id).status));
   const val = new Date(); val.setDate(val.getDate() + 15);
   v.innerHTML = `<div class="cc-head"><div><p class="cc-note">${p ? 'Proposta' : 'Nova proposta'}${ped ? ' · pedido ' + esc(ped._id) : ''}</p><h2>${esc(p?.titulo || (ped ? 'Proposta para ' + nomeLead(ped) : 'Nova proposta'))}</h2></div>${p ? `<div class="cc-actions">${pillProposta(p)}</div>` : ''}</div>
   <div class="cc-cols cc-split">
     <form class="cc-panel cc-form" id="pp" novalidate>
-      <div class="cc-field"><label for="pp-t">Título</label><input id="pp-t" required value="${attr(p?.titulo || (ped ? 'Proposta ' + (ped.contato?.empresa || ped.contato?.nome) : ''))}" ${ro ? 'disabled' : ''}></div>
-      <div class="cc-f2"><div class="cc-field"><label for="pp-ped">Pedido</label><select id="pp-ped" ${ro ? 'disabled' : ''}><option value="">Sem pedido</option>${peds.map(x => `<option value="${attr(x._id)}" ${(p?.pedidoId || pedidoId) === x._id ? 'selected' : ''}>${esc(nomeLead(x))} · ${esc(x._id)}</option>`).join('')}</select></div>
-      <div class="cc-field"><label for="pp-cli">Cliente</label><input id="pp-cli" value="${attr(p?.cliente || (ped ? nomeLead(ped) : ''))}" ${ro ? 'disabled' : ''}></div></div>
-      <div class="cc-f2"><div class="cc-field"><label for="pp-val">Validade</label><input id="pp-val" type="date" value="${attr(p?.validade || val.toISOString().slice(0, 10))}" ${ro ? 'disabled' : ''}></div>
-      <div class="cc-field"><label for="pp-cond">Condições</label><input id="pp-cond" value="${attr(p?.condicoes || '50% na assinatura, 50% na entrega')}" ${ro ? 'disabled' : ''}></div></div>
-      ${ro ? '' : `<details ${p ? '' : 'open'}><summary>${p ? 'Registrar nova versão' : 'Primeira versão'}</summary><div class="cc-form">
+      <div class="cc-field"><label for="pp-t">Título</label><input id="pp-t" required value="${attr(p?.titulo || (ped ? 'Proposta ' + (ped.contato?.empresa || ped.contato?.nome) : ''))}" ${ro || travada ? 'disabled' : ''}></div>
+      <div class="cc-f2"><div class="cc-field"><label for="pp-ped">Pedido</label><select id="pp-ped" ${ro || travada ? 'disabled' : ''}><option value="">Sem pedido</option>${peds.map(x => `<option value="${attr(x._id)}" ${(p?.pedidoId || pedidoId) === x._id ? 'selected' : ''}>${esc(nomeLead(x))} · ${esc(x._id)}</option>`).join('')}</select></div>
+      <div class="cc-field"><label for="pp-cli">Cliente</label><input id="pp-cli" value="${attr(p?.cliente || (ped ? nomeLead(ped) : ''))}" ${ro || travada ? 'disabled' : ''}></div></div>
+      <div class="cc-f2"><div class="cc-field"><label for="pp-val">Validade</label><input id="pp-val" type="date" value="${attr(p?.validade || val.toISOString().slice(0, 10))}" ${ro || travada ? 'disabled' : ''}></div>
+      <div class="cc-field"><label for="pp-cond">Condições</label><input id="pp-cond" value="${attr(p?.condicoes || '50% na assinatura, 50% na entrega')}" ${ro || travada ? 'disabled' : ''}></div></div>
+      ${ro ? '' : `<details ${p ? '' : 'open'}><summary>${p ? 'Registrar nova versão' : 'Primeira versão'}</summary>${travada ? '<p class="cc-note" style="margin-top:8px">Esta proposta já foi enviada: o que o cliente recebeu não muda. Alterações entram como nova versão, com histórico.</p>' : ''}<div class="cc-form">
         <p class="cc-note">Gere a proposta no <a href="gerar-orcamento.html" target="_blank" rel="noopener">gerador de orçamento</a> (custos, fee e impostos ficam lá) e cole aqui o link e o valor final.</p>
         <div class="cc-f2"><div class="cc-field"><label for="pp-link">Link da proposta</label><input id="pp-link" type="url" inputmode="url" spellcheck="false" placeholder="https://bourbonfilms.com.br/orcamento.html?d=…"></div>
         <div class="cc-field"><label for="pp-v">Valor final</label><input id="pp-v" inputmode="numeric" placeholder="Ex.: 4480"></div></div>
         <div class="cc-field"><label for="pp-nv">O que mudou</label><input id="pp-nv" placeholder="Ex.: incluída cobertura do lançamento"></div></div></details>`}
       <p class="cc-err" id="pp-err" role="alert"></p>
-      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--primary" type="submit" id="pp-save">${p ? 'Salvar' : 'Criar proposta'}</button>${p ? '<button class="btn btn--ghost" type="button" id="pp-dup">Duplicar</button><button class="btn btn--danger" type="button" id="pp-del">Excluir</button>' : ''}</div>`}
+      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--primary" type="submit" id="pp-save">${p ? 'Salvar' : 'Criar proposta'}</button>${p ? `<button class="btn btn--ghost" type="button" id="pp-dup">Duplicar</button>${['rascunho', 'enviada'].includes(p.status) ? '<button class="btn btn--ghost" type="button" id="pp-can">Cancelar proposta</button>' : ''}${p.status === 'cancelada' ? '<button class="btn btn--ghost" type="button" id="pp-reab">Reabrir</button>' : ''}<button class="btn btn--ghost" type="button" id="pp-arq">${p.arquivado ? 'Desarquivar' : 'Arquivar'}</button><span class="cc-spacer"></span><button class="btn btn--danger" type="button" id="pp-del">Excluir</button>` : ''}</div>`}
     </form>
     <div class="cc-grid">
       ${p ? `<section class="cc-panel"><h3>Estado comercial</h3><p class="cc-note" style="margin-bottom:12px">Abrir o link não é aceite. Registre cada passo quando ele acontecer de fato.</p>
@@ -1500,46 +1541,31 @@ async function editarProposta(v, id, pedidoId) {
       toast('Registrado.'); atualizarAlertas(); editarProposta(v, p._id);
     } catch (er) { falha(er); }
   });
+  if ($('#pp-can')) $('#pp-can').onclick = async () => { const mot = await confirmar({ titulo: 'Cancelar proposta?', texto: 'Ela deixa de valer e fica registrada como cancelada. Dá para reabrir depois.', ok: 'Cancelar proposta', perigo: true, campo: 'Motivo' }); if (!mot) return; try { await salvarDoc('propostas', p._id, { status: 'cancelada', canceladaEm: new Date().toISOString().slice(0, 10), motivoCancelamento: String(mot).slice(0, 200), statusAntesCancelar: p.status }, 'cancelou proposta', p.titulo); toast('Proposta cancelada.'); navegar(); } catch (er) { falha(er); } };
+  if ($('#pp-reab')) $('#pp-reab').onclick = async () => { try { await salvarDoc('propostas', p._id, { status: p.statusAntesCancelar || 'rascunho', canceladaEm: '', motivoCancelamento: '' }, 'reabriu proposta', p.titulo); toast('Proposta reaberta.'); navegar(); } catch (er) { falha(er); } };
+  if ($('#pp-arq')) $('#pp-arq').onclick = async () => { try { await salvarDoc('propostas', p._id, { arquivado: !p.arquivado }, p.arquivado ? 'desarquivou proposta' : 'arquivou proposta', p.titulo); toast(p.arquivado ? 'Proposta de volta à lista.' : 'Proposta arquivada.', false, p.arquivado ? null : { rotulo: 'Desfazer', fn: async () => { await salvarDoc('propostas', p._id, { arquivado: false }, 'desarquivou proposta', p.titulo); navegar(); } }); ir('propostas'); } catch (er) { falha(er); } };
   if ($('#pp-dup')) $('#pp-dup').onclick = async () => {
     const { _id, criadoEm, atualizadoEm, enviadaEm, aceiteEm, contratoEm, recusadaEm, ...resto } = p;
     try { const nid = await salvarDoc('propostas', null, { ...resto, titulo: p.titulo + ' (cópia)', status: 'rascunho', versoes: (p.versoes || []).slice(-1).map(x => ({ ...x, n: 1 })) }, 'duplicou proposta', p.titulo); toast('Cópia criada.'); ir('propostas/' + nid); } catch (er) { falha(er); }
   };
   if ($('#pp-del')) $('#pp-del').onclick = async () => {
-    if (!(await confirmar({ titulo: 'Excluir esta proposta?', texto: 'Uma cópia fica no histórico de versões.', ok: 'Excluir', perigo: true }))) return;
-    try { await excluirDoc('propostas', p._id, p.titulo); toast('Proposta excluída.'); ir('propostas'); } catch (er) { falha(er); }
+    if (['aceita', 'contrato'].includes(p.status)) { if (await confirmar({ titulo: 'Proposta aceita não pode ser excluída', texto: 'Ela documenta um acordo com o cliente e precisa ser preservada. Você pode arquivá-la: sai da lista e continua no histórico.', ok: 'Arquivar proposta' })) { try { await salvarDoc('propostas', p._id, { arquivado: true }, 'arquivou proposta', p.titulo); toast('Proposta arquivada.'); ir('propostas'); } catch (er) { falha(er); } } return; }
+    try { if (await paraLixeira('propostas', p)) ir('propostas'); } catch (er) { falha(er); }
   };
 }
 
 /* ---------- clientes: casa + contatos do CRM agrupados por empresa ---------- */
-modulo({
-  id: 'clientes', titulo: 'Clientes e contatos', mod: 'crm',
-  async render(v) {
-    const [casa, ped, prop, proj] = await Promise.all([listar('clientes').catch(() => []), listar('pedidos').catch(() => []), listar('propostas').catch(() => []), listar('projetos').catch(() => [])]);
-    const mapa = new Map();
-    const add = (nome, campo) => { const k = norm(nome); if (!k) return null; if (!mapa.has(k)) mapa.set(k, { nome, pedidos: 0, propostas: 0, aprovados: 0, projetos: 0, casa: false, ultimo: 0 }); const o = mapa.get(k); if (campo) o[campo]++; return o; };
-    casa.forEach(c => { const o = add(c.nome); if (o) { o.casa = true; o.especial = c.reconhecimento === 'especial'; o.desde = c.clienteDesde || ''; } });
-    ped.filter(p => etapaDe(p) !== 'identificado').forEach(p => { const o = add(nomeLead(p), 'pedidos'); if (o) { o.ultimo = Math.max(o.ultimo, tsMs(p.criadoEm)); if (etapaDe(p) === 'aprovado') o.aprovados++; } });
-    prop.forEach(p => add(p.cliente, 'propostas'));
-    proj.forEach(p => add(p.clienteNome, 'projetos'));
-    const lista = [...mapa.values()].sort((a, b) => (b.pedidos + b.projetos) - (a.pedidos + a.projetos) || a.nome.localeCompare(b.nome));
-    v.innerHTML = `<div class="cc-head"><div><h2>Clientes e contatos</h2><p>Histórico por empresa: pedidos, propostas e projetos. Contatos importados não entram em comunicações de marketing sem consentimento registrado.</p></div>
-      ${edita('crm') ? '<form class="cc-actions" id="nc"><button class="btn btn--ghost" type="button" id="nc-csv">Importar CSV</button><input id="nc-n" placeholder="Nome do cliente" aria-label="Nome do novo cliente" style="width:220px"><button class="btn btn--primary" type="submit">Adicionar</button></form>' : ''}</div>
-      <div class="cc-table-wrap"><table class="cc-table"><thead><tr><th>Cliente</th><th class="cc-num">Pedidos</th><th class="cc-num">Propostas</th><th class="cc-num">Projetos</th><th></th></tr></thead><tbody>${lista.map(c => `<tr data-q="${attr(c.nome)}" tabindex="0"><td><b>${esc(c.nome)}</b><small>${c.casa ? 'Cliente da casa' : 'Chegou pelo comercial'}${c.ultimo ? ' · último pedido ' + esc(relativo(c.ultimo)) : ''}</small></td><td class="cc-num">${c.pedidos}</td><td class="cc-num">${c.propostas}</td><td class="cc-num">${c.projetos}</td><td>${reconhecimento(c)}</td></tr>`).join('')}</tbody></table></div>`;
-    $$('tr[data-q]', v).forEach(tr => { tr.onclick = () => { sessionStorage.setItem('cc-crm-f', 'todos'); location.hash = '#/comercial'; setTimeout(() => { const q = $('#crm-q'); if (q) { q.value = tr.dataset.q; q.dispatchEvent(new Event('input')); } }, 300); }; });
-    if ($('#nc-csv')) $('#nc-csv').onclick = () => importarContatos(casa);
-    if ($('#nc')) $('#nc').onsubmit = async (e) => { e.preventDefault(); const n = $('#nc-n').value.trim(); if (!n) return; try { await salvarDoc('clientes', null, { nome: n, origem: 'casa' }, 'criou cliente', n); toast('Cliente adicionado.'); navegar(); } catch (er) { falha(er); } };
-  }
-});
-
 /* ---------- área do cliente: projetos que o cliente acompanha ---------- */
 const ETAPAS_PROJ = ['Briefing', 'Roteiro', 'Gravação', 'Edição', 'Revisão', 'Entregue'];
 modulo({
   id: 'projetos', titulo: 'Projetos', mod: 'operacao',
   async render(v, [id]) {
     if (id) return editarProjeto(v, id === 'novo' ? null : id);
-    const lista = (await listar('projetos')).sort((a, b) => tsMs(b.atualizadoEm) - tsMs(a.atualizadoEm));
-    v.innerHTML = `<div class="cc-head"><div><h2>Área do cliente</h2><p>O que cada cliente vê em bourbonfilms.com.br/cliente.html: etapa, previsão, recado e entregas.</p></div><div class="cc-actions">${edita('crm') || edita('operacao') ? '<a class="btn btn--primary" href="#/projetos/novo">Novo projeto</a>' : ''}</div></div>
-      ${lista.length ? `<div class="cc-list">${lista.map(p => `<a class="cc-row" href="#/projetos/${attr(p._id)}"><span><b>${esc(p.titulo)}</b><small>${esc(p.clienteNome || '')}${p.clienteEmail ? ' · ' + esc(p.clienteEmail) : ' · sem e-mail de acesso'}</small></span>${pill(ETAPAS_PROJ[Number(p.status) || 0], Number(p.status) === 5 ? 'ok' : 'info')}</a>`).join('')}</div>` : '<div class="cc-empty"><b>Nenhum projeto na área do cliente.</b>Crie a partir de um pedido aprovado ou aqui.</div>'}`;
+    const todos = (await listar('projetos')).sort((a, b) => tsMs(b.atualizadoEm) - tsMs(a.atualizadoEm));
+    const FP = { abertos: p => !p.arquivado && !['concluido', 'cancelado'].includes(p.situacao || 'andamento'), concluidos: p => !p.arquivado && p.situacao === 'concluido', cancelados: p => !p.arquivado && p.situacao === 'cancelado', arquivados: p => p.arquivado };
+    const fp = FP[sessionStorage.getItem('cc-pj-f')] ? sessionStorage.getItem('cc-pj-f') : 'abertos', lista = todos.filter(FP[fp]);
+    v.innerHTML = `<div class="cc-head"><div><h2>Projetos</h2><p>Situação interna de cada projeto e o que o cliente vê em bourbonfilms.com.br/cliente.html.</p></div><div class="cc-actions">${edita('crm') || edita('operacao') ? '<a class="btn btn--primary" href="#/projetos/novo">Novo projeto</a>' : ''}</div></div>
+      <div class="cc-chips" style="margin-bottom:12px">${[['abertos', 'Em aberto'], ['concluidos', 'Concluídos'], ['cancelados', 'Cancelados'], ['arquivados', 'Arquivados']].map(([k, n]) => `<label><input type="radio" name="pj-f" value="${k}" ${fp === k ? 'checked' : ''} onchange="sessionStorage.setItem('cc-pj-f',this.value);dispatchEvent(new HashChangeEvent('hashchange'))"><span>${n} <i>${todos.filter(FP[k]).length}</i></span></label>`).join('')}</div>${lista.length ? `<div class="cc-list">${lista.map(p => `<a class="cc-row" href="#/projetos/${attr(p._id)}"><span><b>${esc(p.titulo)}</b><small>${esc(p.clienteNome || '')}${p.clienteEmail ? ' · ' + esc(p.clienteEmail) : ' · sem e-mail de acesso'} · cliente vê: ${esc(ETAPAS_PROJ[Number(p.status) || 0])}</small></span>${pill(...SIT_PROJ[p.situacao || 'andamento'])}</a>`).join('')}</div>` : '<div class="cc-empty"><b>Nenhum projeto na área do cliente.</b>Crie a partir de um pedido aprovado ou aqui.</div>'}`;
   }
 });
 async function editarProjeto(v, id) {
@@ -1560,6 +1586,7 @@ async function editarProjeto(v, id) {
     <p class="cc-err" id="pj-err" role="alert"></p>
     ${ro ? '' : `<div class="cc-actions"><button class="btn btn--primary" type="submit" id="pj-save">Salvar projeto</button><a class="btn btn--ghost" href="#/projetos">Cancelar</a>${id ? '<button class="btn btn--danger" type="button" id="pj-del">Excluir</button>' : ''}</div>`}
   </form>`;
+  if (p && p._id) { $('#pj').insertAdjacentHTML('beforebegin', cicloProjeto(p)); ligarCicloProjeto(p); }
   if (ro) return;
   $('#pj-add').onclick = () => $('#pj-ents').insertAdjacentHTML('beforeend', linha());
   $('#pj').onsubmit = async (e) => {
@@ -1572,10 +1599,7 @@ async function editarProjeto(v, id) {
     const b = $('#pj-save'); b.disabled = true; b.textContent = 'Salvando…';
     try { await salvarDoc('projetos', id, dados, id ? 'editou projeto do cliente' : 'criou projeto do cliente', titulo); toast('Projeto salvo.'); ir('projetos'); } catch (er) { falha(er); b.disabled = false; b.textContent = 'Salvar projeto'; }
   };
-  if ($('#pj-del')) $('#pj-del').onclick = async () => {
-    if (!(await confirmar({ titulo: 'Excluir este projeto?', texto: 'O cliente deixa de vê-lo na área do cliente.', ok: 'Excluir', perigo: true }))) return;
-    try { await excluirDoc('projetos', id, p.titulo); toast('Projeto excluído.'); ir('projetos'); } catch (er) { falha(er); }
-  };
+  if ($('#pj-del')) $('#pj-del').onclick = async () => { try { if (await paraLixeira('projetos', p, { avisos: (p.entregas || []).length ? [`${p.entregas.length} arquivo(s) de entrega deixam de aparecer para o cliente enquanto o projeto estiver na Lixeira.`] : [] })) ir('projetos'); } catch (er) { falha(er); } };
 }
 
 /* ============ Conteúdo do site: trabalhos, depoimentos, Instagram ============ */
@@ -1687,7 +1711,7 @@ async function editarTrabalho(v, id) {
         <div class="cc-field"><label for="tf-th">Link da capa <span>deixe vazio para usar a do vídeo</span></label><input id="tf-th" type="url" spellcheck="false" value="${attr(d.thumbCustom || '')}" placeholder="https://i.ytimg.com/…" ${ro ? 'disabled' : ''}></div>
       </div></details>
       <p class="cc-err" id="tf-err" role="alert"></p>
-      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--ghost" type="submit" data-acao="rascunho">Salvar rascunho</button><button class="btn btn--primary" type="submit" data-acao="publicado">${t?.status === 'publicado' ? 'Salvar e manter publicado' : 'Publicar'}</button>${t ? `${t.status === 'publicado' ? '<button class="btn btn--ghost" type="button" id="tf-unpub">Despublicar</button>' : ''}<button class="btn btn--ghost" type="button" id="tf-dup">Duplicar</button><button class="btn btn--ghost" type="button" id="tf-hist">Versões</button><button class="btn btn--danger" type="button" id="tf-del">Excluir</button>` : ''}</div>`}
+      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--ghost" type="submit" data-acao="rascunho">Salvar rascunho</button><button class="btn btn--primary" type="submit" data-acao="publicado">${t?.status === 'publicado' ? 'Salvar e manter publicado' : 'Publicar'}</button>${t ? `${t.status === 'publicado' ? '<button class="btn btn--ghost" type="button" id="tf-unpub">Despublicar</button>' : ''}<button class="btn btn--ghost" type="button" id="tf-dup">Duplicar</button><button class="btn btn--ghost" type="button" id="tf-hist">Versões</button><button class="btn btn--ghost" type="button" id="tf-arq">${t.status === 'arquivado' ? 'Desarquivar' : 'Arquivar'}</button><span class="cc-spacer"></span><button class="btn btn--danger" type="button" id="tf-del">Excluir</button>` : ''}</div>`}
     </form>
     <div class="cc-grid"><section class="cc-prev"><span class="cc-prev-label">Como aparece na galeria do site</span><div id="tf-prev"></div></section>
     <p class="cc-note">Publicar atualiza a galeria do site em até 10 minutos para quem já estava navegando. Quem abrir o site depois já vê a mudança.</p></div>
@@ -1742,7 +1766,8 @@ async function editarTrabalho(v, id) {
   if ($('#tf-unpub')) $('#tf-unpub').onclick = async () => { if (!(await confirmar({ titulo: 'Despublicar?', texto: 'O filme sai da galeria do site, mas continua salvo aqui.', ok: 'Despublicar' }))) return; try { await salvarDoc('trabalhos', id, { status: 'rascunho' }, 'despublicou trabalho', t.titulo); toast('Despublicado.'); navegar(); } catch (e) { falha(e); } };
   $('#tf-dup').onclick = async () => { const { _id, criadoEm, atualizadoEm, ...r } = t; try { const nid = await salvarDoc('trabalhos', null, { ...r, titulo: t.titulo + ' (cópia)', status: 'rascunho', destaque: false }, 'duplicou trabalho', t.titulo); toast('Cópia criada como rascunho.'); ir('trabalhos/' + nid); } catch (e) { falha(e); } };
   $('#tf-hist').onclick = () => abrirVersoes('trabalhos', id, (x) => x.titulo);
-  $('#tf-del').onclick = async () => { if (!(await confirmar({ titulo: 'Excluir este trabalho?', texto: 'Se ele estiver publicado, sai do site. Uma cópia fica em Versões.', ok: 'Excluir', perigo: true }))) return; try { await excluirDoc('trabalhos', id, t.titulo); toast('Excluído.'); ir('trabalhos'); } catch (e) { falha(e); } };
+  $('#tf-del').onclick = async () => { try { if (await paraLixeira('trabalhos', t)) ir('trabalhos'); } catch (e) { falha(e); } };
+  if ($('#tf-arq')) $('#tf-arq').onclick = async () => { try { await salvarDoc('trabalhos', id, { status: t.status === 'arquivado' ? 'rascunho' : 'arquivado' }, t.status === 'arquivado' ? 'desarquivou trabalho' : 'arquivou trabalho', t.titulo); toast(t.status === 'arquivado' ? 'Trabalho de volta como rascunho.' : 'Trabalho arquivado. Saiu do site.'); navegar(); } catch (e) { falha(e); } };
 }
 
 /* histórico de versões com restauração */
@@ -1826,7 +1851,7 @@ async function editarDepoimento(v, id) {
         <select id="df-vr" aria-label="Texto do link" ${ro ? 'disabled' : ''}>${['Conheça o trabalho realizado', 'Ver projeto'].map(t => `<option ${d.vinculo?.rotulo === t ? 'selected' : ''}>${t}</option>`).join('')}</select><span class="cc-note" id="df-sug"></span></div>
       <div class="cc-field"><label for="df-lg">Linha abaixo do nome <span>vazio usa empresa e origem</span></label><input id="df-lg" value="${attr(d.legenda || '')}" ${ro ? 'disabled' : ''}></div>
       <p class="cc-err" id="df-err" role="alert"></p>
-      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--ghost" type="submit" data-acao="rascunho">Salvar para revisão</button><button class="btn btn--primary" type="submit" data-acao="publicado">Publicar</button>${q ? `${q.status === 'publicado' ? '<button class="btn btn--ghost" type="button" id="df-unpub">Despublicar</button>' : ''}<button class="btn btn--ghost" type="button" id="df-hist">Versões</button><button class="btn btn--danger" type="button" id="df-del">Excluir</button>` : ''}</div>`}
+      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--ghost" type="submit" data-acao="rascunho">Salvar para revisão</button><button class="btn btn--primary" type="submit" data-acao="publicado">Publicar</button>${q ? `${q.status === 'publicado' ? '<button class="btn btn--ghost" type="button" id="df-unpub">Despublicar</button>' : ''}<button class="btn btn--ghost" type="button" id="df-hist">Versões</button><button class="btn btn--ghost" type="button" id="df-arq">${q.status === 'arquivado' ? 'Desarquivar' : 'Arquivar'}</button><span class="cc-spacer"></span><button class="btn btn--danger" type="button" id="df-del">Excluir</button>` : ''}</div>`}
     </form>
     <section class="cc-prev"><span class="cc-prev-label">Como aparece no site</span><div id="df-prev"></div></section>
   </div>`;
@@ -1852,7 +1877,8 @@ async function editarDepoimento(v, id) {
   if (!q) return;
   if ($('#df-unpub')) $('#df-unpub').onclick = async () => { try { await salvarDoc('depoimentos', id, { status: 'rascunho' }, 'despublicou depoimento', q.autor); toast('Despublicado.'); navegar(); } catch (e) { falha(e); } };
   $('#df-hist').onclick = () => abrirVersoes('depoimentos', id, (x) => x.autor);
-  $('#df-del').onclick = async () => { if (!(await confirmar({ titulo: 'Excluir este depoimento?', texto: 'Uma cópia fica em Versões.', ok: 'Excluir', perigo: true }))) return; try { await excluirDoc('depoimentos', id, q.autor); toast('Excluído.'); ir('depoimentos'); } catch (e) { falha(e); } };
+  $('#df-del').onclick = async () => { try { if (await paraLixeira('depoimentos', q)) ir('depoimentos'); } catch (e) { falha(e); } };
+  if ($('#df-arq')) $('#df-arq').onclick = async () => { try { await salvarDoc('depoimentos', id, { status: q.status === 'arquivado' ? 'rascunho' : 'arquivado' }, q.status === 'arquivado' ? 'desarquivou depoimento' : 'arquivou depoimento', q.autor); toast(q.status === 'arquivado' ? 'Depoimento de volta para revisão.' : 'Depoimento arquivado.'); navegar(); } catch (e) { falha(e); } };
 }
 
 /* ---------- Instagram: curadoria manual (a API oficial exige servidor) ---------- */
@@ -1906,7 +1932,7 @@ async function editarPost(v, id) {
     if (!img) { $('#ig-err').textContent = 'Envie a imagem da publicação.'; return; }
     try { await salvarDoc('instagram', id, { url, imagem: img, tipo: $('#ig-t').value, legenda: $('#ig-l').value.trim(), status: acao, ordem: p?.ordem ?? lista.length }, acao === 'publicado' ? 'publicou post do Instagram' : 'salvou post do Instagram', url); toast('Salvo.'); ir('instagram'); } catch (er) { falha(er); }
   };
-  if ($('#ig-del')) $('#ig-del').onclick = async () => { if (!(await confirmar({ titulo: 'Excluir esta publicação do site?', texto: 'Ela continua no Instagram.', ok: 'Excluir', perigo: true }))) return; try { await excluirDoc('instagram', id, p.url); ir('instagram'); } catch (e) { falha(e); } };
+  if ($('#ig-del')) $('#ig-del').onclick = async () => { try { if (await paraLixeira('instagram', p)) ir('instagram'); } catch (e) { falha(e); } };
 }
 
 /* ============ Marcas e motor de normalização de logotipos ============
@@ -2074,7 +2100,7 @@ function processarLogo(an, op) {
   return { arquivo, w: out.width, hpx: out.height, h, aspecto, densidade, modo, avisos, util: { tw, th, x0, y0 } };
 }
 
-const ST_MK = { publicado: ['Publicada', 'ok'], rascunho: ['Oculta', 'mute'], removido: ['Removida', 'bad'] };
+const ST_MK = { publicado: ['Publicada', 'ok'], rascunho: ['Oculta', 'mute'], removido: ['Na Lixeira', 'bad'] };
 const pillMk = (st) => pill(...(ST_MK[st] || ST_MK.rascunho));
 const nomeDoArquivo = (f) => (f.name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').replace(/\b(logo|logotipo|marca|final|vetor|png|svg)\b/gi, '').replace(/\s+/g, ' ').trim().replace(/^\w/, c => c.toUpperCase())) || 'Marca';
 async function lerLogo(file) {
@@ -2101,11 +2127,12 @@ modulo({
   id: 'marcas', titulo: 'Marcas', mod: 'conteudo',
   async render(v, [id, extra]) {
     if (id) return editarMarca(v, id === 'nova' ? null : id, extra);
-    const lista = (await listar('marcas')).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
+    const vistaMk = (l) => l.map(m => m.excluido ? { ...m, status: 'removido' } : m);
+    const lista = vistaMk(await listar('marcas', false, true)).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
     const cfg = (await S.F.getDoc(docRef('site', 'config')).catch(() => null))?.data?.() || {};
     const ed = edita('conteudo');
     const conta = (st) => lista.filter(m => (m.status || 'rascunho') === st).length;
-    const FILTROS = [['publicado', 'Publicadas'], ['rascunho', 'Ocultas'], ['removido', 'Removidas'], ['todas', 'Todas']];
+    const FILTROS = [['publicado', 'Publicadas'], ['rascunho', 'Ocultas'], ['removido', 'Lixeira'], ['todas', 'Todas']];
     let filtro = sessionStorage.getItem('cc-mk-f') || 'publicado'; if (filtro !== 'todas' && !conta(filtro) && lista.length) filtro = conta('publicado') ? 'publicado' : 'todas';
     let busca = '';
     v.innerHTML = `<div class="cc-head"><div><h2>Marcas</h2><p class="mk-passos"><span><b>1</b> Envie o logo</span><span><b>2</b> Confira no grid</span><span><b>3</b> Publique</span></p></div>
@@ -2124,9 +2151,9 @@ modulo({
         <div class="mk-prev${m.tratamento === 'original' ? ' is-orig' : ''}">${podeArrastar() ? `<button type="button" class="mk-handle" aria-label="Arrastar ${attr(m.nome)} para reordenar" title="Arraste para reordenar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>` : ''}<img src="${attr(m.arquivo)}" alt="" loading="lazy" style="--h:${Number(m.h) || 40}px">${podeArrastar() ? `<span class="mk-mv"><button type="button" data-a="antes" aria-label="Mover ${attr(m.nome)} para antes">↑</button><button type="button" data-a="depois" aria-label="Mover ${attr(m.nome)} para depois">↓</button></span>` : ''}</div>
         <div class="mk-info"><b>${esc(m.nome)}</b>${pillMk(st)}</div>
         ${ed ? `<div class="mk-acts">${rem
-          ? `<button type="button" class="btn btn--ghost" data-a="restaurar">Restaurar</button><button type="button" class="btn btn--danger" data-a="excluir">Excluir de vez</button>`
+          ? `<button type="button" class="btn btn--ghost" data-a="restaurar">Restaurar</button>${podeApagarDef() ? '<button type="button" class="btn btn--danger" data-a="excluir">Excluir definitivamente</button>' : ''}`
           : `<a class="btn btn--ghost" href="#/marcas/${attr(m._id)}">Editar</a><a class="btn btn--ghost" href="#/marcas/${attr(m._id)}/trocar" title="Trocar imagem">Trocar</a>
-             <button type="button" class="btn btn--ghost" data-a="${st === 'publicado' ? 'ocultar' : 'publicar'}">${st === 'publicado' ? 'Ocultar' : 'Publicar'}</button><button type="button" class="btn btn--ghost mk-rm" data-a="remover">Remover</button>`}</div>` : ''}
+             <button type="button" class="btn btn--ghost" data-a="${st === 'publicado' ? 'ocultar' : 'publicar'}">${st === 'publicado' ? 'Ocultar' : 'Publicar'}</button><button type="button" class="btn btn--ghost mk-rm" data-a="remover">Excluir</button>`}</div>` : ''}
       </li>`;
     };
     const site = () => {
@@ -2137,10 +2164,10 @@ modulo({
     const desenhar = () => {
       const vis = visiveis();
       $('#mk-grid').innerHTML = vis.length ? vis.map(card).join('') : `<li class="cc-empty mk-vazio"><b>${busca ? 'Nenhuma marca encontrada.' : filtro === 'removido' ? 'Nenhuma marca removida.' : filtro === 'rascunho' ? 'Nenhuma marca oculta.' : 'Nenhuma marca ainda.'}</b>${ed && !busca && filtro !== 'removido' ? '<a class="btn btn--primary" href="#/marcas/nova">Adicionar marca</a>' : ''}</li>`;
-      $('#mk-dica').textContent = filtro === 'removido' ? 'Marcas removidas não aparecem no site. Restaure ou exclua de vez.' : podeArrastar() && vis.length > 1 ? 'Arraste pela alça ou use as setas para mudar a ordem. A ordem vale para o site.' : '';
+      $('#mk-dica').textContent = filtro === 'removido' ? 'Marcas na Lixeira não aparecem no site. Restaure ou exclua definitivamente.' : podeArrastar() && vis.length > 1 ? 'Arraste pela alça ou use as setas para mudar a ordem. A ordem vale para o site.' : '';
       contadores(); site();
     };
-    const recarregar = async () => { const nova = (await listar('marcas', true)).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)); lista.splice(0, lista.length, ...nova); desenhar(); };
+    const recarregar = async () => { const nova = vistaMk(await listar('marcas', true, true)).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)); lista.splice(0, lista.length, ...nova); desenhar(); };
     desenhar();
     $('#mk-q').oninput = (e) => { busca = norm(e.target.value.trim()); desenhar(); };
     $$('input[name=mk-f]', v).forEach(r => r.onchange = () => { filtro = r.value; try { sessionStorage.setItem('cc-mk-f', filtro); } catch {} desenhar(); });
@@ -2153,14 +2180,11 @@ modulo({
         if (a === 'publicar') { await mudarStatus(m, 'publicado', 'publicou marca'); toast(`${m.nome} publicada no site.`); }
         else if (a === 'ocultar') { await mudarStatus(m, 'rascunho', 'ocultou marca'); toast(`${m.nome} oculta do site.`, false, { rotulo: 'Desfazer', fn: async () => { await mudarStatus(m, 'publicado', 'publicou marca'); recarregar(); } }); }
         else if (a === 'remover') {
-          if (!(await confirmar({ titulo: `Remover ${m.nome}?`, texto: 'Sai do site na hora. Fica em "Removidas" para restaurar quando quiser.', ok: 'Remover', perigo: true }))) { b.disabled = false; return; }
-          const antes = m.status || 'rascunho'; await mudarStatus(m, 'removido', 'removeu marca');
-          toast(`${m.nome} removida.`, false, { rotulo: 'Desfazer', fn: async () => { await salvarDoc('marcas', m._id, { status: antes }, 'restaurou marca', m.nome); atualizarAlertas(); recarregar(); } });
+          if (!(await paraLixeira('marcas', m))) { b.disabled = false; return; } atualizarAlertas();
         }
-        else if (a === 'restaurar') { await salvarDoc('marcas', m._id, { status: m.statusAntes === 'publicado' ? 'publicado' : 'rascunho' }, 'restaurou marca', m.nome); toast(`${m.nome} restaurada${m.statusAntes === 'publicado' ? ' e publicada' : ' como oculta'}.`); }
+        else if (a === 'restaurar') { await restaurar('marcas', m); toast(`${m.nome} restaurada como oculta. Publique quando quiser.`); }
         else if (a === 'excluir') {
-          if (!(await confirmar({ titulo: `Excluir ${m.nome} de vez?`, texto: 'Não dá para desfazer por aqui. Uma cópia fica em Versões só para consulta.', ok: 'Excluir de vez', perigo: true }))) { b.disabled = false; return; }
-          await excluirDoc('marcas', m._id, m.nome); toast('Marca excluída.');
+          if (!(await excluirDeVez('marcas', [m]))) { b.disabled = false; return; } toast('Marca excluída definitivamente.');
         }
         else if (a === 'antes' || a === 'depois') {
           const ativos = lista.filter(x => x.status !== 'removido'), i = ativos.indexOf(m), j = i + (a === 'antes' ? -1 : 1);
@@ -2242,7 +2266,7 @@ async function editarMarca(v, id, extra) {
       <div class="cc-range"><label for="mf-dy">Ajuste vertical</label><input type="range" id="mf-dy" min="-12" max="12" step="1" value="${op.dy}" ${ro ? 'disabled' : ''}><output id="mf-dy-o">${op.dy} px</output></div>
       <details><summary>Link e detalhes</summary><div class="cc-form"><div class="cc-field"><label for="mf-l">Link externo <span>opcional</span></label><input id="mf-l" type="url" spellcheck="false" value="${attr(m?.link || '')}" placeholder="https://"></div></div></details>
       <p class="cc-err" id="mf-err" role="alert"></p>
-      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--ghost" type="submit" data-acao="rascunho">Salvar rascunho</button><button class="btn btn--primary" type="submit" data-acao="publicado">${m?.status === 'publicado' ? 'Salvar publicado' : 'Publicar no grid'}</button>${m ? `${m.status === 'publicado' ? '<button class="btn btn--ghost" type="button" id="mf-oc">Ocultar do site</button>' : ''}<button class="btn btn--ghost" type="button" id="mf-hist">Versões</button><button class="btn btn--danger" type="button" id="mf-del">Remover</button>` : ''}</div>`}
+      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--ghost" type="submit" data-acao="rascunho">Salvar rascunho</button><button class="btn btn--primary" type="submit" data-acao="publicado">${m?.status === 'publicado' ? 'Salvar publicado' : 'Publicar no grid'}</button>${m ? `${m.status === 'publicado' ? '<button class="btn btn--ghost" type="button" id="mf-oc">Ocultar do site</button>' : ''}<button class="btn btn--ghost" type="button" id="mf-hist">Versões</button><button class="btn btn--danger" type="button" id="mf-del">Excluir</button>` : ''}</div>`}
     </form>
     <div class="cc-grid">
       <section class="cc-panel"><h3>Antes e depois</h3><div class="cc-logo-lab"><div><span class="cc-prev-label">Original</span><div class="cc-checker" id="mf-orig">${original ? `<img src="${attr(original)}" alt="">` : (m ? `<img src="${attr(m.arquivo)}" alt="">` : '<span class="cc-note">Envie um arquivo</span>')}</div></div><div><span class="cc-prev-label">Processado</span><div class="cc-checker" id="mf-proc">${m ? `<img src="${attr(m.arquivo)}" alt="">` : ''}</div></div></div></section>
@@ -2321,7 +2345,7 @@ async function editarMarca(v, id, extra) {
   if (!m) return;
   if ($('#mf-oc')) $('#mf-oc').onclick = async () => { try { await salvarDoc('marcas', id, { status: 'rascunho' }, 'ocultou marca', m.nome); toast('Marca oculta do site.'); navegar(); } catch (e) { falha(e); } };
   $('#mf-hist').onclick = () => abrirVersoes('marcas', id, (x) => x.nome);
-  $('#mf-del').onclick = async () => { if (!(await confirmar({ titulo: `Remover ${m.nome}?`, texto: 'Sai do site na hora. Fica em "Removidas" para restaurar quando quiser.', ok: 'Remover', perigo: true }))) return; try { await mudarStatus(m, 'removido', 'removeu marca'); toast(`${m.nome} removida.`, false, { rotulo: 'Desfazer', fn: async () => { await salvarDoc('marcas', id, { status: m.status || 'rascunho' }, 'restaurou marca', m.nome); atualizarAlertas(); navegar(); } }); ir('marcas'); } catch (e) { falha(e); } };
+  $('#mf-del').onclick = async () => { try { if (await paraLixeira('marcas', m)) ir('marcas'); } catch (e) { falha(e); } };
 }
 
 /* ============ Biblioteca de mídia, Diário de Produção, Stories, Estúdio de Divulgação e cartões ============ */
@@ -2366,7 +2390,7 @@ modulo({
         ed ? '<button class="btn btn--danger" type="button" id="md-del">Excluir</button><button class="btn btn--primary" type="button" id="md-ok">Salvar</button>' : '');
       if (!ed) return;
       $('#md-ok').onclick = async () => { try { await salvarDoc('midia', m._id, { legenda: $('#md-l').value.trim().slice(0, 200), credito: $('#md-c').value.trim().slice(0, 80) }, 'editou foto', m.nome); fecharSheet(); toast('Foto atualizada.'); navegar(); } catch (er) { falha(er); } };
-      $('#md-del').onclick = async () => { if (!(await confirmar({ titulo: 'Excluir esta foto?', texto: 'Se estiver em alguma matéria, ela some de lá. Uma cópia fica no histórico.', ok: 'Excluir', perigo: true }))) return; try { await excluirDoc('midia', m._id, m.nome); fecharSheet(); toast('Foto excluída.'); navegar(); } catch (er) { falha(er); } };
+      $('#md-del').onclick = async () => { const usos = (await listar('diario')).filter(d => d.capa === m._id || (d.fotos || []).includes(m._id)); try { if (await paraLixeira('midia', m, { avisos: usos.length ? [`Usada em: ${usos.map(d => d.titulo).join(', ')}. Ela some dessas matérias até ser restaurada.`] : [] })) { fecharSheet(); navegar(); } } catch (er) { falha(er); } };
     };
     if (ed) $('#md-up').onchange = async (e) => { const fs = [...e.target.files]; e.target.value = ''; $('#md-prog').hidden = false; $('#md-prog').textContent = `Otimizando ${fs.length} foto(s)…`; const ids = await enviarFotos(fs); $('#md-prog').hidden = true; if (ids.length) { toast(`${ids.length} foto(s) na biblioteca.`); navegar(); } };
   }
@@ -2557,7 +2581,7 @@ async function editarMateria(v, id) {
   if (!m) return;
   $('#dp-dup').onclick = async () => { ler(); try { const { _id, criadoEm, criadoPor, atualizadoEm, atualizadoPor, ...base } = d; const nid = await salvarDoc('diario', null, { ...base, titulo: d.titulo + ' (cópia)', slug: slugar(d.titulo) + '-copia-' + Date.now().toString(36).slice(-4), status: 'rascunho', publicarEm: null, autorizado: false }, 'duplicou matéria', d.titulo); toast('Cópia criada como rascunho.'); ir('diario/' + nid); } catch (e) { falha(e); } };
   $('#dp-ver').onclick = () => abrirVersoes('diario', id, (x) => x.titulo);
-  $('#dp-del').onclick = async () => { if (!(await confirmar({ titulo: `Excluir "${m.titulo}"?`, texto: 'Sai do site. Pode ser restaurada em Alterações da equipe.', ok: 'Excluir', perigo: true }))) return; try { await excluirDoc('diario', id, m.titulo); toast('Matéria excluída.'); ir('diario'); } catch (e) { falha(e); } };
+  $('#dp-del').onclick = async () => { const deps = (await listar('depoimentos').catch(() => [])).filter(q => q.vinculo?.tipo === 'diario' && q.vinculo.id === id); try { if (await paraLixeira('diario', m, { avisos: deps.length ? [`${deps.length} depoimento(s) apontam para esta matéria; o link deles some do site até ela voltar.`] : [] })) ir('diario'); } catch (e) { falha(e); } };
 }
 async function storyDoDiario(v, id) {
   const m = (await listar('diario')).find(x => x._id === id); if (!m) { v.innerHTML = '<div class="cc-empty"><b>Matéria não encontrada.</b></div>'; return; }
@@ -2637,7 +2661,7 @@ modulo({
       <div class="cc-actions"><select id="ed-pg" aria-label="Página">${PAGS.map(([k, n]) => `<option value="${k}" ${k === pagina ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></div></div>
       <div class="ed-bar"><div class="cc-chips" role="tablist"><label><input type="radio" name="ed-tab" value="textos" checked><span>Textos</span></label><label><input type="radio" name="ed-tab" value="layout"><span>Layout</span></label><label><input type="radio" name="ed-tab" value="seo"><span>SEO</span></label></div>
         <span class="ed-status" id="ed-st"></span>
-        ${ro ? '' : '<div class="ed-acts"><button class="btn btn--ghost" type="button" id="ed-desc">Descartar rascunho</button><button class="btn btn--ghost" type="button" id="ed-salvar">Salvar rascunho</button><button class="btn btn--primary" type="button" id="ed-pub">Publicar</button></div>'}</div>
+        ${ro ? '' : '<div class="ed-acts"><button class="btn btn--ghost" type="button" id="ed-desf">Desfazer última publicação</button><button class="btn btn--ghost" type="button" id="ed-orig">Voltar ao original</button><button class="btn btn--ghost" type="button" id="ed-desc">Descartar rascunho</button><button class="btn btn--ghost" type="button" id="ed-salvar">Salvar rascunho</button><button class="btn btn--primary" type="button" id="ed-pub">Publicar</button></div>'}</div>
       <div class="ed-cols">
         <div class="ed-form" id="ed-form"></div>
         <div class="ed-prev"><div class="ed-prev-bar"><div class="cc-chips"><label><input type="radio" name="ed-dev" value="m" checked><span>Celular</span></label><label><input type="radio" name="ed-dev" value="d"><span>Computador</span></label></div><a class="cc-link" href="${pagina}.html" target="_blank" rel="noopener">Abrir publicada</a></div>
@@ -2689,12 +2713,30 @@ modulo({
     });
     $$('input[name=ed-tab]').forEach(r => r.onchange = () => { tab = r.value; desenhar(); });
     $$('input[name=ed-dev]').forEach(r => r.onchange = () => { $('#ed-fw').className = 'ed-frame is-' + r.value; });
-    $('#ed-pg').onchange = async (e) => { const alvo = e.target.value; if (pendentes() && !(await confirmar({ titulo: 'Trocar de página?', texto: 'Esta página tem alterações em rascunho. Salve o rascunho antes, se quiser guardá-las.', ok: 'Trocar' }))) { e.target.value = pagina; return; } location.hash = '#/editor/' + alvo; };
+    $('#ed-pg').onchange = async (e) => { const alvo = e.target.value; if (pendentes() && !(await confirmar({ titulo: 'Trocar de página?', texto: 'Esta página tem alterações em rascunho. Salve o rascunho antes, se quiser guardá-las.', ok: 'Trocar' }))) { e.target.value = pagina; return; } sujo = false; location.hash = '#/editor/' + alvo; };
     desenhar();
     if (ro) return;
     const salvarRascunho = async (silencioso) => {
+      sujo = false;
       await S.F.setDoc(docRef('rascunhos', 'site'), { textos: { campos: rascC }, layout: { paginas: rascL }, atualizadoEm: S.F.serverTimestamp(), atualizadoPor: S.email });
       if (!silencioso) { toast('Rascunho salvo. Ainda não está no site.'); auditar('salvou rascunho do site', 'site/' + pagina); }
+    };
+    const reverter = async (mapa, tipoTxt) => {
+      const s = await S.F.getDoc(docRef('site', 'textos')); const atual = s.exists() ? s.data() : { campos: {} }; const novo = { ...(atual.campos || {}) };
+      for (const [k, val] of Object.entries(mapa)) { const antes = novo[k]?.t ?? val.o; if (val.t === val.o || val.t == null) delete novo[k]; else novo[k] = { t: val.t, o: val.o }; await registrarAlteracao({ colecao: 'site/textos', docId: 'textos', pagina: PAG_NOME[pagina], secao: '', elemento: k, rotulo: PAG_NOME[pagina], rotuloCampo: tipoTxt + ': "' + String(val.o).slice(0, 48) + '"', tipo: 'restaurou', antes, depois: val.t ?? val.o, original: val.o, restauravel: true }); }
+      await S.F.setDoc(docRef('site', 'textos'), { campos: novo, versao: (atual.versao || 0) + 1, atualizadoEm: S.F.serverTimestamp(), atualizadoPor: S.email });
+    };
+    $('#ed-desf').onclick = async () => {
+      let regs = []; try { const sn = await S.F.getDocs(S.F.query(col('alteracoes'), S.F.orderBy('em', 'desc'), S.F.limit(300))); regs = sn.docs.map(d => d.data()).filter(r => r.colecao === 'site/textos' && r.rotulo === PAG_NOME[pagina] && r.tipo === 'publicou'); } catch (e) { return falha(e); }
+      if (!regs.length) return toast('Nenhuma publicação desta página para desfazer.');
+      const marco = tsMs(regs[0].em), lote = regs.filter(r => Math.abs(tsMs(r.em) - marco) < 120000);
+      if (!(await confirmar({ titulo: 'Desfazer a última publicação?', texto: `${lote.length} texto(s) publicados por ${(regs[0].nome || regs[0].quem).split(' ')[0]} em ${quando(regs[0].em)} voltam ao que eram antes. Fica registrado no histórico.`, ok: 'Desfazer publicação' }))) return;
+      try { const mapa = {}; lote.forEach(r => mapa[r.elemento] = { t: r.antes, o: r.original || r.antes }); await reverter(mapa, 'Desfeito'); toast('Publicação desfeita.'); navegar(); } catch (e) { falha(e); }
+    };
+    $('#ed-orig').onclick = async () => {
+      const ks = Object.keys(pubC).filter(k => k.startsWith(pagina + '/')); if (!ks.length) return toast('Esta página já está com os textos originais.');
+      if (!(await confirmar({ titulo: 'Voltar a página ao texto original?', texto: `${ks.length} texto(s) editados pela Central voltam a ser os do código do site. Dá para restaurar depois em Alterações da equipe.`, ok: 'Voltar ao original' }))) return;
+      try { const mapa = {}; ks.forEach(k => mapa[k] = { t: null, o: pubC[k].o }); await reverter(mapa, 'Original'); toast('Página de volta ao original.'); navegar(); } catch (e) { falha(e); }
     };
     $('#ed-salvar').onclick = async () => { try { await salvarRascunho(); } catch (e) { falha(e); } };
     $('#ed-desc').onclick = async () => {
@@ -2855,7 +2897,7 @@ async function consolidarEventos() {
 
 /* ============ Operação: demandas, entregas, encerramento, indicações e contatos ============ */
 const reconhecimento = (c) => {
-  const n = (c.aprovados || 0) + (c.projetos || 0), anos = c.desde ? (Date.now() - Date.parse(c.desde)) / 3.15e10 : 0;
+  const n = (c.aprovados || 0) + (c.projetosN ?? (Array.isArray(c.projetos) ? c.projetos.length : c.projetos || 0)), anos = c.desde ? (Date.now() - Date.parse(c.desde)) / 3.15e10 : 0;
   if (c.especial) return pill('Parceria especial', 'gold');
   if (n >= 4 || (anos >= 3 && n >= 2)) return pill('Parceria de longa data', 'gold');
   if (n >= 2) return pill('Parceria recorrente', 'info');
@@ -2940,11 +2982,13 @@ modulo({
         <div class="cc-f2"><div class="cc-field"><label for="dm-r">Responsável</label><select id="dm-r" ${ro ? 'disabled' : ''}>${pessoas.map(p => `<option ${t?.responsavel === p ? 'selected' : ''}>${esc(p)}</option>`).join('')}</select></div><div class="cc-field"><label for="dm-pz">Prazo</label><input id="dm-pz" type="date" value="${attr(t?.prazo || '')}" ${ro ? 'disabled' : ''}></div></div>
         <div class="cc-field"><label for="dm-s">Situação</label><select id="dm-s" ${ro ? 'disabled' : ''}>${ST_TAR.map(([k, n]) => `<option value="${k}" ${(t?.status || 'a-fazer') === k ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
         <div class="cc-field"><label for="dm-no">Notas</label><textarea id="dm-no" rows="3" maxlength="2000" ${ro ? 'disabled' : ''}>${esc(t?.notas || '')}</textarea></div><p class="cc-err" id="dm-err"></p></form>`,
-        ro ? '' : `${t ? '<button class="btn btn--danger" type="button" id="dm-del">Excluir</button>' : ''}<button class="btn btn--primary" type="button" id="dm-ok">Salvar</button>`);
+        ro ? '' : `${t ? `<button class="btn btn--danger" type="button" id="dm-del">Excluir</button><span class="cc-spacer"></span><button class="btn btn--ghost" type="button" id="dm-cl">${t.status === 'feito' ? 'Reabrir' : 'Concluir'}</button>` : ''}<button class="btn btn--ghost" type="button" id="dm-x">Cancelar</button><button class="btn btn--primary" type="button" id="dm-ok">Salvar</button>`);
       if (ro) return;
+      $('#dm-x').onclick = () => fecharSheet();
       $('#dm-ok').onclick = async () => { const titulo = $('#dm-t').value.trim(); if (!titulo) { $('#dm-err').textContent = 'Descreva a demanda.'; return; } const pj = projs.find(p => p._id === $('#dm-pj').value);
         try { await salvarDoc('tarefas', t?._id || null, { titulo, projetoId: pj?._id || '', projetoTitulo: pj?.titulo || '', responsavel: $('#dm-r').value, prazo: $('#dm-pz').value, status: $('#dm-s').value, notas: $('#dm-no').value.trim(), concluidaEm: $('#dm-s').value === 'feito' ? (t?.concluidaEm || new Date().toISOString().slice(0, 10)) : '' }, t ? 'editou demanda' : 'criou demanda', titulo); fecharSheet(); toast('Demanda salva.'); navegar(); } catch (e) { falha(e); } };
-      if ($('#dm-del')) $('#dm-del').onclick = async () => { if (!(await confirmar({ titulo: 'Excluir demanda?', texto: t.titulo, ok: 'Excluir', perigo: true }))) return; try { await excluirDoc('tarefas', t._id, t.titulo); fecharSheet(); navegar(); } catch (e) { falha(e); } };
+      if ($('#dm-del')) $('#dm-del').onclick = async () => { try { if (await paraLixeira('tarefas', t)) { fecharSheet(); navegar(); } } catch (e) { falha(e); } };
+      if ($('#dm-cl')) $('#dm-cl').onclick = async () => { const fim = t.status !== 'feito'; try { await salvarDoc('tarefas', t._id, { status: fim ? 'feito' : 'a-fazer', concluidaEm: fim ? new Date().toISOString().slice(0, 10) : '', concluidaPor: fim ? S.email : '' }, fim ? 'concluiu demanda' : 'reabriu demanda', t.titulo); fecharSheet(); toast(fim ? 'Demanda concluída.' : 'Demanda reaberta.'); navegar(); } catch (e) { falha(e); } };
     };
     $$('input[name=dm-v]').forEach(r => r.onchange = () => { vis = r.value; sessionStorage.setItem('cc-dm-v', vis); desenhar(); });
     $('#dm-p').onchange = (e) => { fp = e.target.value; desenhar(); };
@@ -3022,6 +3066,263 @@ modulo({
     };
   }
 });
+
+/* ============ Ciclo de vida: lixeira, restauração, exclusão definitiva, clientes e projetos ============
+   Exclusão comum é lógica: o registro ganha excluido=true e sai das listas e do site.
+   Exclusão definitiva só na Lixeira, só proprietário ou administrador, e as regras do banco exigem excluido=true. */
+const RETENCAO = 30;
+const TIPOS = {
+  clientes: ['cliente', x => x.nome, 'crm'], pedidos: ['pedido', x => nomeLead(x) + ' · ' + x._id, 'crm'], propostas: ['proposta', x => x.titulo, 'crm'], indicacoes: ['indicação', x => x.indicador, 'crm'],
+  projetos: ['projeto', x => x.titulo, 'operacao'], tarefas: ['demanda', x => x.titulo, 'operacao'],
+  trabalhos: ['trabalho', x => x.titulo, 'conteudo'], marcas: ['marca', x => x.nome, 'conteudo'], depoimentos: ['depoimento', x => x.autor, 'conteudo'], instagram: ['publicação do Instagram', x => x.legenda || 'Publicação', 'conteudo'],
+  diario: ['matéria', x => x.titulo, 'conteudo'], midia: ['foto', x => x.legenda || x.nome, 'conteudo']
+};
+const podeApagarDef = () => S.papel === 'owner' || S.papel === 'admin';
+const emCurso = new Set();
+const prazoRec = (x) => tsMs(x.excluidoEm) + RETENCAO * 864e5;
+
+/* move para a lixeira: guarda o estado anterior e tira do site e da área do cliente */
+async function paraLixeira(colecao, reg, { motivo = '', silencioso = false, avisos = [] } = {}) {
+  const chave = colecao + '/' + reg._id; if (emCurso.has(chave)) return false;
+  const [tipo, rot] = TIPOS[colecao] || ['registro', x => x._id]; const nome = rot(reg) || reg._id;
+  if (!silencioso && !(await confirmar({ titulo: `Excluir ${tipo}?`, texto: `"${nome}" sai das listas${reg.status === 'publicado' ? ' e do site' : ''}${reg.clienteEmail ? ' e da área do cliente' : ''}.${avisos.length ? '\n\n' + avisos.join('\n') : ''}\n\nVocê pode restaurar pela Lixeira durante ${RETENCAO} dias.`, ok: `Excluir ${tipo}`, perigo: true }))) return false;
+  emCurso.add(chave);
+  try {
+    const antes = {}; const dados = { excluido: true, excluidoEm: S.F.serverTimestamp(), excluidoPor: S.email, motivoExclusao: String(motivo).slice(0, 200) };
+    if (reg.status === 'publicado') { antes.status = 'publicado'; dados.status = 'rascunho'; }
+    if (reg.clienteEmail) { antes.clienteEmail = reg.clienteEmail; dados.clienteEmail = ''; }
+    dados.estadoAntes = antes;
+    await salvarDoc(colecao, reg._id, dados, 'moveu para a lixeira', nome);
+    if (!silencioso) toast(`${tipo[0].toUpperCase() + tipo.slice(1)} na Lixeira.`, false, { rotulo: 'Desfazer', fn: async () => { await restaurar(colecao, { ...reg, ...dados, estadoAntes: antes }); navegar(); } });
+    return true;
+  } finally { emCurso.delete(chave); }
+}
+async function restaurar(colecao, reg) {
+  const sn = await S.F.getDoc(docRef(colecao, reg._id)); if (!sn.exists()) throw Object.assign(new Error('Este registro já foi excluído definitivamente e não pode ser restaurado.'), { code: 'nao-existe' });
+  const atual = sn.data(); if (!atual.excluido) return toast('Este registro já estava ativo.');
+  const ea = atual.estadoAntes || {};
+  await salvarDoc(colecao, reg._id, { excluido: false, excluidoEm: null, excluidoPor: '', motivoExclusao: '', estadoAntes: {}, ...(ea.status ? { status: 'rascunho' } : {}), ...(ea.clienteEmail ? { clienteEmail: ea.clienteEmail } : {}) }, 'restaurou da lixeira', (TIPOS[colecao]?.[1] || (x => x._id))({ ...atual, _id: reg._id }));
+  return true;
+}
+async function excluirDeVez(colecao, regs) {
+  if (!podeApagarDef()) return toast('Só o proprietário ou um administrador pode excluir definitivamente.', true);
+  const n = regs.length, [tipo] = TIPOS[colecao] || ['registro'];
+  if (!(await confirmar({ titulo: n > 1 ? `Excluir ${n} itens definitivamente?` : `Excluir ${tipo} definitivamente?`, texto: 'Esta ação não pode ser desfeita. O registro deixa de existir no banco e não volta pela Lixeira. Uma cópia de consulta fica em Versões, acessível só a quem administra.', ok: 'Excluir definitivamente', perigo: true, digitar: 'EXCLUIR' }))) return false;
+  for (const r of regs) { const sn = await S.F.getDoc(docRef(colecao, r._id)); if (sn.exists() && sn.data().excluido) await excluirDoc(colecao, r._id, (TIPOS[colecao]?.[1] || (x => x._id))(r)); }
+  return true;
+}
+
+/* ---------- Lixeira ---------- */
+modulo({
+  id: 'lixeira', titulo: 'Lixeira', mod: 'painel',
+  async render(v) {
+    const cols = Object.entries(TIPOS).filter(([, t]) => pode(t[2]));
+    const todos = [];
+    for (const [c] of cols) { try { (await listar(c, true, true)).filter(x => x.excluido).forEach(x => todos.push({ ...x, _c: c })); } catch {} }
+    todos.sort((a, b) => tsMs(b.excluidoEm) - tsMs(a.excluidoEm));
+    let filtro = '', sel = new Set();
+    v.innerHTML = `<div class="cc-head"><div><h2>Lixeira</h2><p>Tudo o que foi excluído fica aqui por ${RETENCAO} dias para restaurar. Exclusão definitiva só para proprietário e administradores, e não tem volta.</p></div></div>
+      <div class="in-bar"><select id="lx-f" aria-label="Módulo"><option value="">Todos os módulos (${todos.length})</option>${cols.map(([c, t]) => { const n = todos.filter(x => x._c === c).length; return n ? `<option value="${c}">${esc(t[0][0].toUpperCase() + t[0].slice(1))} (${n})</option>` : ''; }).join('')}</select>
+        <div class="lx-lote" id="lx-lote" hidden><b id="lx-n"></b><button type="button" class="btn btn--ghost" id="lx-res">Restaurar selecionados</button>${podeApagarDef() ? '<button type="button" class="btn btn--danger" id="lx-del">Excluir definitivamente</button>' : ''}</div></div>
+      <div class="cc-list" id="lx-l"></div>`;
+    const desenhar = () => {
+      const vis = todos.filter(x => !filtro || x._c === filtro);
+      $('#lx-l').innerHTML = vis.length ? vis.map(x => { const [tipo, rot] = TIPOS[x._c]; const venc = prazoRec(x) < Date.now();
+        return `<div class="cc-row lx-row" data-k="${attr(x._c + '/' + x._id)}"><label class="lx-ck"><input type="checkbox" ${sel.has(x._c + '/' + x._id) ? 'checked' : ''} aria-label="Selecionar ${attr(rot(x))}"></label><span><b>${esc(rot(x) || x._id)}</b><small>${esc(tipo)} · excluído por ${esc((x.excluidoPor || '').split('@')[0])} ${esc(relativo(x.excluidoEm))}${x.motivoExclusao ? ' · ' + esc(x.motivoExclusao) : ''}</small><small class="${venc ? 'lx-venc' : ''}">${venc ? 'Prazo de recuperação vencido: pode ser excluído definitivamente' : 'Recuperável até ' + esc(dia(prazoRec(x)))}</small></span>
+          <span class="lx-acts"><button type="button" class="btn btn--ghost" data-a="res">Restaurar</button>${podeApagarDef() ? '<button type="button" class="btn btn--ghost lx-def" data-a="del">Excluir definitivamente</button>' : ''}</span></div>`; }).join('') : '<div class="cc-empty"><b>A Lixeira está vazia.</b></div>';
+      $('#lx-lote').hidden = !sel.size; $('#lx-n').textContent = `${sel.size} selecionado${sel.size > 1 ? 's' : ''}`;
+    };
+    const achar = (k) => todos.find(x => x._c + '/' + x._id === k);
+    $('#lx-f').onchange = (e) => { filtro = e.target.value; desenhar(); };
+    $('#lx-l').onchange = (e) => { const k = e.target.closest('.lx-row')?.dataset.k; if (!k) return; e.target.checked ? sel.add(k) : sel.delete(k); desenhar(); };
+    $('#lx-l').onclick = async (e) => {
+      const b = e.target.closest('button[data-a]'); if (!b) return; const x = achar(b.closest('.lx-row').dataset.k); b.disabled = true;
+      try { if (b.dataset.a === 'res') { await restaurar(x._c, x); toast('Restaurado. Itens que estavam no site voltam como rascunho.'); } else if (!(await excluirDeVez(x._c, [x]))) { b.disabled = false; return; } else toast('Excluído definitivamente.'); navegar(); } catch (er) { b.disabled = false; falha(er); }
+    };
+    $('#lx-res').onclick = async () => { try { for (const k of sel) { const x = achar(k); await restaurar(x._c, x); } toast(`${sel.size} restaurado(s).`); navegar(); } catch (er) { falha(er); } };
+    if ($('#lx-del')) $('#lx-del').onclick = async () => { const grupos = {}; [...sel].map(achar).forEach(x => (grupos[x._c] = grupos[x._c] || []).push(x)); try { for (const [c, l] of Object.entries(grupos)) if (!(await excluirDeVez(c, l))) return; toast('Excluídos definitivamente.'); navegar(); } catch (er) { falha(er); } };
+    desenhar();
+  }
+});
+
+/* ---------- Clientes e contatos ---------- */
+const SIT_CLI = { ativo: ['Ativo', 'ok'], inativo: ['Inativo', 'mute'], encerrado: ['Relacionamento encerrado', 'warn'] };
+async function dadosClientes() {
+  const [casa, ped, prop, proj] = await Promise.all([listar('clientes').catch(() => []), listar('pedidos').catch(() => []), listar('propostas').catch(() => []), listar('projetos').catch(() => [])]);
+  const mapa = new Map();
+  const add = (nome) => { const k = norm(nome); if (!k) return null; if (!mapa.has(k)) mapa.set(k, { nome, k, pedidos: [], propostas: [], projetos: [], aprovados: 0, doc: null, ultimo: 0 }); return mapa.get(k); };
+  casa.forEach(c => { const o = add(c.nome); if (o && !o.doc) o.doc = c; });
+  ped.filter(p => etapaDe(p) !== 'identificado').forEach(p => { const o = add(nomeLead(p)); if (o) { o.pedidos.push(p); o.ultimo = Math.max(o.ultimo, tsMs(p.criadoEm)); if (etapaDe(p) === 'aprovado') o.aprovados++; } });
+  prop.forEach(p => { const o = add(p.cliente); if (o) o.propostas.push(p); });
+  proj.forEach(p => { const o = add(p.clienteNome); if (o) o.projetos.push(p); });
+  return [...mapa.values()].map(c => ({ ...c, situacao: c.doc?.situacao || 'ativo', arquivado: !!c.doc?.arquivado, especial: c.doc?.reconhecimento === 'especial', desde: c.doc?.clienteDesde || '', casa: !!c.doc, projetosN: c.projetos.length }));
+}
+async function garantirDoc(c) { if (c.doc) return c.doc._id; return salvarDoc('clientes', null, { nome: c.nome, origem: 'comercial', situacao: 'ativo' }, 'cadastrou cliente', c.nome); }
+function dependencias(c) {
+  const ativos = c.projetos.filter(p => !['concluido', 'cancelado'].includes(p.situacao || 'andamento'));
+  const fechadas = c.propostas.filter(p => ['aceita', 'contrato'].includes(p.status));
+  const enviadas = c.propostas.filter(p => p.status === 'enviada');
+  const entregas = c.projetos.reduce((s, p) => s + (p.entregas || []).length, 0);
+  return { ativos, fechadas, enviadas, entregas };
+}
+async function excluirCliente(c) {
+  if (!edita('crm')) return toast('Sem permissão para excluir clientes.', true);
+  const d = dependencias(c);
+  if (d.fechadas.length || d.ativos.length) {
+    const ok = await confirmar({ titulo: 'Este cliente não pode ser excluído agora', texto: `${d.fechadas.length ? `${d.fechadas.length} proposta(s) aceita(s) ou com contrato precisam ser preservadas por obrigação comercial e fiscal.\n` : ''}${d.ativos.length ? `${d.ativos.length} projeto(s) ainda em andamento.\n` : ''}\nVocê pode arquivar o cliente: ele sai das listas e o histórico fica guardado.`, ok: 'Arquivar cliente' });
+    if (ok) { await mudarCliente(c, { arquivado: true }, 'arquivou cliente'); toast('Cliente arquivado.', false, { rotulo: 'Desfazer', fn: async () => { await mudarCliente(c, { arquivado: false }, 'desarquivou cliente'); navegar(); } }); return true; }
+    return false;
+  }
+  const avisos = [`Pedidos: ${c.pedidos.length} · Propostas: ${c.propostas.length} · Projetos: ${c.projetos.length} · Arquivos entregues: ${d.entregas}`, 'Pedidos, propostas e projetos NÃO são apagados: continuam no sistema com o nome do cliente.'];
+  if (d.enviadas.length) avisos.push(`${d.enviadas.length} proposta(s) enviada(s) e sem resposta continuam abertas.`);
+  if (!c.doc) { await garantirDoc(c); limparCache('clientes'); c.doc = (await listar('clientes', true)).find(x => norm(x.nome) === c.k); }
+  return paraLixeira('clientes', c.doc, { avisos });
+}
+async function mudarCliente(c, dados, acao) { const id = await garantirDoc(c); await salvarDoc('clientes', id, dados, acao, c.nome); }
+
+modulo({
+  id: 'clientes', titulo: 'Clientes e contatos', mod: 'crm',
+  async render(v, [id]) {
+    if (id) return fichaCliente(v, decodeURIComponent(id));
+    const lista = (await dadosClientes()).sort((a, b) => (b.pedidos.length + b.projetosN) - (a.pedidos.length + a.projetosN) || a.nome.localeCompare(b.nome));
+    const ed = edita('crm'); let f = sessionStorage.getItem('cc-cli-f') || 'ativos', q = ''; const sel = new Set();
+    const F = { ativos: c => !c.arquivado && c.situacao === 'ativo', inativos: c => !c.arquivado && c.situacao === 'inativo', encerrados: c => !c.arquivado && c.situacao === 'encerrado', arquivados: c => c.arquivado, todos: () => true };
+    v.innerHTML = `<div class="cc-head"><div><h2>Clientes e contatos</h2><p>Abra um cliente para editar, mudar a situação, arquivar ou excluir. Contatos importados não recebem marketing sem consentimento registrado.</p></div>
+      ${ed ? '<div class="cc-actions"><button class="btn btn--ghost" type="button" id="nc-csv">Importar CSV</button><a class="btn btn--primary" href="#/clientes/novo">Novo cliente</a></div>' : ''}</div>
+      <div class="in-bar"><div class="cc-chips">${[['ativos', 'Ativos'], ['inativos', 'Inativos'], ['encerrados', 'Encerrados'], ['arquivados', 'Arquivados'], ['todos', 'Todos']].map(([k, n]) => `<label><input type="radio" name="cli-f" value="${k}" ${f === k ? 'checked' : ''}><span>${n} <i>${lista.filter(F[k]).length}</i></span></label>`).join('')}</div><input type="search" id="cli-q" class="mk-busca" style="flex:1 1 200px;margin:0" placeholder="Buscar cliente" aria-label="Buscar cliente"></div>
+      ${ed ? '<div class="lx-lote" id="cli-lote" hidden><b id="cli-n"></b><button type="button" class="btn btn--ghost" data-l="arquivar">Arquivar</button><button type="button" class="btn btn--ghost" data-l="reativar">Reativar</button><button type="button" class="btn btn--ghost" data-l="inativo">Marcar inativo</button><button type="button" class="btn btn--danger" data-l="excluir">Excluir</button><button type="button" class="cc-link" data-l="limpar">Limpar seleção</button></div>' : ''}
+      <div class="cc-list" id="cli-l"></div>`;
+    const desenhar = () => {
+      const vis = lista.filter(F[f]).filter(c => !q || norm(c.nome).includes(q));
+      $('#cli-l').innerHTML = vis.length ? vis.map(c => `<div class="cc-row cli-row" data-k="${attr(c.k)}">${ed ? `<label class="lx-ck"><input type="checkbox" ${sel.has(c.k) ? 'checked' : ''} aria-label="Selecionar ${attr(c.nome)}"></label>` : ''}<a class="cli-a" href="#/clientes/${encodeURIComponent(c.doc ? c.doc._id : 'nome:' + c.nome)}"><b>${esc(c.nome)}</b><small>${esc([`${c.pedidos.length} pedido(s)`, `${c.propostas.length} proposta(s)`, `${c.projetosN} projeto(s)`, c.ultimo ? 'último pedido ' + relativo(c.ultimo) : ''].filter(Boolean).join(' · '))}</small></a><span class="cli-pills">${c.arquivado ? pill('Arquivado', 'mute') : pill(...SIT_CLI[c.situacao])}${reconhecimento(c)}</span><a class="btn btn--ghost cli-abrir" href="#/clientes/${encodeURIComponent(c.doc ? c.doc._id : 'nome:' + c.nome)}">Abrir</a></div>`).join('') : '<div class="cc-empty"><b>Nenhum cliente neste filtro.</b></div>';
+      if ($('#cli-lote')) { $('#cli-lote').hidden = !sel.size; $('#cli-n').textContent = `${sel.size} selecionado${sel.size > 1 ? 's' : ''}`; }
+    };
+    $$('input[name=cli-f]').forEach(r => r.onchange = () => { f = r.value; sessionStorage.setItem('cc-cli-f', f); sel.clear(); desenhar(); });
+    $('#cli-q').oninput = (e) => { q = norm(e.target.value); desenhar(); };
+    $('#cli-l').onchange = (e) => { const k = e.target.closest('.cli-row')?.dataset.k; if (!k) return; e.target.checked ? sel.add(k) : sel.delete(k); desenhar(); };
+    if ($('#cli-lote')) $('#cli-lote').onclick = async (e) => {
+      const b = e.target.closest('[data-l]'); if (!b) return; const alvo = lista.filter(c => sel.has(c.k)), a = b.dataset.l;
+      if (a === 'limpar') { sel.clear(); return desenhar(); }
+      if (a === 'excluir') { if (!(await confirmar({ titulo: `Excluir ${alvo.length} cliente(s)?`, texto: 'Cada um passa pela verificação de dependências. Quem tiver proposta aceita ou projeto em andamento é arquivado em vez de excluído.', ok: 'Continuar', perigo: true }))) return;
+        let ex = 0, arq = 0; for (const c of alvo) { const d = dependencias(c); if (d.fechadas.length || d.ativos.length) { await mudarCliente(c, { arquivado: true }, 'arquivou cliente'); arq++; } else { if (!c.doc) { await garantirDoc(c); c.doc = (await listar('clientes', true)).find(x => norm(x.nome) === c.k); } await paraLixeira('clientes', c.doc, { silencioso: true }); ex++; } }
+        toast(`${ex} na Lixeira${arq ? `, ${arq} arquivado(s) por terem vínculos` : ''}.`); return navegar(); }
+      if (!(await confirmar({ titulo: `${b.textContent} ${alvo.length} cliente(s)?`, texto: a === 'arquivar' ? 'Saem das listas principais. O histórico fica guardado e dá para reativar.' : a === 'reativar' ? 'Voltam para a lista de ativos.' : 'Ficam como inativos: sem relacionamento comercial no momento.', ok: b.textContent }))) return;
+      try { for (const c of alvo) await mudarCliente(c, a === 'arquivar' ? { arquivado: true } : a === 'reativar' ? { arquivado: false, situacao: 'ativo' } : { situacao: 'inativo' }, a === 'arquivar' ? 'arquivou cliente' : a === 'reativar' ? 'reativou cliente' : 'marcou cliente como inativo'); toast('Pronto.'); navegar(); } catch (er) { falha(er); }
+    };
+    if ($('#nc-csv')) $('#nc-csv').onclick = async () => importarContatos(await listar('clientes'));
+    desenhar();
+  }
+});
+async function fichaCliente(v, id) {
+  limparCache('clientes', 'propostas', 'projetos');
+  const lista = await dadosClientes(); let c;
+  if (id === 'novo') c = { nome: '', k: '', pedidos: [], propostas: [], projetos: [], doc: null, situacao: 'ativo', arquivado: false };
+  else if (id.startsWith('nome:')) c = lista.find(x => x.k === norm(id.slice(5)));
+  else c = lista.find(x => x.doc && x.doc._id === id);
+  if (!c) { const sn = id !== 'novo' && !id.startsWith('nome:') ? await S.F.getDoc(docRef('clientes', id)).catch(() => null) : null;
+    v.innerHTML = `<div class="cc-empty"><b>${sn && sn.exists() && sn.data().excluido ? 'Este cliente está na Lixeira.' : 'Cliente não encontrado.'}</b>${sn && sn.exists() && sn.data().excluido ? '<a class="btn btn--ghost" href="#/lixeira">Abrir Lixeira</a>' : ''}</div>`; return; }
+  const d0 = c.doc || {}, ro = !edita('crm'), novo = id === 'novo';
+  const dep = dependencias(c);
+  v.innerHTML = `<div class="cc-head"><div><h2>${novo ? 'Novo cliente' : esc(c.nome)}</h2><p>${novo ? 'Cadastro manual.' : c.arquivado ? 'Arquivado: fora das listas principais.' : esc(SIT_CLI[c.situacao][0]) + (d0.encerradoEm ? ' em ' + esc(dia(d0.encerradoEm + 'T12:00')) : '')}</p></div>${novo ? '' : `<div class="cc-actions">${c.arquivado ? pill('Arquivado', 'mute') : pill(...SIT_CLI[c.situacao])}${reconhecimento({ ...c, projetos: c.projetosN })}</div>`}</div>
+  <div class="cc-cols cc-split"><form class="cc-panel cc-form" id="cf" novalidate>
+    <div class="cc-f2"><div class="cc-field"><label for="cf-n">Nome</label><input id="cf-n" maxlength="120" value="${attr(d0.nome || c.nome)}" ${ro ? 'disabled' : ''}></div><div class="cc-field"><label for="cf-e">Empresa</label><input id="cf-e" maxlength="120" value="${attr(d0.empresa || '')}" ${ro ? 'disabled' : ''}></div></div>
+    <div class="cc-f2"><div class="cc-field"><label for="cf-m">E-mail</label><input id="cf-m" type="email" value="${attr(d0.email || c.pedidos[0]?.contato?.email || '')}" ${ro ? 'disabled' : ''}></div><div class="cc-field"><label for="cf-w">WhatsApp</label><input id="cf-w" value="${attr(d0.whatsapp || c.pedidos[0]?.contato?.whatsapp || '')}" ${ro ? 'disabled' : ''}></div></div>
+    <div class="cc-f2"><div class="cc-field"><label for="cf-ci">Cidade</label><input id="cf-ci" maxlength="80" value="${attr(d0.cidade || '')}" ${ro ? 'disabled' : ''}></div><div class="cc-field"><label for="cf-ds">Cliente desde</label><input id="cf-ds" type="date" value="${attr(d0.clienteDesde || '')}" ${ro ? 'disabled' : ''}></div></div>
+    <div class="cc-field"><label for="cf-no">Notas internas</label><textarea id="cf-no" rows="3" maxlength="3000" ${ro ? 'disabled' : ''}>${esc(d0.notas || '')}</textarea></div>
+    <label class="cc-check"><input type="checkbox" id="cf-mk" ${d0.marketing?.consentiu ? 'checked' : ''} ${ro ? 'disabled' : ''}>Autorizou receber comunicações de marketing${d0.marketing?.registradoEm ? ` (registrado em ${esc(d0.marketing.registradoEm)})` : ''}</label>
+    <label class="cc-check"><input type="checkbox" id="cf-esp" ${d0.reconhecimento === 'especial' ? 'checked' : ''} ${ro ? 'disabled' : ''}>Parceria especial</label>
+    <p class="cc-err" id="cf-err" role="alert"></p>
+    ${ro ? '' : `<div class="cc-actions"><button class="btn btn--primary" type="submit" data-salvar>Salvar alterações</button><a class="btn btn--ghost" href="#/clientes" data-cancelar>Cancelar</a></div>`}
+  </form>
+  <div class="cc-grid">${novo ? '' : `
+    <section class="cc-panel"><h3>Situação</h3><p class="cc-note">Ativo: relação normal. Inativo: sem trabalho no momento. Encerrado: a relação comercial terminou, o histórico fica. Arquivado: some das listas, dá para reativar.</p>
+      ${ro ? '' : `<div class="cc-actions cli-sit">${c.situacao !== 'ativo' ? '<button type="button" class="btn btn--ghost" data-s="ativo">Reativar</button>' : '<button type="button" class="btn btn--ghost" data-s="inativo">Marcar como inativo</button>'}${c.situacao !== 'encerrado' ? '<button type="button" class="btn btn--ghost" data-s="encerrado">Encerrar relacionamento</button>' : ''}${c.arquivado ? '<button type="button" class="btn btn--ghost" data-s="desarquivar">Desarquivar</button>' : '<button type="button" class="btn btn--ghost" data-s="arquivar">Arquivar</button>'}${c.doc ? '<button type="button" class="btn btn--ghost" data-s="hist">Versões</button>' : ''}</div>`}
+      ${d0.motivoEncerramento ? `<p class="cc-note">Motivo do encerramento: ${esc(d0.motivoEncerramento)}</p>` : ''}</section>
+    <section class="cc-panel"><h3>Vínculos</h3><div class="cc-list">${[...c.pedidos.map(p => [`#/comercial/${p._id}`, 'Pedido ' + p._id, ETAPA[etapaDe(p)][1]]), ...c.propostas.map(p => [`#/propostas/${p._id}`, p.titulo, p.status]), ...c.projetos.map(p => [`#/projetos/${p._id}`, p.titulo, SIT_PROJ[p.situacao || 'andamento'][0]])].map(([h, t, s]) => `<a class="cc-row" href="${attr(h)}"><span><b>${esc(t)}</b><small>${esc(s)}</small></span></a>`).join('') || '<p class="cc-note">Nenhum pedido, proposta ou projeto.</p>'}</div></section>
+    ${ro ? '' : `<section class="cc-panel cc-perigo"><h3>Zona de exclusão</h3><p class="cc-note">Excluir manda para a Lixeira por ${RETENCAO} dias. Pedidos, propostas e projetos não são apagados junto.</p><div class="cc-actions"><button type="button" class="btn btn--danger" id="cf-del">Excluir cliente</button>${S.papel === 'owner' ? '<button type="button" class="btn btn--ghost" id="cf-lgpd">Eliminar dados pessoais (LGPD)</button>' : ''}</div></section>`}`}</div></div>`;
+  if (ro) return;
+  $('#cf').onsubmit = async (e) => {
+    e.preventDefault(); const nome = $('#cf-n').value.trim(); if (!nome) { $('#cf-err').textContent = 'Informe o nome.'; return $('#cf-n').focus(); }
+    const em = $('#cf-m').value.trim(); if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { $('#cf-err').textContent = 'Confira o e-mail.'; return; }
+    const mk = $('#cf-mk').checked, antesMk = !!d0.marketing?.consentiu;
+    const dados = { nome, empresa: $('#cf-e').value.trim(), email: em.toLowerCase(), whatsapp: $('#cf-w').value.trim(), cidade: $('#cf-ci').value.trim(), clienteDesde: $('#cf-ds').value, notas: $('#cf-no').value.trim(), reconhecimento: $('#cf-esp').checked ? 'especial' : '', ...(mk !== antesMk ? { marketing: mk ? { consentiu: true, fonte: 'registrado por ' + S.email, registradoEm: new Date().toISOString().slice(0, 10) } : { consentiu: false, revogadoEm: new Date().toISOString().slice(0, 10) } } : {}), ...(novo || !c.doc ? { situacao: 'ativo', origem: novo ? 'casa' : 'comercial' } : {}) };
+    const b = e.submitter || $('[data-salvar]'); b.disabled = true;
+    try { const nid = await salvarDoc('clientes', c.doc?._id || null, dados, novo ? 'criou cliente' : 'editou cliente', nome); toast('Cliente salvo.'); ir('clientes/' + nid); } catch (er) { b.disabled = false; falha(er); }
+  };
+  if (novo) return;
+  $$('.cli-sit [data-s]').forEach(b => b.onclick = async () => {
+    const s = b.dataset.s;
+    if (s === 'hist') return abrirVersoes('clientes', c.doc._id, x => x.nome);
+    try {
+      if (s === 'encerrado') { const mot = await confirmar({ titulo: 'Encerrar relacionamento?', texto: `A relação comercial com ${c.nome} fica registrada como encerrada. Pedidos, propostas e projetos continuam no histórico. Dá para reativar depois.`, ok: 'Encerrar relacionamento', campo: 'Motivo (fica no histórico)' }); if (!mot) return; await mudarCliente(c, { situacao: 'encerrado', encerradoEm: new Date().toISOString().slice(0, 10), motivoEncerramento: String(mot).slice(0, 200) }, 'encerrou relacionamento'); }
+      else if (s === 'arquivar') { await mudarCliente(c, { arquivado: true }, 'arquivou cliente'); toast('Cliente arquivado.', false, { rotulo: 'Desfazer', fn: async () => { await mudarCliente(c, { arquivado: false }, 'desarquivou cliente'); navegar(); } }); return navegar(); }
+      else if (s === 'desarquivar') await mudarCliente(c, { arquivado: false }, 'desarquivou cliente');
+      else await mudarCliente(c, { situacao: s, ...(s === 'ativo' ? { encerradoEm: '', motivoEncerramento: '' } : {}) }, s === 'ativo' ? 'reativou cliente' : 'marcou cliente como inativo');
+      toast('Situação atualizada.'); navegar();
+    } catch (er) { falha(er); }
+  });
+  $('#cf-del').onclick = async (e) => { e.target.disabled = true; try { if (await excluirCliente(c)) ir('clientes'); } catch (er) { falha(er); } e.target.disabled = false; };
+  if ($('#cf-lgpd')) $('#cf-lgpd').onclick = async () => {
+    if (!c.doc) return toast('Não há cadastro com dados pessoais para eliminar.', true);
+    if (!(await confirmar({ titulo: 'Eliminar dados pessoais?', texto: 'Para pedidos de titular com base na LGPD. Nome de contato, e-mail, WhatsApp, cidade e notas do cadastro são apagados de forma irreversível. Documentos comerciais e fiscais vinculados ficam preservados enquanto a lei exigir.', ok: 'Eliminar dados pessoais', perigo: true, digitar: 'ELIMINAR' }))) return;
+    try { await salvarDoc('clientes', c.doc._id, { nome: 'Titular anonimizado ' + c.doc._id.slice(0, 4), email: '', whatsapp: '', cidade: '', notas: '', marketing: { consentiu: false }, anonimizadoEm: new Date().toISOString().slice(0, 10), situacao: 'encerrado', arquivado: true }, 'anonimizou cliente (LGPD)', 'cliente ' + c.doc._id); toast('Dados pessoais eliminados.'); ir('clientes'); } catch (er) { falha(er); }
+  };
+}
+
+/* ---------- ciclo de projetos ---------- */
+const SIT_PROJ = { planejado: ['Planejado', 'mute'], andamento: ['Em andamento', 'info'], pausado: ['Pausado', 'warn'], revisao: ['Em revisão', 'info'], aguardando: ['Aguardando aprovação', 'warn'], concluido: ['Concluído', 'ok'], cancelado: ['Cancelado', 'bad'] };
+const TRANS_PROJ = { planejado: ['andamento', 'cancelado'], andamento: ['revisao', 'aguardando', 'pausado', 'concluido', 'cancelado'], pausado: ['andamento', 'cancelado'], revisao: ['andamento', 'aguardando', 'concluido'], aguardando: ['andamento', 'concluido'], concluido: [], cancelado: [] };
+const ROT_TRANS = { andamento: 'Iniciar ou retomar', revisao: 'Enviar para revisão', aguardando: 'Aguardar aprovação', pausado: 'Pausar', concluido: 'Concluir', cancelado: 'Cancelar projeto' };
+function cicloProjeto(p) {
+  if (!p) return '';
+  const s = p.situacao || 'andamento', ed = edita('crm') || edita('operacao');
+  return `<section class="cc-panel pj-ciclo"><div class="ix-h"><div><h3>Situação do projeto</h3><p class="cc-note">${esc(SIT_PROJ[s][0])}${p.concluidoEm && s === 'concluido' ? ' em ' + esc(dia(p.concluidoEm + 'T12:00')) + (p.concluidoPor ? ' por ' + esc(p.concluidoPor.split('@')[0]) : '') : ''}${p.arquivado ? ' · arquivado' : ''}</p></div>${pill(...SIT_PROJ[s])}</div>
+    ${ed ? `<div class="cc-actions">${TRANS_PROJ[s].map(t => `<button type="button" class="btn ${t === 'concluido' ? 'btn--primary' : 'btn--ghost'}" data-t="${t}">${ROT_TRANS[t]}</button>`).join('')}${['concluido', 'cancelado'].includes(s) ? '<button type="button" class="btn btn--ghost" data-t="reabrir">Reabrir</button>' : ''}${['concluido', 'cancelado'].includes(s) ? (p.arquivado ? '<button type="button" class="btn btn--ghost" data-t="desarquivar">Desarquivar</button>' : '<button type="button" class="btn btn--ghost" data-t="arquivar">Arquivar</button>') : ''}</div>` : ''}
+    ${(p.cicloHist || []).length ? `<details><summary>Histórico de situações</summary><ul class="in-met">${p.cicloHist.slice().reverse().map(h => `<li>${esc(h.em)} · ${esc(SIT_PROJ[h.para]?.[0] || h.para)} · ${esc(h.por.split('@')[0])}${h.motivo ? ' · ' + esc(h.motivo) : ''}</li>`).join('')}</ul></details>` : ''}</section>`;
+}
+function ligarCicloProjeto(p) {
+  $$('.pj-ciclo [data-t]').forEach(b => b.onclick = async () => {
+    const t = b.dataset.t, s = p.situacao || 'andamento', hoje = new Date().toISOString().slice(0, 10);
+    let dados = {}, motivo = '';
+    if (t === 'arquivar' || t === 'desarquivar') dados = { arquivado: t === 'arquivar' };
+    else if (t === 'reabrir') { motivo = await confirmar({ titulo: 'Reabrir projeto?', texto: 'O projeto volta para "Em andamento". A data de conclusão anterior fica no histórico e os prazos combinados não mudam.', ok: 'Reabrir', campo: 'Motivo da reabertura' }); if (!motivo) return; dados = { situacao: 'andamento', concluidoEm: '' }; }
+    else if (t === 'cancelado') { motivo = await confirmar({ titulo: 'Cancelar projeto?', texto: 'Cancelar não é concluir: o projeto fica registrado como interrompido. Dá para reabrir depois.', ok: 'Cancelar projeto', perigo: true, campo: 'Motivo do cancelamento' }); if (!motivo) return; dados = { situacao: 'cancelado' }; }
+    else if (t === 'concluido') { if (!(await confirmar({ titulo: 'Concluir projeto?', texto: `Registra a conclusão em ${new Date().toLocaleDateString('pt-BR')} por você${p.concluidoEm ? '' : ''}. A pontualidade é calculada com o prazo acordado${p.prorrogadoAte ? ' e a prorrogação registrada' : ''}.`, ok: 'Concluir' }))) return; dados = { situacao: 'concluido', concluidoEm: p.concluidoEm || hoje, concluidoPor: S.email }; }
+    else dados = { situacao: t };
+    if (dados.situacao) dados.cicloHist = [...(p.cicloHist || []), { de: s, para: dados.situacao, por: S.email, em: hoje, motivo: String(motivo || '').slice(0, 200) }];
+    b.disabled = true;
+    try { await salvarDoc('projetos', p._id, dados, t === 'arquivar' ? 'arquivou projeto' : t === 'reabrir' ? 'reabriu projeto' : 'mudou situação do projeto', p.titulo); toast('Projeto atualizado.'); navegar(); } catch (er) { b.disabled = false; falha(er); }
+  });
+}
+
+/* ---------- navegação segura: voltar, cancelar e alterações não salvas ---------- */
+let sujo = false, ignorarHash = false, hashAtual = location.hash;
+document.addEventListener('input', (e) => { if (e.target.closest('#cc-view form, #cc-view .ed-form') && e.target.type !== 'search' && !e.target.closest('[data-nao-sujo]')) sujo = true; }, true);
+document.addEventListener('change', (e) => { if (e.target.closest('#cc-view form, #cc-view .ed-form') && e.target.type !== 'search' && e.target.type !== 'file' && !e.target.closest('[data-nao-sujo]')) sujo = true; }, true);
+addEventListener('beforeunload', (e) => { if (sujo) { e.preventDefault(); e.returnValue = ''; } });
+document.addEventListener('click', async (e) => { const c = e.target.closest('[data-cancelar]'); if (!c) return; if (sujo) { e.preventDefault(); const r = await perguntarSujo(); if (r === 'descartar') { sujo = false; location.hash = c.getAttribute('href'); } else if (r === 'salvar') salvarVista(); } }, true);
+function salvarVista() { const b = $('#cc-view [data-salvar]') || $('#cc-view #ed-salvar') || $('#cc-view button[type=submit].btn--primary') || $('#cc-view button[type=submit]'); if (b) b.click(); }
+function perguntarSujo() {
+  return new Promise(res => {
+    let d = $('#cc-sujo'); if (!d) { d = document.createElement('dialog'); d.id = 'cc-sujo'; d.className = 'cc-confirm'; d.innerHTML = '<form method="dialog"><h2>Você tem alterações não salvas.</h2><p>Se sair agora, o que foi digitado nesta tela se perde.</p><div class="cc-actions cc-sujo-acts"><button class="btn btn--primary btn--sm" value="continuar">Continuar editando</button><button class="btn btn--ghost btn--sm" value="salvar">Salvar</button><button class="btn btn--danger btn--sm" value="descartar">Descartar alterações</button></div></form>'; document.body.appendChild(d); }
+    d.returnValue = ''; d.onclose = () => res(d.returnValue || 'continuar'); d.showModal(); d.querySelector('[value=continuar]').focus();
+  });
+}
+async function guardaNavegacao() {
+  if (ignorarHash) { ignorarHash = false; return false; }
+  if (!sujo) { hashAtual = location.hash; return true; }
+  const destino = location.hash; history.replaceState(null, '', hashAtual || '#/painel');
+  const r = await perguntarSujo();
+  if (r === 'descartar') { sujo = false; hashAtual = destino; history.replaceState(null, '', destino); return true; }
+  if (r === 'salvar') salvarVista();
+  return false;
+}
+function completarVista(m, params) {
+  sujo = false;
+  const v = $('#cc-view');
+  if (params.length && !$('.cc-back', v)) v.insertAdjacentHTML('afterbegin', `<a class="cc-back" href="#/${m.id}">← ${esc(m.titulo)}</a>`);
+  $$('form.cc-form', v).forEach(f => { const acts = $('.cc-actions', f); if (!acts || !$('button[type=submit], [data-salvar]', acts)) return; if ($('[data-cancelar]', f) || [...acts.children].some(x => /^Cancelar$/.test(x.textContent.trim()))) return; acts.insertAdjacentHTML('beforeend', `<a class="btn btn--ghost" href="#/${m.id}" data-cancelar>Cancelar</a>`); });
+}
 
 /* ============ Site (números, SEO, saúde), equipe, auditoria, integrações e dados ============ */
 const PAGINAS = ['index.html', 'montar-projeto.html', 'publicidade.html', 'esportes.html', 'ativacoes-de-marca.html', 'institucional.html', 'bourbon-cultural.html', 'cabras-do-sol.html', 'de-nada-em-nada-tudo.html', 'captador-de-recursos.html', 'manual-patrocinio.html', 'trabalhe-conosco.html', 'briefing.html', 'cliente.html', 'privacidade.html', 'link.html'];
@@ -3144,7 +3445,7 @@ modulo({
         <div class="cc-field"><label for="eq-p">Papel</label><select id="eq-p">${papeisGeriveis.map(p => `<option value="${p}" ${m?.papel === p ? 'selected' : ''}>${esc(PAPEIS[p].nome)}</option>`).join('')}</select></div>
         <details ${mods ? 'open' : ''}><summary>Permissões específicas</summary><div class="cc-form"><p class="cc-note">Marque só se quiser fugir do padrão do papel.</p><label class="cc-check"><input type="checkbox" id="eq-custom" ${mods ? 'checked' : ''}>Usar permissões específicas</label><div class="cc-chips" id="eq-mods">${Object.entries(MOD_NOMES).filter(([k]) => souOwner || !['equipe', 'auditoria', 'config'].includes(k)).map(([k, n]) => `<label><input type="checkbox" value="${k}" ${(mods || PAPEIS[m?.papel || 'editor'].mods).includes(k) ? 'checked' : ''}><span>${esc(n)}</span></label>`).join('')}</div></div></details>
         <p class="cc-err" id="eq-err" role="alert"></p></form>`,
-        `<button class="btn btn--primary" type="button" id="eq-ok">${novo ? 'Criar convite' : 'Salvar'}</button>${!novo ? `${m.status === 'suspenso' ? '<button class="btn btn--ghost" type="button" id="eq-reat">Reativar</button>' : '<button class="btn btn--ghost" type="button" id="eq-susp">Suspender</button>'}${m.status === 'convidado' ? '<button class="btn btn--ghost" type="button" id="eq-reenv">Renovar convite</button>' : ''}<span class="cc-spacer"></span><button class="btn btn--danger" type="button" id="eq-rev">${m.status === 'convidado' ? 'Cancelar convite' : 'Revogar acesso'}</button>` : ''}`);
+        `<button class="btn btn--primary" type="button" id="eq-ok">${novo ? 'Criar convite' : 'Salvar'}</button>${!novo ? `${m.status === 'suspenso' ? '<button class="btn btn--ghost" type="button" id="eq-reat">Reativar</button>' : '<button class="btn btn--ghost" type="button" id="eq-susp">Suspender</button>'}${m.status === 'convidado' ? '<button class="btn btn--ghost" type="button" id="eq-reenv">Renovar convite</button>' : ''}${m.modulos ? '<button class="btn btn--ghost" type="button" id="eq-padrao">Restaurar permissões padrão</button>' : ''}<a class="btn btn--ghost" href="#/auditoria">Histórico</a><span class="cc-spacer"></span><button class="btn btn--danger" type="button" id="eq-rev">${m.status === 'convidado' ? 'Cancelar convite' : 'Revogar acesso'}</button>` : ''}`);
       const coletar = () => { const custom = $('#eq-custom').checked; return { nome: $('#eq-n').value.trim(), papel: $('#eq-p').value, modulos: custom ? $$('#eq-mods input:checked').map(i => i.value) : null }; };
       const expira = () => S.F.Timestamp.fromMillis(Date.now() + 7 * 864e5);
       $('#eq-ok').onclick = async () => {
@@ -3174,6 +3475,7 @@ modulo({
       const muda = async (dados, acao, titulo, texto, perigo = false) => { if (!(await confirmar({ titulo, texto, ok: 'Confirmar', perigo }))) return; try { await S.F.updateDoc(docRef('equipe', m._id), dados); auditar(acao, 'equipe/' + m._id); fecharSheet(); limparCache('equipe'); toast('Feito.'); navegar(); } catch (er) { falha(er); } };
       if ($('#eq-susp')) $('#eq-susp').onclick = () => muda({ status: 'suspenso' }, 'suspendeu acesso', 'Suspender acesso?', 'A pessoa perde o acesso a qualquer dado na próxima ação, mesmo com a sessão aberta.', true);
       if ($('#eq-reat')) $('#eq-reat').onclick = () => muda({ status: 'ativo' }, 'reativou acesso', 'Reativar acesso?', 'A pessoa volta a acessar com o mesmo papel.');
+      if ($('#eq-padrao')) $('#eq-padrao').onclick = () => muda({ modulos: null }, 'restaurou permissões padrão', 'Restaurar permissões padrão?', `Volta a valer o acesso padrão de ${PAPEIS[m.papel]?.nome}: ${PAPEIS[m.papel]?.mods.map(k => MOD_NOMES[k]).join(', ')}.`);
       if ($('#eq-reenv')) $('#eq-reenv').onclick = () => muda({ expiraEm: expira() }, 'renovou convite', 'Renovar convite?', 'O convite passa a valer por mais 7 dias.');
       $('#eq-rev').onclick = async () => {
         if (!(await confirmar({ titulo: m.status === 'convidado' ? 'Cancelar convite?' : 'Revogar acesso?', texto: 'A ficha é apagada e a pessoa não entra mais. Para voltar, será preciso um novo convite.', ok: 'Revogar', perigo: true, digitar: 'REVOGAR' }))) return;
@@ -3242,7 +3544,7 @@ modulo({
       const velhos = (await listar('pedidos', true)).filter(p => ['recusado', 'arquivado', 'identificado'].includes(etapaDe(p)) && tsMs(p.criadoEm) < lim);
       if (!velhos.length) return toast('Nenhum pedido com mais de 12 meses para apagar.');
       if (!(await confirmar({ titulo: `Apagar ${velhos.length} pedidos antigos?`, texto: 'Não dá para desfazer. Exporte um backup antes se precisar.', ok: 'Apagar', perigo: true, digitar: 'APAGAR' }))) return;
-      try { for (const p of velhos) await S.F.deleteDoc(docRef('pedidos', p._id)); limparCache('pedidos'); auditar('apagou pedidos antigos', 'pedidos', String(velhos.length)); toast('Pedidos apagados.'); } catch (e) { falha(e); }
+      try { for (const p of velhos) { await S.F.updateDoc(docRef('pedidos', p._id), { excluido: true, excluidoEm: S.F.serverTimestamp(), excluidoPor: S.email, motivoExclusao: 'retenção: identificação sem briefing' }); await S.F.deleteDoc(docRef('pedidos', p._id)); } limparCache('pedidos'); auditar('apagou pedidos antigos', 'pedidos', String(velhos.length)); toast('Pedidos apagados.'); } catch (e) { falha(e); }
     };
   }
 });
