@@ -312,7 +312,7 @@ body.cc{min-height:100svh;color:var(--text);-webkit-font-smoothing:antialiased}
   .cc-search span,.cc-search kbd{display:none}
   .cc-search{width:36px;height:36px;padding:0;justify-content:center;border-radius:999px}
   .cc-view{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-  .cc-tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;z-index:40;left:0;right:0;bottom:0;padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px));background:rgba(10,10,11,.92);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--cc-line)}
+  .cc-tabbar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;position:fixed;z-index:40;left:0;right:0;bottom:0;padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px));background:rgba(10,10,11,.92);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--cc-line)}
   .cc .cc-tabbar a,.cc .cc-tabbar button{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:48px;justify-content:center;font-size:.6875rem;color:var(--text-3);text-decoration:none;position:relative}
   .cc-tabbar svg{width:21px;height:21px}
   .cc-tabbar [aria-current="page"]{color:var(--gold)}
@@ -330,6 +330,45 @@ body.cc{min-height:100svh;color:var(--text);-webkit-font-smoothing:antialiased}
   .cc-head .cc-actions .btn{flex:1}
   .cc-range{grid-template-columns:90px 1fr 48px}
 }
+
+/* marcas */
+.cc-toast{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.cc-toast-btn{flex:none;font:inherit;font-weight:600;color:#000;background:transparent;border:1px solid rgba(0,0,0,.25);border-radius:999px;padding:6px 14px;min-height:36px;cursor:pointer}
+.cc-back{display:inline-block;color:var(--cc-mute,#a1a1a6);text-decoration:none;font-size:.875rem;margin-bottom:10px;padding:6px 0}
+.mk-passos{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:6px}
+.mk-passos span{display:inline-flex;align-items:center;gap:8px;color:var(--cc-mute,#a1a1a6);font-size:.875rem}
+.mk-passos b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#000;font-size:.75rem}
+.mk-add{font-weight:600}
+.mk-lote{cursor:pointer}
+.mk-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:4px 0 16px}
+.mk-bar input[type=search]{flex:1 1 220px;min-width:0;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--cc-line);background:var(--cc-panel);color:inherit;font:inherit}
+.mk-bar .cc-chips i{font-style:normal;opacity:.6;margin-left:4px}
+.mk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;padding:0;margin:0;list-style:none}
+.mk-card{display:flex;flex-direction:column;background:var(--cc-panel);border:1px solid var(--cc-line);border-radius:16px;overflow:hidden;min-width:0;transition:box-shadow .15s,transform .15s}
+.mk-card.is-drag{box-shadow:0 0 0 2px var(--gold),0 18px 40px rgba(0,0,0,.5);transform:scale(1.02);position:relative;z-index:2}
+.mk-card.is-rem .mk-prev img{opacity:.35}
+.mk-prev{position:relative;aspect-ratio:5/2;background:var(--bg-3,#1c1c1e);display:grid;place-items:center;padding:16px}
+.mk-prev img{width:auto;height:var(--h);max-width:82%;max-height:80%;object-fit:contain;filter:var(--mark-filter);opacity:var(--mark-op)}
+.mk-prev.is-orig img{filter:none;opacity:1}
+.mk-handle{position:absolute;top:6px;left:6px;width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:rgba(0,0,0,.35);color:#d2d2d7;border:0;cursor:grab;touch-action:none}
+.mk-handle svg{width:18px;height:18px}
+.mk-handle:active{cursor:grabbing}
+.mk-info{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 4px;min-width:0}
+.mk-info b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.mk-acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:8px 12px 12px}
+.cc .mk-acts .btn{min-height:36px;padding:0 4px;white-space:nowrap;font-size:.8125rem;font-weight:500;line-height:1}
+.cc .mk-acts .mk-rm{color:var(--bad)}
+.mk-mv{position:absolute;top:6px;right:6px;display:flex;gap:4px}
+.cc .mk-mv button{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:rgba(0,0,0,.35);color:#d2d2d7;border:0;font-size:1rem;cursor:pointer}
+.cc .mk-mv button:hover{color:#fff;background:rgba(0,0,0,.6)}
+.mk-vazio{grid-column:1/-1;display:grid;gap:12px;justify-items:center}
+.mk-dica{margin-top:10px}
+.mk-site{margin-top:20px}
+.mk-site summary{cursor:pointer;list-style:none;padding:4px 0 10px}
+.cc-drop.is-alvo{box-shadow:0 0 0 2px var(--gold)}
+@media (max-width:520px){.mk-grid{grid-template-columns:1fr;gap:10px}.mk-prev{aspect-ratio:3/1}.mk-acts{grid-template-columns:repeat(4,1fr);padding:6px 10px 10px}.cc .mk-acts .btn{padding:0 4px;font-size:.75rem}.mk-long{display:none}.mk-info{padding:10px 12px 2px}}
+
+.cc .mk-card.is-rem .mk-acts{grid-template-columns:1fr 1fr}.mk-site summary{display:flex;align-items:center;gap:8px}
 
 </style>
 </head>
@@ -364,6 +403,7 @@ body.cc{min-height:100svh;color:var(--text);-webkit-font-smoothing:antialiased}
   <nav class="cc-tabbar" aria-label="Atalhos">
     <a href="#/painel" data-tab="painel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Painel</a>
     <a href="#/comercial" data-tab="comercial"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>Pedidos<i class="cc-dot" id="dot-tab" hidden></i></a>
+    <a href="#/marcas" data-tab="marcas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg>Marcas</a>
     <a href="#/trabalhos" data-tab="trabalhos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8z"/></svg>Site</a>
     <button type="button" id="btn-mais"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>Mais</button>
   </nav>
@@ -440,9 +480,11 @@ const gerarIdPedido = () => {
 const safeUrl = (u) => /^https:\/\//i.test(String(u || '').trim()) ? String(u).trim() : '';
 
 /* ---------- interface ---------- */
-function toast(msg, ruim = false) {
-  const t = document.createElement('div'); t.className = 'cc-toast' + (ruim ? ' is-bad' : ''); t.textContent = msg;
-  $('#cc-toasts').appendChild(t); setTimeout(() => t.remove(), ruim ? 6000 : 3200);
+function toast(msg, ruim = false, acao = null) {
+  const t = document.createElement('div'); t.className = 'cc-toast' + (ruim ? ' is-bad' : ''); t.setAttribute('role', 'status');
+  const s = document.createElement('span'); s.textContent = msg; t.appendChild(s);
+  if (acao) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cc-toast-btn'; b.textContent = acao.rotulo; b.onclick = async () => { b.disabled = true; t.remove(); try { await acao.fn(); toast('Desfeito.'); } catch (e) { falha(e); } }; t.appendChild(b); }
+  $('#cc-toasts').appendChild(t); setTimeout(() => t.remove(), acao ? 8000 : ruim ? 6000 : 3200);
 }
 function erroTxt(e) {
   const c = (e && e.code) || '';
@@ -551,7 +593,7 @@ const ICON = {
 /* ---------- módulos e rotas ---------- */
 const ROTAS = {};
 function modulo(def) { ROTAS[def.id] = def; S.modulos.push(def); }
-const GRUPOS = [['Visão', ['painel', 'estatisticas']], ['Comercial', ['comercial', 'propostas', 'clientes', 'projetos']], ['Site', ['trabalhos', 'marcas', 'depoimentos', 'instagram', 'site', 'saude']], ['Gestão', ['equipe', 'auditoria', 'integracoes', 'dados']]];
+const GRUPOS = [['Visão', ['painel', 'estatisticas']], ['Comercial', ['comercial', 'propostas', 'clientes', 'projetos']], ['Site', ['marcas', 'trabalhos', 'depoimentos', 'instagram', 'site', 'saude']], ['Gestão', ['equipe', 'auditoria', 'integracoes', 'dados']]];
 function montarNav() {
   const nav = $('#cc-nav');
   nav.innerHTML = GRUPOS.map(([g, ids]) => {
@@ -573,7 +615,7 @@ async function navegar() {
   if (!m || !pode(m.mod)) m = ROTAS.painel;
   rotaAtual = m.id;
   $$('#cc-nav a').forEach(a => { if (a.dataset.r === m.id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
-  $$('.cc-tabbar [data-tab]').forEach(a => { const on = a.dataset.tab === m.id || (a.dataset.tab === 'trabalhos' && ['marcas', 'depoimentos', 'instagram', 'site', 'saude'].includes(m.id)); if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  $$('.cc-tabbar [data-tab]').forEach(a => { const on = a.dataset.tab === m.id || (a.dataset.tab === 'trabalhos' && ['depoimentos', 'instagram', 'site', 'saude'].includes(m.id)); if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   $('#cc-title').textContent = m.titulo; document.title = m.titulo + ' | Command Center';
   fecharMenu();
   sheetClose = null; if ($('#cc-sheet').open) $('#cc-sheet').close(); if ($('#cc-palette').open) $('#cc-palette').close();
@@ -893,7 +935,8 @@ modulo({
 });
 
 /* ============ Comercial: pedidos (CRM), propostas, clientes e área do cliente ============ */
-const ROT_FMT = { horizontal: 'Horizontal', vertical: 'Vertical', ambos: 'Horizontal e vertical', 'nao-sei': 'Ainda não sei' };
+const ROT_FMT = { horizontal: 'Horizontal', vertical: 'Vertical', quadrado: 'Quadrado', ambos: 'Vários formatos', 'nao-sei': 'Ainda não sei' };
+const ROT_PROD = { entrevista: 'Entrevistas e depoimentos', elenco: 'Pessoas em cena', estudio: 'Estúdio ou set', externa: 'Gravação externa', drone: 'Imagens aéreas', multicam: 'Mais de uma câmera', roteiro: 'Roteiro e direção criativa', 'voces-decidem': 'Vocês decidem' };
 const ROT_QTD = { '1': 'Um filme principal', '2-4': 'De 2 a 4 peças', '5+': '5 ou mais peças', 'nao-sei': 'Ainda não sei' };
 const ROT_POS = { edicao: 'Edição com narrativa', cor: 'Tratamento de cor', som: 'Trilha e som', legendas: 'Legendas', motion: 'Animação e motion', 'voces-decidem': 'Vocês decidem' };
 const ROT_PRAZO = { '': 'Sem prazo definido', '30-dias': 'Em até 30 dias', '60-dias': 'Em até 60 dias', 'data-fixa': 'Data fixa' };
@@ -1014,7 +1057,7 @@ async function detalhePedido(v, id) {
           <div><dt>Contato</dt><dd>${esc(c.nome || '')}</dd></div><div><dt>Empresa</dt><dd>${esc(c.empresa || 'Não informada')}</dd></div>
           <div><dt>WhatsApp</dt><dd>${esc(c.whatsapp || 'Não informado')}</dd></div><div><dt>E-mail</dt><dd>${esc(c.email || 'Não informado')}</dd></div>
           <div><dt>Objetivo</dt><dd>${esc(ROT_OBJ[e.objetivo] || 'Não informado')}</dd></div><div><dt>Formato</dt><dd>${esc(ROT_FMT[e.formato] || 'Não informado')}</dd></div>
-          <div><dt>Quantidade</dt><dd>${esc(ROT_QTD[e.quantidade] || 'Não informado')}</dd></div><div><dt>Acabamento</dt><dd>${esc((e.pos || []).map(k => ROT_POS[k] || k).join(', ') || 'Vocês decidem')}</dd></div>
+          <div><dt>Quantidade</dt><dd>${esc(ROT_QTD[e.quantidade] || 'Não informado')}</dd></div><div><dt>Produção</dt><dd>${esc((e.producao || []).map(k => ROT_PROD[k] || k).join(', ') || 'Vocês decidem')}</dd></div><div><dt>Acabamento</dt><dd>${esc((e.pos || []).map(k => ROT_POS[k] || k).join(', ') || 'Vocês decidem')}</dd></div>
           <div><dt>Cidade</dt><dd>${esc(x.cidade || 'Não informada')}</dd></div><div><dt>Prazo</dt><dd>${esc(ROT_PRAZO[x.prazo || ''] || x.prazo)}</dd></div>
           <div style="grid-column:1/-1"><dt>Observações do cliente</dt><dd>${esc(x.notas || 'Nenhuma')}</dd></div>
         </dl>
@@ -1715,20 +1758,143 @@ function processarLogo(an, op) {
   return { arquivo, w: out.width, hpx: out.height, h, aspecto, densidade, modo, avisos, util: { tw, th, x0, y0 } };
 }
 
+const ST_MK = { publicado: ['Publicada', 'ok'], rascunho: ['Oculta', 'mute'], removido: ['Removida', 'bad'] };
+const pillMk = (st) => pill(...(ST_MK[st] || ST_MK.rascunho));
+const nomeDoArquivo = (f) => (f.name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').replace(/\b(logo|logotipo|marca|final|vetor|png|svg)\b/gi, '').replace(/\s+/g, ' ').trim().replace(/^\w/, c => c.toUpperCase())) || 'Marca';
+async function lerLogo(file) {
+  if (!/^image\/(png|svg\+xml|jpeg|webp)$/.test(file.type)) throw new Error('formato');
+  if (file.size > 8e6) throw new Error('tamanho');
+  let original;
+  if (file.type === 'image/svg+xml') original = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(sanitizarSVG(await file.text()))));
+  else original = await lerComoDataURL(file);
+  const an = await analisarLogo(file);
+  return { an, original };
+}
+async function salvarOrdem(lista) {
+  const lote = S.F.writeBatch(S.db); let n = 0;
+  lista.forEach((m, i) => { if (m.ordem !== i) { lote.update(docRef('marcas', m._id), { ordem: i }); m.ordem = i; n++; } });
+  if (n) { await lote.commit(); limparCache('marcas'); auditar('reordenou', 'marcas', n + ' posições'); }
+  return n;
+}
+async function mudarStatus(m, status, acao) {
+  const dados = { status }; if (status === 'removido') dados.statusAntes = m.status === 'removido' ? 'rascunho' : (m.status || 'rascunho');
+  await salvarDoc('marcas', m._id, dados, acao, m.nome); atualizarAlertas();
+}
+
 modulo({
   id: 'marcas', titulo: 'Marcas', mod: 'conteudo',
-  async render(v, [id]) {
-    if (id) return editarMarca(v, id === 'nova' ? null : id);
+  async render(v, [id, extra]) {
+    if (id) return editarMarca(v, id === 'nova' ? null : id, extra);
     const lista = (await listar('marcas')).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
     const cfg = (await S.F.getDoc(docRef('site', 'config')).catch(() => null))?.data?.() || {};
-    const pubs = lista.filter(m => m.status === 'publicado');
-    v.innerHTML = `<div class="cc-head"><div><h2>Marcas</h2><p>"Marcas que confiam no nosso método." O grid se reorganiza sozinho, para qualquer quantidade. Envie o logo e o sistema prepara o resto.</p></div>
-      <div class="cc-actions">${edita('conteudo') ? `${lista.length ? '' : '<button class="btn btn--ghost" id="mk-imp" type="button">Importar marcas atuais do site</button>'}<a class="btn btn--primary" href="#/marcas/nova">Adicionar marca</a>` : ''}</div></div>
-      <section class="cc-prev" style="margin-bottom:14px"><span class="cc-prev-label">Grid publicado, como aparece no site (${pubs.length} marcas)</span>${pubs.length ? `<ul class="cc-brand-prev">${pubs.map(m => `<li class="${m.tratamento === 'original' ? 'is-orig' : ''}"><img src="${attr(m.arquivo)}" alt="${attr(m.nome)}" style="--h:${Number(m.h) || 40}px;${(m.dx || m.dy) ? `transform:translate(${Number(m.dx) || 0}px,${Number(m.dy) || 0}px)` : ''}"></li>`).join('')}</ul>` : '<p class="cc-note">Nenhuma marca publicada pelo Command Center. O site continua mostrando o grid fixo atual.</p>'}
-      <p class="stat-line" style="margin-top:16px"><b>Mais de ${esc(cfg.projetos || 500)} projetos</b> entregues para <b>mais de ${esc(cfg.marcas || 125)} marcas</b>.</p><p class="cc-note" style="text-align:center">Estes números são fatos comerciais e não dependem dos logos cadastrados. Edite em <a href="#/site">Números e SEO</a>.</p></section>
-      ${lista.length ? `<div class="cc-list">${lista.map((m, i) => `<div class="cc-row" data-id="${attr(m._id)}"><span style="flex:none;width:96px;height:48px;border-radius:8px;background:var(--bg-3);display:grid;place-items:center"><img src="${attr(m.arquivo)}" alt="" style="max-width:80px;max-height:32px;${m.tratamento === 'original' ? '' : 'filter:var(--mark-filter);opacity:var(--mark-op)'}"></span><span><b>${esc(m.nome)}</b><small>${esc(m.tratamento === 'original' ? 'Versão original' : m.modo === 'detalhes' ? 'Monocromático com detalhes' : 'Monocromático')}${m.link ? ' · com link' : ''}</small></span>${pillPub(m.status)}${edita('conteudo') ? `<button class="cc-icon-btn" data-up="${i}" aria-label="Mover ${attr(m.nome)} para antes">↑</button><button class="cc-icon-btn" data-down="${i}" aria-label="Mover ${attr(m.nome)} para depois">↓</button>` : ''}</div>`).join('')}</div>` : ''}`;
-    $$('.cc-row[data-id]', v).forEach(r => r.onclick = (e) => { if (!e.target.closest('button')) location.hash = '#/marcas/' + r.dataset.id; });
-    $$('[data-up],[data-down]', v).forEach(b => b.onclick = async () => { try { await reordenar('marcas', lista, Number(b.dataset.up ?? b.dataset.down), b.dataset.up != null ? -1 : 1); navegar(); } catch (e) { falha(e); } });
+    const ed = edita('conteudo');
+    const conta = (st) => lista.filter(m => (m.status || 'rascunho') === st).length;
+    const FILTROS = [['publicado', 'Publicadas'], ['rascunho', 'Ocultas'], ['removido', 'Removidas'], ['todas', 'Todas']];
+    let filtro = sessionStorage.getItem('cc-mk-f') || 'publicado'; if (filtro !== 'todas' && !conta(filtro) && lista.length) filtro = conta('publicado') ? 'publicado' : 'todas';
+    let busca = '';
+    v.innerHTML = `<div class="cc-head"><div><h2>Marcas</h2><p class="mk-passos"><span><b>1</b> Envie o logo</span><span><b>2</b> Confira no grid</span><span><b>3</b> Publique</span></p></div>
+      ${ed ? `<div class="cc-actions">${lista.length ? '' : '<button class="btn btn--ghost" id="mk-imp" type="button">Importar marcas atuais do site</button>'}<label class="btn btn--ghost mk-lote" for="mk-lote">Enviar vários logos<input type="file" id="mk-lote" multiple accept="image/png,image/svg+xml,image/jpeg,image/webp" hidden></label><a class="btn btn--primary mk-add" href="#/marcas/nova"><span aria-hidden="true">+</span> Adicionar marca</a></div>` : ''}</div>
+      <div class="mk-bar"><input type="search" id="mk-q" placeholder="Buscar marca" aria-label="Buscar marca" autocomplete="off"><div class="cc-chips" role="radiogroup" aria-label="Filtrar">${FILTROS.map(([k, n]) => `<label><input type="radio" name="mk-f" value="${k}" ${filtro === k ? 'checked' : ''}><span>${n} <i data-n="${k}">${k === 'todas' ? lista.filter(m => m.status !== 'removido').length : conta(k)}</i></span></label>`).join('')}</div></div>
+      <div id="mk-prog" class="cc-note" hidden></div>
+      <ul class="mk-grid" id="mk-grid"></ul>
+      <p class="cc-note mk-dica" id="mk-dica"></p>
+      <details class="cc-prev mk-site" id="mk-site"><summary><span class="cc-prev-label" style="margin:0">Como aparece no site</span></summary><div id="mk-site-g"></div>
+      <p class="stat-line" style="margin-top:16px"><b>Mais de ${esc(cfg.projetos || 500)} projetos</b> entregues para <b>mais de ${esc(cfg.marcas || 125)} marcas</b>.</p><p class="cc-note" style="text-align:center">Números comerciais, editados em <a href="#/site">Números e SEO</a>.</p></details>`;
+    const visiveis = () => lista.filter(m => (filtro === 'todas' ? m.status !== 'removido' : (m.status || 'rascunho') === filtro) && (!busca || norm(m.nome).includes(busca)));
+    const podeArrastar = () => ed && !busca && filtro !== 'removido';
+    const card = (m) => {
+      const st = m.status || 'rascunho', rem = st === 'removido';
+      return `<li class="mk-card${rem ? ' is-rem' : ''}" data-id="${attr(m._id)}">
+        <div class="mk-prev${m.tratamento === 'original' ? ' is-orig' : ''}">${podeArrastar() ? `<button type="button" class="mk-handle" aria-label="Arrastar ${attr(m.nome)} para reordenar" title="Arraste para reordenar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>` : ''}<img src="${attr(m.arquivo)}" alt="" loading="lazy" style="--h:${Number(m.h) || 40}px">${podeArrastar() ? `<span class="mk-mv"><button type="button" data-a="antes" aria-label="Mover ${attr(m.nome)} para antes">↑</button><button type="button" data-a="depois" aria-label="Mover ${attr(m.nome)} para depois">↓</button></span>` : ''}</div>
+        <div class="mk-info"><b>${esc(m.nome)}</b>${pillMk(st)}</div>
+        ${ed ? `<div class="mk-acts">${rem
+          ? `<button type="button" class="btn btn--ghost" data-a="restaurar">Restaurar</button><button type="button" class="btn btn--danger" data-a="excluir">Excluir de vez</button>`
+          : `<a class="btn btn--ghost" href="#/marcas/${attr(m._id)}">Editar</a><a class="btn btn--ghost" href="#/marcas/${attr(m._id)}/trocar" title="Trocar imagem">Trocar</a>
+             <button type="button" class="btn btn--ghost" data-a="${st === 'publicado' ? 'ocultar' : 'publicar'}">${st === 'publicado' ? 'Ocultar' : 'Publicar'}</button><button type="button" class="btn btn--ghost mk-rm" data-a="remover">Remover</button>`}</div>` : ''}
+      </li>`;
+    };
+    const site = () => {
+      const pubs = lista.filter(m => m.status === 'publicado');
+      $('#mk-site-g').innerHTML = pubs.length ? `<ul class="cc-brand-prev">${pubs.map(m => `<li class="${m.tratamento === 'original' ? 'is-orig' : ''}"><img src="${attr(m.arquivo)}" alt="${attr(m.nome)}" style="--h:${Number(m.h) || 40}px;${(m.dx || m.dy) ? `transform:translate(${Number(m.dx) || 0}px,${Number(m.dy) || 0}px)` : ''}"></li>`).join('')}</ul>` : '<p class="cc-note">Nenhuma marca publicada pelo Command Center. O site continua mostrando o grid fixo atual.</p>';
+    };
+    const contadores = () => FILTROS.forEach(([k]) => { const el = $(`[data-n="${k}"]`); if (el) el.textContent = k === 'todas' ? lista.filter(m => m.status !== 'removido').length : conta(k); });
+    const desenhar = () => {
+      const vis = visiveis();
+      $('#mk-grid').innerHTML = vis.length ? vis.map(card).join('') : `<li class="cc-empty mk-vazio"><b>${busca ? 'Nenhuma marca encontrada.' : filtro === 'removido' ? 'Nenhuma marca removida.' : filtro === 'rascunho' ? 'Nenhuma marca oculta.' : 'Nenhuma marca ainda.'}</b>${ed && !busca && filtro !== 'removido' ? '<a class="btn btn--primary" href="#/marcas/nova">Adicionar marca</a>' : ''}</li>`;
+      $('#mk-dica').textContent = filtro === 'removido' ? 'Marcas removidas não aparecem no site. Restaure ou exclua de vez.' : podeArrastar() && vis.length > 1 ? 'Arraste pela alça ou use as setas para mudar a ordem. A ordem vale para o site.' : '';
+      contadores(); site();
+    };
+    const recarregar = async () => { const nova = (await listar('marcas', true)).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)); lista.splice(0, lista.length, ...nova); desenhar(); };
+    desenhar();
+    $('#mk-q').oninput = (e) => { busca = norm(e.target.value.trim()); desenhar(); };
+    $$('input[name=mk-f]', v).forEach(r => r.onchange = () => { filtro = r.value; try { sessionStorage.setItem('cc-mk-f', filtro); } catch {} desenhar(); });
+    if (!ed) return;
+    $('#mk-grid').onclick = async (e) => {
+      const b = e.target.closest('button[data-a]'); if (!b) return;
+      const m = lista.find(x => x._id === b.closest('.mk-card').dataset.id); if (!m) return;
+      const a = b.dataset.a; b.disabled = true;
+      try {
+        if (a === 'publicar') { await mudarStatus(m, 'publicado', 'publicou marca'); toast(`${m.nome} publicada no site.`); }
+        else if (a === 'ocultar') { await mudarStatus(m, 'rascunho', 'ocultou marca'); toast(`${m.nome} oculta do site.`, false, { rotulo: 'Desfazer', fn: async () => { await mudarStatus(m, 'publicado', 'publicou marca'); recarregar(); } }); }
+        else if (a === 'remover') {
+          if (!(await confirmar({ titulo: `Remover ${m.nome}?`, texto: 'Sai do site na hora. Fica em "Removidas" para restaurar quando quiser.', ok: 'Remover', perigo: true }))) { b.disabled = false; return; }
+          const antes = m.status || 'rascunho'; await mudarStatus(m, 'removido', 'removeu marca');
+          toast(`${m.nome} removida.`, false, { rotulo: 'Desfazer', fn: async () => { await salvarDoc('marcas', m._id, { status: antes }, 'restaurou marca', m.nome); atualizarAlertas(); recarregar(); } });
+        }
+        else if (a === 'restaurar') { await salvarDoc('marcas', m._id, { status: m.statusAntes === 'publicado' ? 'publicado' : 'rascunho' }, 'restaurou marca', m.nome); toast(`${m.nome} restaurada${m.statusAntes === 'publicado' ? ' e publicada' : ' como oculta'}.`); }
+        else if (a === 'excluir') {
+          if (!(await confirmar({ titulo: `Excluir ${m.nome} de vez?`, texto: 'Não dá para desfazer por aqui. Uma cópia fica em Versões só para consulta.', ok: 'Excluir de vez', perigo: true }))) { b.disabled = false; return; }
+          await excluirDoc('marcas', m._id, m.nome); toast('Marca excluída.');
+        }
+        else if (a === 'antes' || a === 'depois') {
+          const ativos = lista.filter(x => x.status !== 'removido'), i = ativos.indexOf(m), j = i + (a === 'antes' ? -1 : 1);
+          if (j < 0 || j >= ativos.length) { b.disabled = false; return; }
+          [ativos[i], ativos[j]] = [ativos[j], ativos[i]]; await salvarOrdem(ativos);
+        }
+        await recarregar();
+        const foco = $(`.mk-card[data-id="${CSS.escape(m._id)}"] [data-a="${a}"]`); if (foco) foco.focus();
+      } catch (er) { b.disabled = false; falha(er); }
+    };
+    // arrastar para reordenar (mouse e toque), pela alça
+    $('#mk-grid').addEventListener('pointerdown', (e) => {
+      const h = e.target.closest('.mk-handle'); if (!h || !podeArrastar()) return;
+      e.preventDefault(); const el = h.closest('.mk-card'), g = $('#mk-grid'); el.classList.add('is-drag'); try { h.setPointerCapture(e.pointerId); } catch {}
+      const mover = (ev) => {
+        const alvo = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.mk-card'); if (!alvo || alvo === el || !g.contains(alvo)) return;
+        const r = alvo.getBoundingClientRect(), depois = (ev.clientY > r.top + r.height / 2) || (ev.clientY > r.top && ev.clientX > r.left + r.width / 2);
+        g.insertBefore(el, depois ? alvo.nextSibling : alvo);
+        if (ev.clientY < 80) scrollBy(0, -12); else if (ev.clientY > innerHeight - 110) scrollBy(0, 12);
+      };
+      const soltar = async () => {
+        removeEventListener('pointermove', mover); removeEventListener('pointerup', soltar); removeEventListener('pointercancel', soltar); el.classList.remove('is-drag');
+        const ids = $$('.mk-card', g).map(x => x.dataset.id), vis = ids.map(i => lista.find(x => x._id === i));
+        const ativos = lista.filter(x => x.status !== 'removido'), pos = ativos.map((x, i) => vis.includes(x) ? i : -1).filter(i => i >= 0);
+        const nova = [...ativos]; pos.forEach((p, k) => { nova[p] = vis[k]; });
+        try { const n = await salvarOrdem(nova); if (n) toast('Ordem salva.'); await recarregar(); } catch (er) { falha(er); recarregar(); }
+      };
+      addEventListener('pointermove', mover); addEventListener('pointerup', soltar); addEventListener('pointercancel', soltar);
+    });
+    $('#mk-lote').onchange = async (e) => {
+      const arqs = [...e.target.files]; e.target.value = ''; if (!arqs.length) return;
+      const prog = $('#mk-prog'); prog.hidden = false; let ok = 0; const falhas = [];
+      for (const [i, f] of arqs.entries()) {
+        prog.textContent = `Preparando ${i + 1} de ${arqs.length}: ${f.name}`;
+        try {
+          const { an, original } = await lerLogo(f);
+          const r = processarLogo(an, { removerFundo: true, tratamento: 'auto', escala: 100, dx: 0, dy: 0 });
+          if (r.erro) throw new Error(r.erro);
+          const dados = { nome: nomeDoArquivo(f), arquivo: r.arquivo, w: r.w, hpx: r.hpx, h: r.h, modo: r.modo || 'silhueta', tratamento: 'mono', escala: 100, dx: 0, dy: 0, removerFundo: true, link: '', status: 'rascunho', ordem: lista.length + ok };
+          if (original.length < MAX_ORIGINAL * 1.37) dados.original = original;
+          if (JSON.stringify(dados).length > 950000) throw new Error('grande');
+          await salvarDoc('marcas', null, dados, 'enviou marca', dados.nome); ok++;
+        } catch (er) { falhas.push(f.name + (er.message === 'formato' ? ' (formato não aceito)' : er.message === 'tamanho' ? ' (acima de 8 MB)' : '')); }
+      }
+      prog.hidden = true; atualizarAlertas();
+      if (ok) { filtro = 'rascunho'; try { sessionStorage.setItem('cc-mk-f', filtro); } catch {} const r = $('input[name=mk-f][value=rascunho]'); if (r) r.checked = true; }
+      await recarregar();
+      toast(ok ? `${ok} marca${ok > 1 ? 's prontas' : ' pronta'} em Ocultas. Confira e toque em Publicar.` : 'Nenhum logo pôde ser lido.', !ok);
+      if (falhas.length) toast('Não processados: ' + falhas.join(', '), true);
+    };
     if ($('#mk-imp')) $('#mk-imp').onclick = async () => {
       let d; try { d = await lerSitePublico('index.html'); } catch (e) { return falha(e); }
       const itens = $$('#clientes .brands img', d).map((im, i) => ({ nome: im.getAttribute('alt') || 'Marca', arquivo: im.getAttribute('src'), w: Number(im.getAttribute('width')) || 200, hpx: Number(im.getAttribute('height')) || 80, h: Number((im.getAttribute('style') || '').match(/--h:\s*(\d+)/)?.[1]) || 40, tratamento: 'mono', modo: 'silhueta', ordem: i }));
@@ -1739,14 +1905,14 @@ modulo({
   }
 });
 
-async function editarMarca(v, id) {
+async function editarMarca(v, id, extra) {
   const lista = (await listar('marcas')).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
   const m = id ? lista.find(x => x._id === id) : null;
   if (id && !m) { v.innerHTML = '<div class="cc-empty"><b>Marca não encontrada.</b></div>'; return; }
   const ro = !edita('conteudo');
   const op = { removerFundo: m?.removerFundo ?? true, tratamento: m?.tratamento === 'original' ? 'original' : (m?.modo || 'auto'), escala: m?.escala || 100, dx: m?.dx || 0, dy: m?.dy || 0 };
   let an = null, res = m ? { arquivo: m.arquivo, w: m.w, hpx: m.hpx, h: m.h, modo: m.modo, avisos: [] } : null, original = m?.original || '';
-  v.innerHTML = `<div class="cc-head"><div><h2>${m ? esc(m.nome) : 'Adicionar marca'}</h2><p>PNG, SVG, JPG ou WebP. O sistema detecta fundo e área útil, normaliza o tamanho e mostra no grid real.</p></div>${m ? pillPub(m.status) : ''}</div>
+  v.innerHTML = `<a class="cc-back" href="#/marcas">← Todas as marcas</a><div class="cc-head"><div><h2>${m ? esc(m.nome) : 'Adicionar marca'}</h2><p>PNG, SVG, JPG ou WebP. O sistema detecta fundo e área útil, normaliza o tamanho e mostra no grid real.</p></div>${m ? pillMk(m.status) : ''}</div>
   <div class="cc-cols cc-split">
     <form class="cc-panel cc-form" id="mf" novalidate>
       <div class="cc-field"><label for="mf-n">Nome da marca</label><input id="mf-n" value="${attr(m?.nome || '')}" ${ro ? 'disabled' : ''}><span class="cc-note">Usado como texto alternativo para leitores de tela.</span></div>
@@ -1760,7 +1926,7 @@ async function editarMarca(v, id) {
       <div class="cc-range"><label for="mf-dy">Ajuste vertical</label><input type="range" id="mf-dy" min="-12" max="12" step="1" value="${op.dy}" ${ro ? 'disabled' : ''}><output id="mf-dy-o">${op.dy} px</output></div>
       <details><summary>Link e detalhes</summary><div class="cc-form"><div class="cc-field"><label for="mf-l">Link externo <span>opcional</span></label><input id="mf-l" type="url" spellcheck="false" value="${attr(m?.link || '')}" placeholder="https://"></div></div></details>
       <p class="cc-err" id="mf-err" role="alert"></p>
-      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--ghost" type="submit" data-acao="rascunho">Salvar rascunho</button><button class="btn btn--primary" type="submit" data-acao="publicado">${m?.status === 'publicado' ? 'Salvar publicado' : 'Publicar no grid'}</button>${m ? `${m.status === 'publicado' ? '<button class="btn btn--ghost" type="button" id="mf-oc">Ocultar do site</button>' : ''}<button class="btn btn--ghost" type="button" id="mf-hist">Versões</button><button class="btn btn--danger" type="button" id="mf-del">Excluir</button>` : ''}</div>`}
+      ${ro ? '' : `<div class="cc-actions"><button class="btn btn--ghost" type="submit" data-acao="rascunho">Salvar rascunho</button><button class="btn btn--primary" type="submit" data-acao="publicado">${m?.status === 'publicado' ? 'Salvar publicado' : 'Publicar no grid'}</button>${m ? `${m.status === 'publicado' ? '<button class="btn btn--ghost" type="button" id="mf-oc">Ocultar do site</button>' : ''}<button class="btn btn--ghost" type="button" id="mf-hist">Versões</button><button class="btn btn--danger" type="button" id="mf-del">Remover</button>` : ''}</div>`}
     </form>
     <div class="cc-grid">
       <section class="cc-panel"><h3>Antes e depois</h3><div class="cc-logo-lab"><div><span class="cc-prev-label">Original</span><div class="cc-checker" id="mf-orig">${original ? `<img src="${attr(original)}" alt="">` : (m ? `<img src="${attr(m.arquivo)}" alt="">` : '<span class="cc-note">Envie um arquivo</span>')}</div></div><div><span class="cc-prev-label">Processado</span><div class="cc-checker" id="mf-proc">${m ? `<img src="${attr(m.arquivo)}" alt="">` : ''}</div></div></div></section>
@@ -1805,6 +1971,7 @@ async function editarMarca(v, id) {
   grade();
   if (m && original) carregar(original);
   if (ro) return;
+  if (extra === 'trocar' && $('#mf-drop')) { const z = $('#mf-drop'); z.scrollIntoView({ block: 'center' }); z.classList.add('is-alvo'); try { $('#mf-f').click(); } catch {} }
   ligarDrop($('#mf-drop'), $('#mf-f'), async (file) => {
     $('#mf-err').textContent = ''; an = null; res = m ? res : null; $('#mf-an').innerHTML = ''; if (!m) $('#mf-proc').innerHTML = '';
     if (!/^image\/(png|svg\+xml|jpeg|webp)$/.test(file.type)) { $('#mf-err').textContent = 'Formato não aceito. Envie PNG, SVG, JPG ou WebP.'; return; }
@@ -1838,7 +2005,7 @@ async function editarMarca(v, id) {
   if (!m) return;
   if ($('#mf-oc')) $('#mf-oc').onclick = async () => { try { await salvarDoc('marcas', id, { status: 'rascunho' }, 'ocultou marca', m.nome); toast('Marca oculta do site.'); navegar(); } catch (e) { falha(e); } };
   $('#mf-hist').onclick = () => abrirVersoes('marcas', id, (x) => x.nome);
-  $('#mf-del').onclick = async () => { if (!(await confirmar({ titulo: `Excluir ${m.nome}?`, texto: 'Sai do grid do site. Uma cópia fica em Versões para restaurar.', ok: 'Excluir', perigo: true }))) return; try { await excluirDoc('marcas', id, m.nome); toast('Marca excluída.'); ir('marcas'); } catch (e) { falha(e); } };
+  $('#mf-del').onclick = async () => { if (!(await confirmar({ titulo: `Remover ${m.nome}?`, texto: 'Sai do site na hora. Fica em "Removidas" para restaurar quando quiser.', ok: 'Remover', perigo: true }))) return; try { await mudarStatus(m, 'removido', 'removeu marca'); toast(`${m.nome} removida.`, false, { rotulo: 'Desfazer', fn: async () => { await salvarDoc('marcas', id, { status: m.status || 'rascunho' }, 'restaurou marca', m.nome); atualizarAlertas(); navegar(); } }); ir('marcas'); } catch (e) { falha(e); } };
 }
 
 /* ============ Site (números, SEO, saúde), equipe, auditoria, integrações e dados ============ */
