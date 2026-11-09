@@ -307,18 +307,22 @@
     dlg.addEventListener('close',function(){frame.innerHTML='';document.documentElement.style.overflow='';if(opener) opener.focus()});
     dlg.addEventListener('click',function(e){if(e.target===dlg) close()});
     dlg.querySelector('.player-x').addEventListener('click',close);
-    document.querySelectorAll('[data-play]').forEach(function(b){
-      b.addEventListener('click',function(){
-        opener=b;
-        dlg.classList.toggle('is-v',b.hasAttribute('data-vertical'));
-        var f=document.createElement('iframe');
-        f.src=ytSrc(b.dataset.play);f.title=b.getAttribute('aria-label').replace('Assistir: ','');
-        f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;
-        frame.appendChild(f);
-        document.documentElement.style.overflow='hidden';
-        if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
-        dlg.querySelector('.player-x').focus();
-      });
+    /* clique delegado: funciona também para filmes que chegam do Command Center */
+    document.addEventListener('click',function(ev){
+      var b=ev.target.closest&&ev.target.closest('[data-play],[data-vimeo]');
+      if(!b) return;
+      var vimeo=/^\d{5,12}$/.test(b.dataset.vimeo||'')?b.dataset.vimeo:'';
+      if(!vimeo&&!/^[A-Za-z0-9_-]{11}$/.test(b.dataset.play||'')) return;
+      opener=b;
+      if(window.bfTrack) window.bfTrack('filme',vimeo||b.dataset.play);
+      dlg.classList.toggle('is-v',b.hasAttribute('data-vertical'));
+      var f=document.createElement('iframe');
+      f.src=vimeo?'https://player.vimeo.com/video/'+vimeo+'?autoplay=1&dnt=1':ytSrc(b.dataset.play);f.title=(b.getAttribute('aria-label')||'Filme').replace('Assistir: ','');
+      f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;
+      frame.appendChild(f);
+      document.documentElement.style.overflow='hidden';
+      if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
+      dlg.querySelector('.player-x').focus();
     });
   }
 
@@ -359,6 +363,121 @@
         });
     });
   });
+
+
+  /* ---------- medição própria (sem cookies, sem dados pessoais) e conteúdo vivo do Command Center ---------- */
+  var SCRIPT_URL=(document.currentScript&&document.currentScript.src)||location.href;
+  var FBV='https://www.gstatic.com/firebasejs/10.14.1/';
+  var fbp=null;
+  function fb(){
+    if(!fbp) fbp=Promise.all([import(new URL('firebase-config.js',SCRIPT_URL).href),import(FBV+'firebase-app.js'),import(FBV+'firebase-firestore-lite.js')])
+      .then(function(m){var a=m[1],f=m[2];var app=a.getApps().length?a.getApp():a.initializeApp(m[0].firebaseConfig);return {f:f,db:f.getFirestore(app)}});
+    return fbp;
+  }
+  var privado=!!document.body.dataset.portal||navigator.doNotTrack==='1'||window.doNotTrack==='1';
+  var fila=[];
+  window.bfTrack=function(t,x){
+    if(privado) return;
+    var d=new Date(),p=function(n){return String(n).padStart(2,'0')};
+    var r='direto';try{if(document.referrer){var h=new URL(document.referrer).hostname;r=h===location.hostname?'interno':h.replace(/^www\./,'')}}catch(e){}
+    fila.push({t:t,p:location.pathname.slice(0,80)||'/',r:r.slice(0,80),dv:innerWidth<768?'m':'d',dia:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()),x:String(x||'').slice(0,60)});
+    clearTimeout(window.__bfT);window.__bfT=setTimeout(enviarFila,800);
+  };
+  function enviarFila(){
+    var lote=fila.splice(0);if(!lote.length) return;
+    fb().then(function(o){lote.forEach(function(ev){ev.em=o.f.serverTimestamp();o.f.addDoc(o.f.collection(o.db,'eventos'),ev).catch(function(){})})}).catch(function(){});
+  }
+  if(!privado){
+    var ver=function(){window.bfTrack('view')};
+    if('requestIdleCallback' in window) requestIdleCallback(ver,{timeout:4000}); else setTimeout(ver,1500);
+    document.addEventListener('click',function(ev){
+      var a=ev.target.closest&&ev.target.closest('a[href]');if(!a) return;
+      if(/wa\.me|whatsapp/.test(a.href)) window.bfTrack('whatsapp');
+      else if(/^mailto:/.test(a.href)) window.bfTrack('contato');
+    },true);
+  }
+
+  var gH=document.getElementById('gal-h'),gV=document.getElementById('gal-v'),brands=document.querySelector('#clientes .brands'),quotes=document.querySelector('#depoimentos .quotes'),bast=document.getElementById('bastidores');
+  if(gH||brands||quotes||bast){
+    var CK='bf-cms-v1',cache=null;
+    try{cache=JSON.parse(sessionStorage.getItem(CK)||'null')}catch(e){}
+    var carregar=function(){
+      if(cache&&Date.now()-cache.t<6e5) return Promise.resolve(cache.d);
+      return fb().then(function(o){
+        var f=o.f,db=o.db,pub=function(c){return f.getDocs(f.query(f.collection(db,c),f.where('status','==','publicado'))).then(function(s){return s.docs.map(function(d){var v=d.data();v.id=d.id;return v})}).catch(function(){return null})};
+        return Promise.all([pub('trabalhos'),pub('marcas'),pub('depoimentos'),pub('instagram'),f.getDoc(f.doc(db,'site','config')).then(function(s){return s.exists()?s.data():null}).catch(function(){return null})]);
+      }).then(function(r){var d={trabalhos:r[0],marcas:r[1],depoimentos:r[2],instagram:r[3],config:r[4]};try{sessionStorage.setItem(CK,JSON.stringify({t:Date.now(),d:d}))}catch(e){}return d});
+    };
+    var el=function(tag,cls,txt){var e=document.createElement(tag);if(cls) e.className=cls;if(txt!=null) e.textContent=txt;return e};
+    var ordem=function(a,b){return (a.ordem||0)-(b.ordem||0)};
+    var embaralhar=function(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a};
+    var imgOk=function(u){return typeof u==='string'&&(/^data:image\/(webp|png|jpeg);base64,[A-Za-z0-9+\/=]+$/.test(u)||/^assets\/[\w\/.-]+$/.test(u)||/^https:\/\/(i\.ytimg\.com|i\.vimeocdn\.com)\//.test(u))};
+    var gvItem=function(t){
+      var vert=t.orientacao==='vertical',id=t.videoId,vm=t.plataforma==='vimeo';
+      var li=el('li','gv'+(vert?' gv--v':''));
+      var b=el('button','gv-btn');b.type='button';if(vm) b.dataset.vimeo=id; else b.dataset.play=id;if(vert) b.setAttribute('data-vertical','');b.setAttribute('aria-label','Assistir: '+t.titulo);
+      var box=el('span','gv-img'),img=document.createElement('img');
+      img.src=imgOk(t.thumb)?t.thumb:vm?'':'https://i.ytimg.com/vi/'+id+'/'+(vert?'oardefault':'maxresdefault')+'.jpg';
+      img.width=vert?360:1280;img.height=vert?640:720;img.alt='';img.loading='lazy';img.decoding='async';
+      if(!vm) img.addEventListener('load',function(){if(img.naturalWidth<200&&!img.dataset.f){img.dataset.f=1;img.src='https://i.ytimg.com/vi/'+id+'/hqdefault.jpg'}});
+      var pl=el('span','gv-play');pl.setAttribute('aria-hidden','true');pl.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
+      box.append(img,pl);b.append(box,el('span','gv-t',t.titulo));li.appendChild(b);return li;
+    };
+    var montarGaleria=function(ul,lista,rotulo){
+      if(!ul||!lista.length) return;
+      var fix=lista.filter(function(t){return t.destaque}).sort(ordem),resto=embaralhar(lista.filter(function(t){return !t.destaque}));
+      ul.textContent='';fix.concat(resto).forEach(function(t){ul.appendChild(gvItem(t))});
+      var more=document.querySelector('[data-more="'+ul.id+'"]');
+      if(more){var lbl='Ver todos os '+lista.length+' '+rotulo;more.dataset.label=lbl;if(more.getAttribute('aria-expanded')!=='true') more.textContent=lbl}
+    };
+    var rotuloOrigem={google:'Avaliação no Google',recorrente:'Cliente recorrente',direto:'Depoimento direto'};
+    carregar().then(function(d){
+      var tr=(d.trabalhos||[]).filter(function(t){return (t.plataforma==='vimeo'?/^\d{5,12}$/:/^[A-Za-z0-9_-]{11}$/).test(t.videoId||'')&&t.titulo});
+      if(tr.length){
+        montarGaleria(gH,tr.filter(function(t){return t.orientacao!=='vertical'}),'filmes');
+        montarGaleria(gV,tr.filter(function(t){return t.orientacao==='vertical'}),'verticais');
+      }
+      var mk=(d.marcas||[]).filter(function(m){return imgOk(m.arquivo)&&m.nome}).sort(ordem);
+      if(brands&&mk.length){
+        brands.textContent='';
+        mk.forEach(function(m){
+          var li=el('li','reveal is-in'),img=document.createElement('img');
+          img.src=m.arquivo;img.alt=m.nome;img.width=m.w||200;img.height=m.hpx||80;img.loading='lazy';img.decoding='async';
+          img.style.setProperty('--h',(Number(m.h)||40)+'px');
+          if(m.tratamento==='original'){img.style.filter='none';img.style.opacity='1'}
+          if(Number(m.dx)||Number(m.dy)) img.style.transform='translate('+(Number(m.dx)||0)+'px,'+(Number(m.dy)||0)+'px)';
+          if(m.link&&/^https:\/\//.test(m.link)){var a=el('a');a.href=m.link;a.target='_blank';a.rel='noopener';a.appendChild(img);li.appendChild(a)}else li.appendChild(img);
+          brands.appendChild(li);
+        });
+      }
+      var dp=(d.depoimentos||[]).filter(function(q){return q.texto&&q.autor}).sort(ordem);
+      if(quotes&&dp.length){
+        quotes.textContent='';
+        dp.forEach(function(q){
+          var fg=el('figure','quote reveal is-in'),bq=el('blockquote',null,'“'+q.texto.replace(/^[“"]|[”"]$/g,'')+'”'),fc=el('figcaption',null,q.autor);
+          var sp=el('span',null,q.legenda||[q.empresa,rotuloOrigem[q.origem]].filter(Boolean).join(', '));
+          fc.appendChild(sp);fg.append(bq,fc);quotes.appendChild(fg);
+        });
+      }
+      var c=d.config;
+      if(c){
+        var st=document.querySelector('#clientes .stat-line');
+        if(st&&c.projetos&&c.marcas){st.textContent='';st.append(el('b',null,'Mais de '+c.projetos+' projetos'),' entregues para ',el('b',null,'mais de '+c.marcas+' marcas'),'.')}
+        var rt=document.querySelector('#depoimentos .rating > span:not(.stars)');
+        if(rt&&c.notaGoogle&&c.avaliacoesGoogle){rt.textContent='';rt.append(el('b',null,c.notaGoogle),' no Google, com mais de '+c.avaliacoesGoogle+' avaliações.')}
+      }
+      var ig=(d.instagram||[]).filter(function(p){return imgOk(p.imagem)&&/^https:\/\/(www\.)?instagram\.com\//.test(p.url||'')}).sort(ordem);
+      if(bast&&ig.length){
+        var ul=bast.querySelector('.ig-grid');ul.textContent='';
+        ig.slice(0,8).forEach(function(p){
+          var li=el('li'),a=el('a');a.href=p.url;a.target='_blank';a.rel='noopener';a.setAttribute('aria-label',(p.legenda||'Publicação no Instagram')+' (abre o Instagram)');
+          var img=document.createElement('img');img.src=p.imagem;img.alt='';img.width=600;img.height=750;img.loading='lazy';img.decoding='async';
+          a.appendChild(img);li.appendChild(a);ul.appendChild(li);
+        });
+        bast.hidden=false;
+      }
+    }).catch(function(){});
+  }
 
   /* ano no rodapé */
   document.querySelectorAll('[data-year]').forEach(function(el){el.textContent=new Date().getFullYear()});

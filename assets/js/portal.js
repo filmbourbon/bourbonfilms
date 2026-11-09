@@ -211,7 +211,7 @@ async function carregarAdmin(db) {
   const form = $('#projForm');
   const filesBox = $('#fFiles');
 
-  tabs($('.pt-tabs--admin'), (b) => { if (b.id === 'tabCli') listarClientes(); });
+  tabs($('.pt-tabs--admin'), (b) => { if (b.id === 'tabCli') listarClientes(); if (b.id === 'tabPed') listarPedidos(); });
 
   const addFileRow = (f = {}) => {
     const row = document.createElement('div');
@@ -321,6 +321,104 @@ async function carregarAdmin(db) {
     catch (e) { alert('Não foi possível adicionar. [' + (e.code || e.message) + ']'); }
   };
 
-  await listar();
+
+  /* ---------- pedidos do "Monte seu projeto" ---------- */
+  const SIT = { novo: 'Novo', 'em-analise': 'Em análise', 'aguardando-cliente': 'Aguardando cliente', 'proposta-enviada': 'Proposta enviada', aprovado: 'Aprovado', arquivado: 'Arquivado' };
+  const ROT = {
+    objetivo: { marca: 'Apresentar a marca', produto: 'Anunciar um produto ou serviço', evento: 'Cobrir um evento', historia: 'Contar uma história real', recorrente: 'Conteúdo todo mês', campanha: 'Lançar uma campanha', institucional: 'Filme institucional', 'nao-sei': 'Ainda não sei' },
+    formato: { horizontal: 'Horizontal', vertical: 'Vertical', ambos: 'Horizontal e vertical', 'nao-sei': 'Ainda não sei' },
+    quantidade: { '1': 'Um filme principal', '2-4': 'De 2 a 4 peças', '5+': '5 ou mais peças', 'nao-sei': 'Ainda não sei' },
+    pos: { edicao: 'Edição com narrativa', cor: 'Tratamento de cor', som: 'Trilha e som', legendas: 'Legendas', motion: 'Animação e motion', 'voces-decidem': 'Vocês decidem' },
+    prazo: { '': 'Sem prazo definido', '30-dias': 'Em até 30 dias', '60-dias': 'Em até 60 dias', 'data-fixa': 'Data fixa' }
+  };
+  const quando = (ts) => ts && ts.toDate ? new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(ts.toDate()) : '';
+  const b64url = (obj) => { const by = new TextEncoder().encode(JSON.stringify(obj)); let x = ''; by.forEach(b => x += String.fromCharCode(b)); return btoa(x).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+  let PEDIDOS = [], filtro = 'abertos', atual = null;
+
+  document.querySelectorAll('.pd-f').forEach(b => b.addEventListener('click', () => {
+    filtro = b.dataset.f;
+    document.querySelectorAll('.pd-f').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    desenharPedidos();
+  }));
+
+  function desenharPedidos() {
+    const box = $('#pedidos');
+    const vis = PEDIDOS.filter(p => filtro === 'todos' ? true : filtro === 'arquivado' ? p.status === 'arquivado' : !['arquivado', 'aprovado'].includes(p.status));
+    const novos = PEDIDOS.filter(p => p.status === 'novo').length;
+    $('#tabPed').textContent = novos ? `Pedidos (${novos})` : 'Pedidos';
+    if (!vis.length) { box.innerHTML = '<p class="muted">' + (PEDIDOS.length ? 'Nenhum pedido neste filtro.' : 'Nenhum pedido ainda. Eles chegam pela página Monte seu projeto.') + '</p>'; return; }
+    box.innerHTML = vis.map(p => `<button type="button" class="pt-row" data-p="${esc(p.id)}">
+        <span><b>${esc(p.contato?.empresa || p.contato?.nome || 'Sem nome')}</b><small>${esc(ROT.objetivo[p.escolhas?.objetivo] || 'Objetivo não informado')}, ${esc(p.id)}${p.criadoEm ? ', ' + esc(quando(p.criadoEm)) : ''}</small></span>
+        <span class="tag${p.status === 'novo' ? ' tag--novo' : ''}">${esc(SIT[p.status] || p.status)}</span></button>`).join('');
+    box.querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => abrirPedido(PEDIDOS.find(x => x.id === b.dataset.p))));
+  }
+
+  async function listarPedidos() {
+    const box = $('#pedidos');
+    if (!PEDIDOS.length) box.innerHTML = '<p class="muted">Carregando…</p>';
+    try {
+      const snap = await F.getDocs(F.collection(db, 'pedidos'));
+      PEDIDOS = snap.docs.map(d => ({ ...d.data(), id: d.id })).sort((a, b) => (b.criadoEm?.seconds || 0) - (a.criadoEm?.seconds || 0));
+      desenharPedidos();
+    } catch (e) { box.innerHTML = '<p class="form-msg">' + esc(erroBanco(e)) + '</p>'; }
+  }
+
+  function abrirPedido(p) {
+    if (!p) return;
+    atual = p;
+    const e = p.escolhas || {}, c = p.contato || {}, x = p.contexto || {};
+    $('#pdRef').textContent = p.id;
+    $('#pdTitulo').textContent = c.empresa || c.nome || 'Pedido';
+    $('#pdQuando').textContent = p.criadoEm ? 'Recebido em ' + quando(p.criadoEm) : '';
+    const linhas = [
+      ['Contato', c.nome], ['Empresa', c.empresa || 'Não informada'], ['WhatsApp', c.whatsapp || 'Não informado'], ['E-mail', c.email || 'Não informado'],
+      ['Objetivo', ROT.objetivo[e.objetivo] || 'Não informado'], ['Formato', ROT.formato[e.formato] || 'Não informado'],
+      ['Quantidade', ROT.quantidade[e.quantidade] || 'Não informado'], ['Acabamento', (e.pos || []).length ? e.pos.map(v => ROT.pos[v] || v).join(', ') : 'Vocês decidem'],
+      ['Cidade', x.cidade || 'Não informada'], ['Prazo', ROT.prazo[x.prazo || ''] || x.prazo], ['Observações', x.notas || 'Nenhuma']
+    ];
+    $('#pdDados').innerHTML = linhas.map(([t, v]) => `<div><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`).join('');
+    $('#pdStatus').value = p.status || 'novo';
+    $('#pdProposta').value = p.propostaUrl || '';
+    $('#pdNota').value = '';
+    const codigo = b64url({ ...p, criadoEm: p.criadoEm?.toDate ? p.criadoEm.toDate().toISOString() : '', historico: undefined, atualizadoEm: undefined });
+    $('#pdGerador').href = 'gerar-orcamento.html#importar=' + codigo;
+    const fone = String(c.whatsapp || '').replace(/\D/g, '');
+    const wpp = $('#pdWpp');
+    wpp.hidden = fone.length < 10;
+    wpp.href = 'https://wa.me/' + (fone.startsWith('55') ? fone : '55' + fone) + '?text=' + encodeURIComponent(`Olá, ${(c.nome || '').split(' ')[0]}! Aqui é da Bourbon Films. Recebemos seu projeto (${p.id}) e queremos alinhar alguns detalhes.`);
+    const hist = (p.historico || []).slice().reverse();
+    $('#pdHist').innerHTML = hist.length ? hist.map(h => `<li><time>${esc(quando(h.em))}</time><b>${esc(SIT[h.status] || h.status)}</b>${h.nota ? '. ' + esc(h.nota) : ''}</li>`).join('') : '<li>Sem alterações ainda.</li>';
+    show('pedido'); window.scrollTo(0, 0);
+  }
+
+  async function registrar(mudancas, nota) {
+    const item = { em: F.Timestamp.now(), status: mudancas.status || atual.status, nota: nota || '', por: (U.getAuth().currentUser || {}).email || '' };
+    await F.updateDoc(F.doc(db, 'pedidos', atual.id), { ...mudancas, atualizadoEm: F.serverTimestamp(), historico: F.arrayUnion(item) });
+    Object.assign(atual, mudancas, { historico: [...(atual.historico || []), item] });
+  }
+
+  $('#pdForm').onsubmit = async (ev) => {
+    ev.preventDefault();
+    const b = $('#pdSalvar'); b.disabled = true; b.textContent = 'Salvando…';
+    const url = $('#pdProposta').value.trim();
+    try {
+      await registrar({ status: $('#pdStatus').value, propostaUrl: /^https:\/\//i.test(url) ? url : '' }, $('#pdNota').value.trim());
+      abrirPedido(atual); desenharPedidos();
+    } catch (e) { alert('Não foi possível salvar. [' + (e.code || e.message) + ']'); }
+    b.disabled = false; b.textContent = 'Salvar';
+  };
+  $('#pdVoltar').onclick = () => { show('painel'); listarPedidos(); };
+  $('#pdProjeto').onclick = async () => {
+    const c = atual.contato || {};
+    try { if (atual.status !== 'aprovado') await registrar({ status: 'aprovado' }, 'Projeto criado no painel'); } catch (e) {}
+    await listarClientes().catch(() => {});
+    abrir(null, c.empresa || c.nome || '');
+    if (c.email) form.clienteEmail.value = c.email.toLowerCase();
+    form.titulo.value = (ROT.objetivo[atual.escolhas?.objetivo] || 'Projeto') + (c.empresa ? ' ' + c.empresa : '');
+    form.observacao.value = '';
+  };
+
+  await listarPedidos();
+  listar();
   listarClientes();
 }

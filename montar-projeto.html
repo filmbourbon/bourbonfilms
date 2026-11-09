@@ -20,14 +20,124 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="assets/css/site.css?v=20261109b">
-<link rel="stylesheet" href="assets/css/montar.css?v=20261109b">
-<link rel="modulepreload" href="assets/vendor/three.module.min.js">
+<link rel="stylesheet" href="assets/css/site.css?v=20261109c">
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq('init','880805848416367');fbq('track','PageView');
 </script>
 <script type="speculationrules">{"prefetch":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
+<style>
+/* Monte seu projeto: palco 3D + painel de escolhas. Usa os tokens de site.css */
+.mp-intro{padding:calc(var(--nav-h) + clamp(40px,7vw,96px)) 0 clamp(24px,4vw,48px);text-align:center}
+.mp-title{max-width:18ch;margin-inline:auto}
+.mp-intro .lede{margin-inline:auto}
+.mp-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(20px,3vw,40px);align-items:start;padding-bottom:clamp(64px,10vw,128px)}
+.mp-grid>*{min-width:0}
+
+.mp-stage{position:sticky;top:calc(var(--nav-h) + 16px);height:min(calc(100svh - var(--nav-h) - 32px),560px);min-height:420px;border-radius:var(--radius-lg);background:radial-gradient(120% 90% at 50% 30%,#0d0d0e 0%,#000 70%);border:1px solid var(--line);overflow:hidden;isolation:isolate}
+.mp-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .9s var(--ease)}
+.mp-stage.is-ready canvas{opacity:1}
+.mp-stage-cap{position:absolute;left:16px;right:16px;bottom:14px;font-size:.8125rem;line-height:1.35;color:var(--text-3);letter-spacing:-.01em;text-wrap:pretty;pointer-events:none}
+
+/* fallback sem WebGL: três quadros estáticos em CSS */
+.mp-stage-fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;gap:14px}
+.mp-stage.no-3d .mp-stage-fallback{display:flex}
+.mp-stage-fallback span{width:22%;aspect-ratio:16/9;border:1px solid var(--line-2);border-radius:4px;background:linear-gradient(180deg,#141416,#0a0a0b)}
+.mp-stage-fallback span:nth-child(2){width:30%;border-color:var(--gold)}
+
+.mp-panel{padding-top:4px}
+.mp-progress{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:14px}
+.mp-progress i{height:3px;border-radius:2px;background:var(--fill-2);transition:background-color .35s var(--ease)}
+.mp-progress i.on{background:var(--gold)}
+.mp-step-n{font-size:.875rem;font-weight:600;color:var(--text-3);margin-bottom:6px;font-variant-numeric:tabular-nums}
+.mp-step{border:0;min-width:0}
+.mp-step legend,.mp-step>.h3{padding:0;margin-bottom:6px;max-width:22ch}
+.mp-step h2:focus{outline:none}
+.mp-hint{color:var(--text-2);font-size:1rem;margin-bottom:18px;text-wrap:pretty}
+
+.mp-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mp-opt{position:relative;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.mp-opt input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.mp-opt span{display:flex;flex-direction:column;gap:3px;height:100%;padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg-3);border:1px solid transparent;transition:border-color .2s var(--ease),background-color .2s var(--ease)}
+.mp-opt b{font-weight:600;font-size:1rem;letter-spacing:-.015em;line-height:1.25;color:var(--text)}
+.mp-opt small{font-size:.8125rem;color:var(--text-3);line-height:1.3}
+@media (hover:hover){.mp-opt:hover span{background:var(--bg-4)}}
+.mp-opt input:checked+span{border-color:var(--gold);background:linear-gradient(0deg,var(--gold-soft),var(--gold-soft)),var(--bg-3)}
+.mp-opt input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
+.mp-opt:active span{transform:scale(.985)}
+@media (prefers-reduced-motion:no-preference){.mp-opt span{transition:border-color .2s var(--ease),background-color .2s var(--ease),transform .15s var(--ease)}}
+
+.mp-nav{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
+.mp-nav .btn{margin-top:0}
+.mp-nav .btn[disabled]{opacity:.38;pointer-events:none}
+.mp-nav #mp-back[hidden]{display:none}
+.mp-nav #mp-next{margin-left:auto}
+.mp-save a{color:var(--text-2)}
+.mp-save{margin-top:14px;font-size:.8125rem;color:var(--text-3)}
+
+/* resumo */
+.mp-sum{display:grid;gap:0;margin:16px 0 22px;border-top:1px solid var(--line)}
+.mp-sum>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.mp-sum dt{font-size:.8125rem;color:var(--text-3);grid-column:1}
+.mp-sum dd{grid-column:1;font-weight:600;letter-spacing:-.015em;text-wrap:pretty}
+.mp-sum button{grid-column:2;grid-row:1 / span 2;font:inherit;font-size:.875rem;color:var(--gold);background:none;border:0;padding:8px 4px;cursor:pointer;min-height:44px}
+.mp-sum button:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+
+.mp-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mp-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.mp-field--full{grid-column:1 / -1}
+.mp-field label{font-size:.875rem;font-weight:600;color:var(--text-2)}
+.mp-field label span{font-weight:400;color:var(--text-3)}
+.mp-field input,.mp-field select,.mp-field textarea{font:inherit;font-size:1rem;color:var(--text);background:var(--bg-3);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px 14px;min-height:46px;width:100%;transition:border-color .2s var(--ease)}
+.mp-field select{appearance:none;-webkit-appearance:none;background-color:var(--bg-3);color:var(--text);background-image:linear-gradient(45deg,transparent 50%,var(--text-3) 50%),linear-gradient(135deg,var(--text-3) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 15px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:36px}
+.mp-field textarea{resize:vertical;min-height:88px}
+.mp-field input::placeholder,.mp-field textarea::placeholder{color:#6e6e73}
+.mp-field input:focus-visible,.mp-field select:focus-visible,.mp-field textarea:focus-visible{outline:none;border-color:var(--gold)}
+.mp-field [aria-invalid="true"]{border-color:#FF6961}
+.mp-hp{position:absolute;left:-9999px;width:1px;height:1px}
+.mp-consent{display:flex;gap:10px;align-items:flex-start;font-size:.875rem;color:var(--text-2);line-height:1.4;cursor:pointer;padding:6px 0}
+.mp-consent input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--gold)}
+.mp-consent a{color:var(--text)}
+.mp-err{min-height:1.2em;margin-top:10px;font-size:.875rem;color:#FF6961}
+
+/* enviado */
+.mp-done h2:focus{outline:none}
+.mp-ref{margin:8px 0 18px;color:var(--text-2)}
+.mp-ref b{color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.mp-next{list-style:none;counter-reset:n;display:grid;gap:12px;margin-bottom:24px}
+.mp-next li{counter-increment:n;position:relative;padding-left:36px;color:var(--text-2);text-wrap:pretty}
+.mp-next li b{color:var(--text);font-weight:600}
+.mp-next li::before{content:counter(n);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:var(--bg-3);color:var(--gold);font-size:.8125rem;font-weight:700;display:grid;place-items:center}
+.mp-done-actions{display:flex;gap:10px;flex-wrap:wrap}
+.mp-done-actions .btn{margin-top:0}
+.mp.is-done .mp-nav,.mp.is-done .mp-save,.mp.is-done .mp-progress,.mp.is-done .mp-step-n{display:none}
+
+/* entrada de cada etapa */
+@media (prefers-reduced-motion:no-preference){
+  .mp-step.is-in,.mp-done.is-in{animation:mpIn .45s var(--spring) both}
+  @keyframes mpIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+
+/* celular: palco em cima, escolhas embaixo */
+@media (max-width:899px){
+  .mp-intro{padding-bottom:18px}
+  .mp-intro .lede{font-size:1.0625rem}
+  .mp-grid{grid-template-columns:1fr;gap:16px}
+  .mp-stage{top:var(--nav-h);height:34svh;min-height:220px;max-height:340px;border-radius:var(--radius);z-index:2;margin-inline:calc(var(--gutter) * -0.5)}
+  .mp-stage canvas{pointer-events:none}
+  .mp-stage-cap{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+@media (max-width:520px){
+  .mp-opts{grid-template-columns:1fr}
+  .mp-opt span{padding:12px 14px;flex-direction:row;align-items:baseline;justify-content:space-between;gap:10px}
+  .mp-opt small{text-align:right}
+  .mp-fields{grid-template-columns:1fr}
+  .mp-nav{position:sticky;bottom:0;z-index:3;margin-inline:calc(var(--gutter) * -1);padding:12px var(--gutter) calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(0,0,0,0),#000 30%)}
+  .mp-nav .btn{flex:1}
+  .mp~.wpp-fab{display:none}
+}
+
+</style>
 </head>
 <body>
 <a class="skip" href="#conteudo">Pular para o conteúdo</a>
@@ -36,12 +146,12 @@ fbq('init','880805848416367');fbq('track','PageView');
     <a class="nav-brand" href="index.html" aria-label="Bourbon Films, página inicial"><img src="assets/img/logo.svg" alt="" width="34" height="30"></a>
     <nav aria-label="Principal"><ul class="nav-links"><li><a href="index.html#filmes">Filmes</a></li><li><a href="index.html#como-funciona">Como funciona</a></li><li><a href="bourbon-cultural.html">Bourbon Cultural</a></li><li><a href="cliente.html">Área do cliente</a></li></ul></nav>
     <div class="nav-end">
-    <a class="btn btn--primary nav-cta" href="montar-projeto.html">Iniciar projeto</a>
+    <a class="btn btn--primary nav-cta" href="briefing.html">Iniciar projeto</a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu"><span></span></button>
     </div>
   </div>
 </header>
-<div class="nav-sheet" id="menu"><a href="index.html#filmes">Filmes</a><a href="index.html#como-funciona">Como funciona</a><a href="bourbon-cultural.html">Bourbon Cultural</a><a href="cliente.html">Área do cliente</a><a class="btn btn--primary" href="montar-projeto.html">Iniciar um projeto</a></div>
+<div class="nav-sheet" id="menu"><a href="index.html#filmes">Filmes</a><a href="index.html#como-funciona">Como funciona</a><a href="bourbon-cultural.html">Bourbon Cultural</a><a href="cliente.html">Área do cliente</a><a class="btn btn--primary" href="briefing.html">Iniciar um projeto</a></div>
 <main id="conteudo" class="mp">
 <section class="mp-intro">
   <div class="wrap">
@@ -60,10 +170,23 @@ fbq('init','880805848416367');fbq('track','PageView');
 
   <div class="mp-panel">
     <form id="mp-form" novalidate>
-      <div class="mp-progress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-      <p class="mp-step-n" id="mp-step-n">Etapa 1 de 5</p>
+      <div class="mp-progress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <p class="mp-step-n" id="mp-step-n">Antes de começar</p>
 
-      <fieldset class="mp-step" data-step="1" data-key="objetivo">
+      <div class="mp-step" data-step="1" id="mp-ident">
+        <h2 class="h3" tabindex="-1">Primeiro, quem é você?</h2>
+        <p class="mp-hint">Com isso a gente já sabe com quem falar. Leva menos de um minuto.</p>
+        <div class="mp-fields">
+          <div class="mp-field"><label for="i-nome">Seu nome</label><input id="i-nome" type="text" autocomplete="name" required placeholder="Ex.: Ana Souza…"></div>
+          <div class="mp-field"><label for="i-empresa">Empresa ou marca <span>opcional</span></label><input id="i-empresa" type="text" autocomplete="organization" placeholder="Ex.: Academia Korpus…"></div>
+          <div class="mp-field"><label for="i-email">E-mail</label><input id="i-email" type="email" autocomplete="email" spellcheck="false" required placeholder="voce@empresa.com.br"></div>
+          <div class="mp-field"><label for="i-wpp">WhatsApp</label><input id="i-wpp" type="tel" inputmode="tel" autocomplete="tel" required placeholder="(83) 99999-9999"></div>
+          <label class="mp-consent mp-field--full"><input type="checkbox" id="i-ok"><span>Autorizo a Bourbon Films a usar estes dados só para tratar deste projeto. <a href="privacidade.html">Privacidade</a></span></label>
+        </div>
+        <p class="mp-err" id="i-err" role="alert" aria-live="polite"></p>
+      </div>
+
+      <fieldset class="mp-step" data-step="2" data-key="objetivo" hidden>
         <legend class="h3">O que você quer fazer?</legend>
         <p class="mp-hint">Não precisa saber o nome técnico. Escolha o mais próximo.</p>
         <div class="mp-opts">
@@ -78,7 +201,7 @@ fbq('init','880805848416367');fbq('track','PageView');
         </div>
       </fieldset>
 
-      <fieldset class="mp-step" data-step="2" data-key="formato" hidden>
+      <fieldset class="mp-step" data-step="3" data-key="formato" hidden>
         <legend class="h3">Onde o filme vai passar?</legend>
         <p class="mp-hint">Isso define o enquadramento desde a gravação.</p>
         <div class="mp-opts">
@@ -89,7 +212,7 @@ fbq('init','880805848416367');fbq('track','PageView');
         </div>
       </fieldset>
 
-      <fieldset class="mp-step" data-step="3" data-key="quantidade" hidden>
+      <fieldset class="mp-step" data-step="4" data-key="quantidade" hidden>
         <legend class="h3">Quantas peças você imagina?</legend>
         <p class="mp-hint">Uma estimativa basta. Ajustamos juntos depois.</p>
         <div class="mp-opts">
@@ -100,7 +223,7 @@ fbq('init','880805848416367');fbq('track','PageView');
         </div>
       </fieldset>
 
-      <fieldset class="mp-step" data-step="4" data-key="pos" hidden>
+      <fieldset class="mp-step" data-step="5" data-key="pos" hidden>
         <legend class="h3">O que o acabamento precisa ter?</legend>
         <p class="mp-hint">Marque quantos quiser. Se preferir, deixe com a gente.</p>
         <div class="mp-opts">
@@ -113,21 +236,17 @@ fbq('init','880805848416367');fbq('track','PageView');
         </div>
       </fieldset>
 
-      <div class="mp-step" data-step="5" hidden>
+      <div class="mp-step" data-step="6" hidden>
         <h2 class="h3" tabindex="-1" id="mp-fim-t">Projeto configurado. Vamos preparar sua proposta.</h2>
         <dl class="mp-sum" id="mp-sum"></dl>
 
         <div class="mp-fields">
-          <div class="mp-field"><label for="f-nome">Seu nome</label><input id="f-nome" name="nome" type="text" autocomplete="name" required placeholder="Ex.: Ana Souza…"></div>
-          <div class="mp-field"><label for="f-empresa">Empresa ou marca <span>opcional</span></label><input id="f-empresa" name="empresa" type="text" autocomplete="organization" placeholder="Ex.: Academia Korpus…"></div>
-          <div class="mp-field"><label for="f-wpp">WhatsApp</label><input id="f-wpp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(83) 99999-9999"></div>
-          <div class="mp-field"><label for="f-email">E-mail</label><input id="f-email" name="email" type="email" autocomplete="email" spellcheck="false" placeholder="voce@empresa.com.br"></div>
           <div class="mp-field"><label for="f-cidade">Cidade da gravação <span>opcional</span></label><input id="f-cidade" name="cidade" type="text" autocomplete="off" placeholder="Ex.: Campina Grande…"></div>
           <div class="mp-field"><label for="f-prazo">Prazo <span>opcional</span></label>
             <select id="f-prazo" name="prazo"><option value="">Sem prazo definido</option><option value="30-dias">Em até 30 dias</option><option value="60-dias">Em até 60 dias</option><option value="data-fixa">Tenho uma data fixa</option></select></div>
           <div class="mp-field mp-field--full"><label for="f-notas">Algo mais que devemos saber? <span>opcional</span></label><textarea id="f-notas" name="notas" rows="3" autocomplete="off" placeholder="Referências, datas, ideias, links…"></textarea></div>
           <input class="mp-hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="mp-consent mp-field--full"><input type="checkbox" id="f-ok" name="consentimento" required><span>Autorizo a Bourbon Films a usar estes dados só para responder este pedido. <a href="privacidade.html">Privacidade</a></span></label>
+          
         </div>
         <p class="mp-err" id="mp-err" role="alert" aria-live="polite"></p>
       </div>
@@ -147,7 +266,7 @@ fbq('init','880805848416367');fbq('track','PageView');
         <button type="button" class="btn btn--ghost" id="mp-back">Voltar</button>
         <button type="button" class="btn btn--primary" id="mp-next" disabled>Continuar</button>
       </div>
-      <p class="mp-save">Suas escolhas ficam salvas neste aparelho até o envio. Prefere um questionário detalhado? <a href="briefing.html">Briefing completo</a>.</p>
+      <p class="mp-save">Suas escolhas ficam salvas neste aparelho até o envio.</p>
     </form>
   </div>
 </div>
@@ -157,7 +276,7 @@ fbq('init','880805848416367');fbq('track','PageView');
   <div class="wrap">
     <div class="footer-grid">
       <div class="footer-brand"><img src="assets/img/logo.svg" alt="Bourbon Films" width="30" height="26"><p>Produtora audiovisual em Campina Grande, Paraíba. Projetos em todo o Brasil.</p></div>
-      <div><h2>Navegar</h2><ul><li><a href="index.html#filmes">Filmes</a></li><li><a href="index.html#como-funciona">Como funciona</a></li><li><a href="montar-projeto.html">Iniciar projeto</a></li></ul></div>
+      <div><h2>Navegar</h2><ul><li><a href="index.html#filmes">Filmes</a></li><li><a href="index.html#como-funciona">Como funciona</a></li><li><a href="briefing.html">Iniciar projeto</a></li></ul></div>
       <div><h2>Bourbon</h2><ul><li><a href="cliente.html">Área do cliente</a></li><li><a href="bourbon-cultural.html">Bourbon Cultural</a></li><li><a href="trabalhe-conosco.html">Trabalhe conosco</a></li></ul></div>
       <div><h2>Contato</h2><ul><li><a href="https://wa.me/5583998683878" target="_blank" rel="noopener">(83)&nbsp;99868-3878</a></li><li><a href="mailto:filmbourbon@gmail.com">filmbourbon@gmail.com</a></li><li><a href="https://instagram.com/bourbonfilm" target="_blank" rel="noopener" translate="no">@bourbonfilm</a></li></ul></div>
     </div>
@@ -165,7 +284,572 @@ fbq('init','880805848416367');fbq('track','PageView');
   </div>
 </footer>
 <a class="wpp-fab" href="https://wa.me/5583998683878?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Bourbon%20Films." target="_blank" rel="noopener" aria-label="Conversar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35M12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.16-3.48-8.41"/></svg></a>
-<script src="assets/js/site.js?v=20261021u" defer></script>
-<script type="module" src="assets/js/montar.js?v=20261109b"></script>
+<script src="assets/js/site.js?v=20261109c" defer></script>
+<script type="module">
+/* Monte seu projeto, Bourbon Films.
+   Identificação primeiro, depois as escolhas. O estado estruturado é a fonte de verdade;
+   a cena 3D só representa o estado e nunca é necessária para enviar. */
+
+const SCHEMA = 'bf.projeto/1';
+const RASCUNHO = 'bf-projeto-rascunho-v2';
+const W3F_KEY = 'cecf6141-9abc-4182-aa50-fb7625cc188e';
+const TOTAL = 6;
+const FB = 'https://www.gstatic.com/firebasejs/10.14.1/';
+
+const ROTULOS = {
+  objetivo: { marca:'Apresentar a marca', produto:'Anunciar um produto ou serviço', evento:'Cobrir um evento', historia:'Contar uma história real', recorrente:'Conteúdo todo mês', campanha:'Lançar uma campanha', institucional:'Filme institucional', 'nao-sei':'Ainda não sei' },
+  formato: { horizontal:'Horizontal', vertical:'Vertical', ambos:'Horizontal e vertical', 'nao-sei':'Ainda não sei' },
+  quantidade: { '1':'Um filme principal', '2-4':'De 2 a 4 peças', '5+':'5 ou mais peças', 'nao-sei':'Ainda não sei' },
+  pos: { edicao:'Edição com narrativa', cor:'Tratamento de cor', som:'Trilha e som', legendas:'Legendas', motion:'Animação e motion', 'voces-decidem':'Vocês decidem' },
+  prazo: { '':'Sem prazo definido', '30-dias':'Em até 30 dias', '60-dias':'Em até 60 dias', 'data-fixa':'Data fixa' }
+};
+
+const estado = { objetivo:null, formato:null, quantidade:null, pos:[] };
+const contato = { nome:'', empresa:'', whatsapp:'', email:'' };
+const reg = { id:null, uid:null, salvo:false }; /* registro do pedido: um por pessoa neste aparelho */
+let etapa = 1;
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const track = (t, d) => { try { window.bfTrack && window.bfTrack(t, d); } catch {} };
+function ler(){ try { return JSON.parse(localStorage.getItem(RASCUNHO) || 'null'); } catch { return null; } }
+function gravar(){ try { localStorage.setItem(RASCUNHO, JSON.stringify({ estado, contato, reg, etapa })); } catch {} }
+function apagar(){ try { localStorage.removeItem(RASCUNHO); } catch {} }
+function gerarId(){
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  const a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  const r = crypto.getRandomValues(new Uint8Array(4));
+  return `BF-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${Array.from(r, b => a[b % a.length]).join('')}`;
+}
+function b64url(obj){
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  let s = ''; bytes.forEach(b => s += String.fromCharCode(b));
+  return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function descricao(){
+  const o = estado.objetivo ? ROTULOS.objetivo[estado.objetivo] : null;
+  if (!o) return 'Prévia do seu projeto. Ela muda a cada escolha.';
+  const partes = [o];
+  if (estado.formato && estado.formato !== 'nao-sei') partes.push(ROTULOS.formato[estado.formato].toLowerCase());
+  if (estado.quantidade && estado.quantidade !== 'nao-sei') partes.push(ROTULOS.quantidade[estado.quantidade].toLowerCase());
+  const pos = estado.pos.filter(v => v !== 'voces-decidem');
+  if (pos.length) partes.push('acabamento: ' + pos.map(v => ROTULOS.pos[v].toLowerCase()).join(', '));
+  return partes.join(' · ');
+}
+
+/* ---------- banco (Firebase). Tudo aqui é opcional: se falhar, o e-mail garante o pedido ---------- */
+let fbp = null;
+function firebase(){
+  if (!fbp) fbp = (async () => {
+    const [{ firebaseConfig }, a, f, u] = await Promise.all([
+      import('./assets/js/firebase-config.js'), import(FB + 'firebase-app.js'),
+      import(FB + 'firebase-firestore-lite.js'), import(FB + 'firebase-auth.js')
+    ]);
+    const app = a.getApps().length ? a.getApp() : a.initializeApp(firebaseConfig);
+    return { f, u, db: f.getFirestore(app), auth: u.getAuth(app) };
+  })();
+  return fbp;
+}
+const comPrazo = (p, ms = 9000) => Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error('tempo')), ms))]);
+
+/* cria o pedido assim que a pessoa se identifica (login anônimo do Firebase).
+   Se o login anônimo não estiver ativo, o pedido é criado só no envio. */
+async function registrarIdentificacao(){
+  if (!reg.id) reg.id = gerarId();
+  gravar();
+  try {
+    await comPrazo((async () => {
+      const { f, u, db, auth } = await firebase();
+      if (!auth.currentUser) await u.signInAnonymously(auth);
+      reg.uid = auth.currentUser.uid;
+      if (!reg.salvo){
+        await f.setDoc(f.doc(db, 'pedidos', reg.id), {
+          schema: SCHEMA, id: reg.id, versao: 1, status: 'identificado', origem: 'site/montar-projeto',
+          uid: reg.uid, criadoEm: f.serverTimestamp(), atualizadoEm: f.serverTimestamp(),
+          escolhas: { ...estado, pos: [...estado.pos] }, contexto: { cidade: '', prazo: '', notas: '' }, contato: { ...contato }
+        });
+        reg.salvo = true;
+      } else {
+        await f.updateDoc(f.doc(db, 'pedidos', reg.id), { contato: { ...contato }, atualizadoEm: f.serverTimestamp() });
+      }
+    })());
+  } catch (e) { /* segue sem banco: o envio final cria o registro */ }
+  gravar();
+}
+let tSync = null;
+function sincronizarEscolhas(){
+  if (!reg.salvo) return;
+  clearTimeout(tSync);
+  tSync = setTimeout(async () => {
+    try { const { f, db } = await firebase(); await f.updateDoc(f.doc(db, 'pedidos', reg.id), { escolhas: { ...estado, pos: [...estado.pos] }, etapaVisitante: etapa, atualizadoEm: f.serverTimestamp() }); } catch {}
+  }, 1200);
+}
+
+let cena = null;
+async function iniciarCena(){
+  const palco = $('#stage'), canvas = $('#cena');
+  try {
+    const teste = document.createElement('canvas');
+    if (!(teste.getContext('webgl2') || teste.getContext('webgl'))) throw new Error('sem webgl');
+    let THREE;
+    try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js'); }
+    catch { THREE = await import('./assets/vendor/three.module.min.js'); }
+    cena = criarCena(THREE, canvas, palco);
+    cena.aplicar(estado, etapa === TOTAL);
+    requestAnimationFrame(() => palco.classList.add('is-ready'));
+  } catch (e) {
+    palco.classList.add('no-3d');
+  }
+}
+
+function criarCena(THREE, canvas, palco){
+  const mobile = matchMedia('(max-width: 899px)').matches;
+  const fraco = mobile || (navigator.hardwareConcurrency || 8) <= 4;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, fraco ? 1.5 : 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x000000, 7, 15);
+  const cam = new THREE.PerspectiveCamera(32, 1, 0.1, 40);
+
+  /* luz: uma principal e um contra dourado, como num set */
+  const amb = new THREE.AmbientLight(0xffffff, 0.32); scene.add(amb);
+  const key = new THREE.SpotLight(0xffffff, 60, 20, 0.6, 0.8, 1.4); scene.add(key, key.target);
+  const rim = new THREE.PointLight(0xF5A020, 6, 10, 1.8); scene.add(rim);
+
+  /* chão que recebe a luz */
+  const chao = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshStandardMaterial({ color: 0x0b0b0c, roughness: 0.92, metalness: 0 }));
+  chao.rotation.x = -Math.PI / 2; chao.position.y = -1.25; scene.add(chao);
+
+  /* textura discreta dentro dos quadros: um gradiente de céu e horizonte */
+  const tc = document.createElement('canvas'); tc.width = 8; tc.height = 128;
+  const g = tc.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 128);
+  gr.addColorStop(0, '#3a3a40'); gr.addColorStop(.58, '#1c1c20'); gr.addColorStop(.6, '#29292d'); gr.addColorStop(1, '#111113');
+  g.fillStyle = gr; g.fillRect(0, 0, 8, 128);
+  const tex = new THREE.CanvasTexture(tc); tex.colorSpace = THREE.SRGBColorSpace;
+
+  const geoPlano = new THREE.PlaneGeometry(1, 1);
+  const pts = [[-.5,-.5],[.5,-.5],[.5,.5],[-.5,.5],[-.5,-.5]].map(([x,y]) => new THREE.Vector3(x, y, 0.002));
+  const geoBorda = new THREE.BufferGeometry().setFromPoints(pts);
+  const terços = [];
+  [-1/6, 1/6].forEach(v => { terços.push(new THREE.Vector3(v,-.5,.003), new THREE.Vector3(v,.5,.003), new THREE.Vector3(-.5,v,.003), new THREE.Vector3(.5,v,.003)); });
+  const geoTerços = new THREE.BufferGeometry().setFromPoints(terços);
+
+  const MAX = 6, quadros = [];
+  for (let i = 0; i < MAX; i++){
+    const grupo = new THREE.Group();
+    const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: .35, roughness: 0.62, metalness: 0.05, transparent: true });
+    const painel = new THREE.Mesh(geoPlano, mat);
+    const matB = new THREE.LineBasicMaterial({ color: i === 0 ? 0xF5A020 : 0xF5F5F7, transparent: true, opacity: i === 0 ? .9 : .32 });
+    const borda = new THREE.Line(geoBorda, matB);
+    const matT = new THREE.LineBasicMaterial({ color: 0xF5F5F7, transparent: true, opacity: .07 });
+    const guia = new THREE.LineSegments(geoTerços, matT);
+    const caixa = new THREE.Group(); caixa.add(painel, borda, guia);
+    grupo.add(caixa); scene.add(grupo);
+    quadros.push({ grupo, caixa, mats: [mat, matB, matT], base: [1, matB.opacity, .07],
+      atual: { x:0, y:0, z:0, ry:0, w:1.6, h:.9, s:1, v:0 }, alvo: { x:0, y:0, z:0, ry:0, w:1.6, h:.9, s:1, v:0 } });
+  }
+
+  /* linha do tempo de edição: uma trilha por item de acabamento */
+  const mesa = new THREE.Group(); mesa.position.set(0, -1.12, .55); mesa.rotation.x = -1.3; mesa.scale.setScalar(.82); scene.add(mesa);
+  const fundoMesa = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 1.15), new THREE.MeshBasicMaterial({ color: 0x0c0c0d, transparent: true }));
+  mesa.add(fundoMesa);
+  const TRILHAS = [
+    { k: 'motion', cor: 0xF5A020, clips: [[.05,.18],[.42,.12],[.72,.16]] },
+    { k: 'edicao', cor: 0xD8D8DC, clips: [[0,.22],[.23,.17],[.41,.25],[.67,.14],[.82,.18]] },
+    { k: 'cor', cor: 0xB8743A, clips: [[0,1]] },
+    { k: 'legendas', cor: 0xF5F5F7, clips: [[.06,.08],[.19,.1],[.33,.07],[.48,.11],[.63,.09],[.79,.08]] },
+    { k: 'som', cor: 0x7C7C82, clips: [[0,.55],[.57,.43]] }
+  ];
+  const trilhas = TRILHAS.map((t, idx) => {
+    const g = new THREE.Group(); g.position.y = .42 - idx * .21; mesa.add(g);
+    const mats = [];
+    t.clips.forEach(([ini, larg]) => {
+      const m = new THREE.MeshBasicMaterial({ color: t.cor, transparent: true, opacity: 0 });
+      const c = new THREE.Mesh(geoPlano, m);
+      c.scale.set(4.0 * larg - .03, .085, 1); c.position.set(-2 + 4.0 * ini + (4.0 * larg) / 2, 0, .004);
+      g.add(c); mats.push(m);
+    });
+    return { k: t.k, g, mats, base: { motion: .75, edicao: .5, cor: .4, legendas: .45, som: .38 }[t.k], atual: 0, alvo: 0 };
+  });
+  const cabeca = new THREE.Mesh(geoPlano, new THREE.MeshBasicMaterial({ color: 0xF5A020, transparent: true, opacity: 0 }));
+  cabeca.scale.set(.012, 1.1, 1); cabeca.position.set(-.35, 0, .01); mesa.add(cabeca);
+  const mesaEst = { atual: 0, alvo: 0 };
+
+  /* câmera e luz com alvo e amortecimento */
+  const camE = { atual: { x:0, y:.5, z:6.4, lx:0, ly:0, lz:-1 }, alvo: { x:0, y:.5, z:6.4, lx:0, ly:0, lz:-1 } };
+  const luzE = { atual: { kx:2.5, ky:4.5, kz:4, ki:60, kr:1, kg:1, kb:1, rx:-2.5, ry:1, rz:-2.5, ri:6 }, alvo: null };
+  luzE.alvo = { ...luzE.atual };
+  const ptr = { x:0, y:0, ax:0, ay:0 };
+
+  function tamanho(i, formato){
+    const H = { w:1.6, h:.9 }, V = { w:.62, h:1.1 };
+    if (formato === 'vertical') return V;
+    if (formato === 'ambos') return i % 2 ? V : H;
+    return H;
+  }
+  function contar(q){ return q === '1' ? 1 : q === '2-4' ? 3 : q === '5+' ? 6 : 3; }
+
+  function aplicar(st, final){
+    const n = st.quantidade ? contar(st.quantidade) : (st.objetivo ? 3 : 5);
+    const obj = st.objetivo || 'inicio';
+    const fmt = st.formato || 'horizontal';
+    const tam = Array.from({ length: MAX }, (_, i) => tamanho(i, fmt));
+    const pos = layout(final ? 'final' : obj, n, tam);
+    quadros.forEach((q, i) => {
+      const vis = i < n;
+      Object.assign(q.alvo, pos[i] || pos[pos.length - 1], { w: tam[i].w, h: tam[i].h, v: vis ? 1 : 0 });
+    });
+    const sel = new Set(st.pos.includes('voces-decidem') ? ['edicao','cor','som'] : st.pos);
+    trilhas.forEach(t => t.alvo = sel.has(t.k) || (final && t.k === 'edicao') ? 1 : 0);
+    mesaEst.alvo = (sel.size || final) ? 1 : 0;
+    Object.assign(camE.alvo, enquadrar(final ? 'final' : obj, mesaEst.alvo));
+    Object.assign(luzE.alvo, iluminar(final ? 'final' : obj));
+    pedir();
+  }
+
+  function layout(obj, n, tam){
+    const out = [];
+    const c = (n - 1) / 2;
+    const larguraLinha = gap => { let t = 0; for (let i = 0; i < n; i++) t += tam[i].w + (i ? gap : 0); return t; };
+    if (obj === 'inicio' || obj === 'nao-sei'){
+      const sp = [[-1.5,.35,-.6,.38],[1.25,-.05,-1.5,-.32],[.1,.62,-2.6,.12],[-.35,-.5,.35,-.16],[1.95,.72,-.25,-.42],[-2.2,-.25,-1.9,.48]];
+      for (let i = 0; i < MAX; i++){ const [x,y,z,ry] = sp[i]; out.push({ x, y, z, ry, s: .82 }); }
+      return out;
+    }
+    if (obj === 'evento'){
+      const R = 2.6, cz = -2.3, abre = n > 1 ? Math.min(1.4, .62 * (n - 1)) : 0;
+      for (let i = 0; i < MAX; i++){ const a = n > 1 ? -abre / 2 + abre * (i / (n - 1)) : 0; out.push({ x: Math.sin(a) * R, y: .05, z: cz + Math.cos(a) * R, ry: a, s: n > 3 ? .5 : .68 }); }
+      return out;
+    }
+    if (obj === 'historia'){
+      for (let i = 0; i < MAX; i++) out.push({ x: -.5 + i * .95, y: .02, z: -i * 1.25, ry: -.42, s: 1 });
+      return out;
+    }
+    if (obj === 'recorrente'){
+      const cols = n <= 3 ? n : 3, s = n > 3 ? .58 : .7;
+      for (let i = 0; i < MAX; i++){ const col = i % cols, row = Math.floor(i / cols), rows = Math.ceil(n / cols);
+        out.push({ x: (col - (cols - 1) / 2) * 1.85 * s / .7 * .82, y: (rows > 1 ? (row ? -.5 : .55) : .05), z: -.4, ry: 0, s }); }
+      return out;
+    }
+    if (obj === 'campanha'){
+      for (let i = 0; i < MAX; i++){ const d = i - c; out.push({ x: d * .62, y: .02 + Math.abs(d) * -.04, z: -Math.abs(d) * .32 + (i === 0 ? .01 : 0), ry: d * -.22, s: .9 }); }
+      return out;
+    }
+    if (obj === 'produto'){
+      out.push({ x: 0, y: .08, z: .35, ry: 0, s: 1.28 });
+      for (let i = 1; i < MAX; i++) out.push({ x: 1.55 + (i - 1) * .55, y: -.1, z: -1 - (i - 1) * .7, ry: -.5, s: .6 });
+      return out;
+    }
+    if (obj === 'final'){
+      const gap = .14, total = larguraLinha(gap), esc = Math.min(1, 3.4 / total);
+      let x = -total * esc / 2;
+      for (let i = 0; i < MAX; i++){ const w = (tam[i] || tam[0]).w * esc; out.push({ x: x + w / 2, y: .3, z: 0, ry: 0, s: esc }); if (i < n) x += w + gap * esc; }
+      return out;
+    }
+    /* marca, institucional: um quadro principal e os outros atrás, em camadas */
+    for (let i = 0; i < MAX; i++) out.push({ x: i * .26 - (obj === 'institucional' ? 0 : .05), y: i * .14, z: -i * .62, ry: obj === 'institucional' ? 0 : -.08, s: 1 });
+    return out;
+  }
+
+  function enquadrar(obj, comMesa){
+    const base = {
+      inicio:   { x: 0,   y: .55, z: 5.8, lx: 0, ly: 0, lz: -1 },
+      'nao-sei':{ x: 0,   y: .55, z: 5.8, lx: 0, ly: 0, lz: -1 },
+      marca:    { x: .9,  y: .45, z: 5.2, lx: .3, ly: .15, lz: -1 },
+      institucional:{ x: 0, y: .55, z: 5.4, lx: .5, ly: .2, lz: -1.2 },
+      produto:  { x: -.6, y: -.05, z: 4.6, lx: .3, ly: .05, lz: -.4 },
+      evento:   { x: 0,   y: 1.7, z: 5.0, lx: 0, ly: -.1, lz: -1.6 },
+      historia: { x: 2.6, y: .55, z: 4.4, lx: .8, ly: 0, lz: -2 },
+      recorrente:{ x: 0,  y: .3, z: 5.4, lx: 0, ly: .05, lz: -.4 },
+      campanha: { x: 0,   y: .6, z: 5.2, lx: 0, ly: 0, lz: -.6 },
+      final:    { x: 0,   y: .8, z: 5.6, lx: 0, ly: -.2, lz: 0 }
+    }[obj];
+    const r = { ...base };
+    if (comMesa && obj !== 'final'){ r.y += .2; r.ly -= .22; r.z += .35; }
+    return r;
+  }
+  function iluminar(obj){
+    const neutra = { kx: 2.5, ky: 4.5, kz: 4, ki: 60, kr: 1, kg: 1, kb: 1, rx: -2.5, ry: 1, rz: -2.5, ri: 6 };
+    const m = {
+      historia: { kx: -4.2, ky: 1.8, kz: 2.4, ki: 70, kr: 1, kg: .78, kb: .55, rx: 3, ry: 1.2, rz: -3, ri: 4 },
+      produto:  { kx: 0, ky: 5.2, kz: 3, ki: 75, kr: 1, kg: 1, kb: 1, rx: -2, ry: .4, rz: -1.6, ri: 9 },
+      campanha: { kx: 1.5, ky: 5, kz: 3.5, ki: 68, kr: 1, kg: .97, kb: .92, rx: 2.4, ry: .8, rz: -2, ri: 8 },
+      evento:   { kx: 0, ky: 6, kz: 2.5, ki: 80, kr: .86, kg: .92, kb: 1, rx: 0, ry: 1.5, rz: -4.5, ri: 7 },
+      final:    { kx: 0, ky: 5, kz: 4.5, ki: 64, kr: 1, kg: .95, kb: .88, rx: 0, ry: 1.4, rz: -2.4, ri: 7 }
+    };
+    return m[obj] || neutra;
+  }
+
+  /* render só quando algo está se movendo */
+  let rodando = false, visivel = true, ultimo = 0;
+  function pedir(){ if (!rodando && visivel){ rodando = true; ultimo = performance.now(); requestAnimationFrame(passo); } }
+  function amortecer(a, b, k, dt){ return reduz ? b : a + (b - a) * (1 - Math.exp(-k * dt)); }
+  function passo(t){
+    const dt = Math.min(.05, (t - ultimo) / 1000); ultimo = t;
+    let mov = 0;
+    const mexe = (o, chave, k) => { const a = o.atual[chave], b = o.alvo[chave], n = amortecer(a, b, k, dt); o.atual[chave] = n; mov = Math.max(mov, Math.abs(b - n)); };
+    quadros.forEach((q, i) => {
+      const k = 3.4 - i * .18;
+      ['x','y','z','ry','w','h','s'].forEach(c => mexe(q, c, k));
+      mexe(q, 'v', 4.5);
+      const a = q.atual;
+      q.grupo.position.set(a.x, a.y, a.z); q.grupo.rotation.y = a.ry;
+      const sv = .001 + a.v * .999;
+      q.caixa.scale.set(a.w * a.s * sv, a.h * a.s * sv, 1);
+      q.mats.forEach((m, j) => m.opacity = q.base[j] * a.v);
+      q.grupo.visible = a.v > .005;
+    });
+    trilhas.forEach(tr => { const n = amortecer(tr.atual, tr.alvo, 4, dt); mov = Math.max(mov, Math.abs(tr.alvo - n)); tr.atual = n;
+      tr.g.scale.set(.6 + .4 * n, n, 1); tr.mats.forEach(m => m.opacity = tr.base * n); tr.g.visible = n > .005; });
+    { const n = amortecer(mesaEst.atual, mesaEst.alvo, 3.2, dt); mov = Math.max(mov, Math.abs(mesaEst.alvo - n)); mesaEst.atual = n;
+      fundoMesa.material.opacity = n; cabeca.material.opacity = n * .95; mesa.visible = n > .005; }
+    ['x','y','z','lx','ly','lz'].forEach(c => mexe(camE, c, 2.2));
+    Object.keys(luzE.alvo).forEach(c => mexe(luzE, c, 2.6));
+    ptr.ax = amortecer(ptr.ax, ptr.x, 3, dt); ptr.ay = amortecer(ptr.ay, ptr.y, 3, dt);
+    mov = Math.max(mov, Math.abs(ptr.x - ptr.ax), Math.abs(ptr.y - ptr.ay));
+
+    const c = camE.atual, L = luzE.atual;
+    const asp = palco.clientWidth / Math.max(1, palco.clientHeight);
+    const recuo = asp < 1.25 ? Math.min(1.6, 1.25 / asp) : 1;
+    cam.position.set(c.x * recuo + ptr.ax * .35, c.y + ptr.ay * .18, c.z * recuo);
+    cam.lookAt(c.lx, c.ly, c.lz);
+    key.position.set(L.kx, L.ky, L.kz); key.target.position.set(0, -.2, -.8); key.intensity = L.ki; key.color.setRGB(L.kr, L.kg, L.kb);
+    rim.position.set(L.rx, L.ry, L.rz); rim.intensity = L.ri;
+    renderer.render(scene, cam);
+    if (mov > .0008) requestAnimationFrame(passo); else rodando = false;
+  }
+
+  function redimensionar(){
+    const w = palco.clientWidth, h = palco.clientHeight;
+    renderer.setSize(w, h, false); cam.aspect = w / Math.max(1, h); cam.updateProjectionMatrix();
+    rodando = false; pedir();
+  }
+  new ResizeObserver(redimensionar).observe(palco);
+  new IntersectionObserver(([e]) => { visivel = e.isIntersecting; if (visivel) pedir(); }).observe(palco);
+  document.addEventListener('visibilitychange', () => { visivel = !document.hidden; if (visivel) pedir(); });
+  if (matchMedia('(pointer: fine)').matches && !reduz){
+    palco.addEventListener('pointermove', e => { const r = palco.getBoundingClientRect(); ptr.x = ((e.clientX - r.left) / r.width - .5) * 2; ptr.y = -((e.clientY - r.top) / r.height - .5) * 2; pedir(); });
+    palco.addEventListener('pointerleave', () => { ptr.x = 0; ptr.y = 0; pedir(); });
+  }
+  canvas.addEventListener('webglcontextlost', ev => { ev.preventDefault(); palco.classList.add('no-3d'); palco.classList.remove('is-ready'); });
+  addEventListener('pagehide', () => { renderer.dispose(); });
+  redimensionar();
+  return { aplicar };
+}
+
+
+/* ---------- fluxo ---------- */
+const form = $('#mp-form'), btNext = $('#mp-next'), btBack = $('#mp-back');
+const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+function identificacaoOk(mostrarErro){
+  const nome = $('#i-nome'), email = $('#i-email'), wpp = $('#i-wpp'), ok = $('#i-ok'), err = $('#i-err');
+  [nome, email, wpp].forEach(i => i.removeAttribute('aria-invalid'));
+  let falha = null, msg = '';
+  if (nome.value.trim().length < 2){ falha = nome; msg = 'Escreva seu nome.'; }
+  else if (!RE_EMAIL.test(email.value.trim())){ falha = email; msg = 'Confira o e-mail.'; }
+  else if (wpp.value.replace(/\D/g, '').length < 10){ falha = wpp; msg = 'Confira o WhatsApp com DDD.'; }
+  else if (!ok.checked){ falha = ok; msg = 'Marque a autorização para continuar.'; }
+  if (mostrarErro){
+    err.textContent = msg;
+    if (falha){ if (falha !== ok) falha.setAttribute('aria-invalid', 'true'); falha.focus(); }
+  }
+  return !falha;
+}
+function lerContato(){
+  contato.nome = $('#i-nome').value.trim();
+  contato.empresa = $('#i-empresa').value.trim();
+  contato.email = $('#i-email').value.trim().toLowerCase();
+  contato.whatsapp = $('#i-wpp').value.trim();
+}
+function valorDaEtapa(n){
+  if (n === 1) return true; /* validação acontece no clique, com mensagem */
+  const fs = $(`.mp-step[data-step="${n}"]`); const k = fs && fs.dataset.key;
+  if (!k) return true;
+  return k === 'pos' ? true : !!estado[k];
+}
+function liberadaAte(){
+  if (!reg.id) return 1;
+  for (let i = 2; i < TOTAL; i++) if (!valorDaEtapa(i)) return i;
+  return TOTAL;
+}
+function mostrar(n, foco = true){
+  etapa = Math.max(1, Math.min(liberadaAte(), n));
+  $$('.mp-step').forEach(s => { const on = +s.dataset.step === etapa; s.hidden = !on; s.classList.toggle('is-in', on); });
+  $$('.mp-progress i').forEach((i, idx) => i.classList.toggle('on', idx < etapa));
+  $('#mp-step-n').textContent = etapa === 1 ? 'Antes de começar' : etapa === TOTAL ? 'Revisão' : `Etapa ${etapa - 1} de ${TOTAL - 2}`;
+  btBack.hidden = etapa === 1;
+  btNext.textContent = etapa === 1 ? 'Começar meu projeto' : etapa === TOTAL ? 'Enviar para orçamento' : etapa === TOTAL - 1 ? 'Revisar projeto' : 'Continuar';
+  btNext.disabled = !valorDaEtapa(etapa);
+  if (etapa === TOTAL) montarResumo();
+  if (cena) cena.aplicar(estado, etapa === TOTAL);
+  gravar();
+  if (foco){
+    const alvo = $(`.mp-step[data-step="${etapa}"] legend, .mp-step[data-step="${etapa}"] h2`);
+    const topo = $('.mp-panel').getBoundingClientRect().top + scrollY - (matchMedia('(max-width: 899px)').matches ? $('#stage').offsetHeight + 70 : 90);
+    if (scrollY > topo) scrollTo({ top: topo, behavior: reduz ? 'auto' : 'smooth' });
+    if (alvo && (etapa === TOTAL || etapa === 1)) alvo.focus({ preventScroll: true });
+  }
+}
+function ir(n){
+  if (n === etapa) return;
+  history.pushState({ etapa: n }, '', `#etapa-${n}`);
+  mostrar(n);
+  if (n > 1 && n < TOTAL) track('etapa', String(n - 1));
+}
+
+form.addEventListener('change', e => {
+  const el = e.target; if (!el.name) return;
+  if (el.name === 'pos'){
+    let v = $$('input[name="pos"]:checked').map(i => i.value);
+    if (el.value === 'voces-decidem' && el.checked){ $$('input[name="pos"]').forEach(i => { if (i.value !== 'voces-decidem') i.checked = false; }); v = ['voces-decidem']; }
+    else if (el.checked && v.includes('voces-decidem')){ $('input[name="pos"][value="voces-decidem"]').checked = false; v = v.filter(x => x !== 'voces-decidem'); }
+    estado.pos = v;
+  } else if (el.name in estado){
+    estado[el.name] = el.value;
+  } else return;
+  btNext.disabled = !valorDaEtapa(etapa);
+  $('#cena-desc').textContent = descricao();
+  if (cena) cena.aplicar(estado, false);
+  gravar(); sincronizarEscolhas();
+});
+form.addEventListener('submit', e => e.preventDefault());
+$('#mp-ident').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'checkbox'){ e.preventDefault(); btNext.click(); } });
+
+btNext.addEventListener('click', async () => {
+  if (etapa === 1){
+    if (!identificacaoOk(true)) return;
+    lerContato();
+    const novo = !reg.id;
+    btNext.disabled = true; btNext.textContent = 'Preparando…';
+    await registrarIdentificacao();
+    if (novo) track('identificacao');
+    btNext.disabled = false;
+    ir(2);
+    return;
+  }
+  if (etapa < TOTAL) ir(etapa + 1); else enviar();
+});
+btBack.addEventListener('click', () => ir(etapa - 1));
+addEventListener('popstate', e => {
+  const n = (e.state && e.state.etapa) || +((location.hash.match(/etapa-(\d)/) || [])[1] || 1);
+  if (!document.querySelector('.mp.is-done')) mostrar(n);
+});
+
+function montarResumo(){
+  const linhas = [
+    ['Contato', [contato.nome, contato.empresa].filter(Boolean).join(', '), 1],
+    ['O que você quer fazer', estado.objetivo ? ROTULOS.objetivo[estado.objetivo] : 'Não informado', 2],
+    ['Formato', estado.formato ? ROTULOS.formato[estado.formato] : 'Não informado', 3],
+    ['Quantidade', estado.quantidade ? ROTULOS.quantidade[estado.quantidade] : 'Não informado', 4],
+    ['Acabamento', estado.pos.length ? estado.pos.map(v => ROTULOS.pos[v]).join(', ') : 'Vocês decidem', 5]
+  ];
+  const dl = $('#mp-sum'); dl.textContent = '';
+  linhas.forEach(([t, v, n]) => {
+    const d = document.createElement('div');
+    const dt = document.createElement('dt'); dt.textContent = t;
+    const dd = document.createElement('dd'); dd.textContent = v;
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Alterar'; b.setAttribute('aria-label', `Alterar ${t.toLowerCase()}`);
+    b.addEventListener('click', () => ir(n));
+    d.append(dt, dd, b); dl.append(d);
+  });
+}
+
+/* ---------- envio ---------- */
+let enviando = false;
+async function enviar(){
+  if (enviando) return;
+  const err = $('#mp-err'); err.textContent = '';
+  if (form.botcheck.checked) return;
+  if (!reg.id) reg.id = gerarId();
+  const projeto = {
+    schema: SCHEMA, id: reg.id, versao: 1, status: 'novo', origem: 'site/montar-projeto', criadoEm: new Date().toISOString(),
+    escolhas: { ...estado, pos: [...estado.pos] },
+    contexto: { cidade: $('#f-cidade').value.trim(), prazo: $('#f-prazo').value, notas: $('#f-notas').value.trim() },
+    contato: { ...contato }
+  };
+  const codigo = b64url(projeto);
+  const texto = [
+    `Novo projeto pelo site: ${projeto.id}`, '',
+    `Nome: ${contato.nome}`, `Empresa: ${contato.empresa || 'Não informada'}`,
+    `WhatsApp: ${contato.whatsapp}`, `E-mail: ${contato.email}`, '',
+    `Objetivo: ${ROTULOS.objetivo[estado.objetivo] || 'Não informado'}`,
+    `Formato: ${ROTULOS.formato[estado.formato] || 'Não informado'}`,
+    `Quantidade: ${ROTULOS.quantidade[estado.quantidade] || 'Não informado'}`,
+    `Acabamento: ${estado.pos.length ? estado.pos.map(v => ROTULOS.pos[v]).join(', ') : 'Vocês decidem'}`,
+    `Cidade: ${projeto.contexto.cidade || 'Não informada'}`, `Prazo: ${ROTULOS.prazo[projeto.contexto.prazo]}`,
+    `Observações: ${projeto.contexto.notas || 'Nenhuma'}`, '',
+    'Código para importar no gerador de orçamento:', codigo
+  ].join('\n');
+
+  enviando = true; btNext.disabled = true; btNext.textContent = 'Enviando…';
+  let noBanco = false;
+  try {
+    await comPrazo((async () => {
+      const { f, db } = await firebase();
+      const dados = { status: 'novo', escolhas: projeto.escolhas, contexto: projeto.contexto, contato: projeto.contato, enviadoEm: f.serverTimestamp(), atualizadoEm: f.serverTimestamp() };
+      if (reg.salvo) await f.updateDoc(f.doc(db, 'pedidos', reg.id), dados);
+      else await f.setDoc(f.doc(db, 'pedidos', reg.id), { schema: SCHEMA, id: reg.id, versao: 1, origem: 'site/montar-projeto', criadoEm: f.serverTimestamp(), ...dados });
+    })());
+    noBanco = true;
+  } catch {}
+  let entregue = noBanco;
+  try {
+    const fd = new FormData();
+    fd.append('access_key', W3F_KEY);
+    fd.append('subject', `Projeto pelo site | ${contato.empresa || contato.nome} | ${projeto.id}`);
+    fd.append('from_name', 'Bourbon Films | Monte seu projeto');
+    fd.append('replyto', contato.email);
+    fd.append('message', texto + (noBanco ? '\n\nRegistrado no Command Center, em Comercial.' : '\n\nATENÇÃO: não foi registrado no Command Center. Use o código acima.'));
+    fd.append('botcheck', '');
+    const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+    const j = await r.json().catch(() => ({}));
+    entregue = noBanco || (r.ok && j.success !== false);
+  } catch {}
+  enviando = false;
+  if (!entregue){
+    btNext.disabled = false; btNext.textContent = 'Tentar de novo';
+    err.textContent = `Não conseguimos enviar agora. Tente de novo ou fale no WhatsApp citando a referência ${projeto.id}.`;
+    $('#mp-wpp').href = 'https://wa.me/5583998683878?text=' + encodeURIComponent(texto.split('\n\nCódigo')[0]);
+    return;
+  }
+  track('envio');
+  apagar();
+  $('#mp-ref').textContent = projeto.id;
+  $('#mp-wpp').href = 'https://wa.me/5583998683878?text=' + encodeURIComponent(`Olá! Acabei de montar meu projeto no site. Referência ${projeto.id}.`);
+  $$('.mp-step').forEach(s => s.hidden = true);
+  $('#mp-done').hidden = false; $('#mp-done').classList.add('is-in');
+  document.querySelector('.mp').classList.add('is-done');
+  if (cena) cena.aplicar(estado, true);
+  $('#mp-done-t').focus();
+}
+
+/* ---------- início ---------- */
+(function iniciar(){
+  const r = ler();
+  if (r){
+    if (r.estado) Object.assign(estado, r.estado);
+    if (r.contato) Object.assign(contato, r.contato);
+    if (r.reg) Object.assign(reg, r.reg);
+    ['objetivo','formato','quantidade'].forEach(k => { if (estado[k]) { const i = $(`input[name="${k}"][value="${CSS.escape(estado[k])}"]`); if (i) i.checked = true; } });
+    (estado.pos || []).forEach(v => { const i = $(`input[name="pos"][value="${CSS.escape(v)}"]`); if (i) i.checked = true; });
+    $('#i-nome').value = contato.nome; $('#i-empresa').value = contato.empresa; $('#i-email').value = contato.email; $('#i-wpp').value = contato.whatsapp;
+    if (reg.id) $('#i-ok').checked = true;
+  }
+  const h = +((location.hash.match(/etapa-(\d)/) || [])[1] || 0);
+  const n = h || (r && r.etapa) || 1;
+  mostrar(n, false);
+  history.replaceState({ etapa }, '', `#etapa-${etapa}`);
+  $('#cena-desc').textContent = descricao();
+  track('montar_abriu');
+  iniciarCena();
+})();
+
+</script>
 </body>
 </html>

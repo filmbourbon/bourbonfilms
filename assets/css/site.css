@@ -551,8 +551,8 @@ a,button,input,select,textarea,label{touch-action:manipulation}
 .pt-tabs{display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:3px;border-radius:999px;background:var(--fill)}
 .pt-tabs button{min-height:36px;border-radius:999px;font-size:.9375rem;font-weight:500;color:var(--text-2)}
 .pt-tabs button[aria-selected="true"]{background:var(--bg-4);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.4)}
-.pt-tabs--admin{display:inline-grid;grid-template-columns:auto auto;margin-bottom:20px}
-.pt-tabs--admin button{padding:0 20px}
+.pt-tabs--admin{display:inline-grid;grid-template-columns:repeat(3,auto);margin-bottom:20px;max-width:100%}
+.pt-tabs--admin button{padding:0 clamp(12px,3vw,20px);white-space:nowrap}
 .pt-pane{display:grid;gap:14px}
 .pt-help{font-size:.8125rem;color:var(--text-3)}
 .pt-check{display:flex;gap:10px;align-items:flex-start;font-size:.9375rem;color:var(--text-2);cursor:pointer;padding:4px 0}
@@ -673,3 +673,32 @@ a,button,input,select,textarea,label{touch-action:manipulation}
 .js .mock.is-in .mock-files li{opacity:1;transform:none}
 .js .mock.is-in .mock-files li:nth-child(1){transition-delay:1.75s}.js .mock.is-in .mock-files li:nth-child(2){transition-delay:1.95s}
 @media (prefers-reduced-motion:reduce){.js .mock .mock-steps li::before,.js .mock .mock-note,.js .mock .mock-files li{transform:none!important;opacity:1!important;transition:none!important}}
+
+/* painel: pedidos do Monte seu projeto */
+.pd-filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.pd-f{font:inherit;font-size:.875rem;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line-2);background:none;color:var(--text-2);cursor:pointer}
+.pd-f[aria-pressed="true"]{background:var(--text);color:#000;border-color:var(--text)}
+.pd-f:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.pt-row .tag--novo{background:var(--gold);color:#000}
+.pd-dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.pd-dl>div{background:var(--bg-2);padding:14px 16px;min-width:0}
+.pd-dl dt{font-size:.8125rem;color:var(--text-3);margin-bottom:4px}
+.pd-dl dd{font-weight:600;letter-spacing:-.015em;overflow-wrap:anywhere;white-space:pre-line}
+.pd-hist{list-style:none;display:grid;gap:10px;margin-top:14px}
+.pd-hist li{padding:12px 16px;border-radius:var(--radius-sm);background:var(--bg-3);font-size:.9375rem;color:var(--text-2)}
+.pd-hist li b{color:var(--text);font-weight:600}
+.pd-hist time{display:block;font-size:.8125rem;color:var(--text-3);margin-bottom:2px;font-variant-numeric:tabular-nums}
+
+/* bastidores (Instagram com curadoria pelo Command Center) */
+.ig-grid{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:clamp(32px,4vw,48px)}
+.ig-grid a{display:block;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg-3);aspect-ratio:4/5}
+.ig-grid img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+@media (hover:hover){.ig-grid a:hover img{transform:scale(1.03)}}
+.ig-grid a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.ig-more{text-align:center;margin-top:20px}
+@media (max-width:767px){.ig-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* grid de marcas: qualquer quantidade, última linha centralizada */
+.brands{display:flex;flex-wrap:wrap;justify-content:center}
+.brands li{flex:0 0 calc((100% - 24px) / 3)}
+@media (max-width:760px){.brands li{flex-basis:calc((100% - 8px) / 2)}}
