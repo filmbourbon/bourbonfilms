@@ -1,0 +1,51 @@
+BOURBON EDITORIAL FORMAT (BEF) | VERSÃO 1
+Contrato entre o agente de IA externo e o Conversor Editorial da Central Bourbon.
+
+O agente responde com UM objeto JSON:
+
+{
+  "format": "bourbon-editorial",        obrigatório
+  "version": 1,                         obrigatório
+  "title": "texto",                     até 140 caracteres
+  "subtitle": "texto",                  até 240
+  "summary": "texto",                   até 300 (cartão e compartilhamento)
+  "client": "texto",                    só se informado no briefing
+  "category": "texto",
+  "work_date": "texto",                 data ou período, só se informado
+  "sections": [                         até 400 blocos
+    {"type": "paragraph", "text": "..."},
+    {"type": "heading", "level": 2 ou 3, "text": "..."},
+    {"type": "quote", "text": "..."},
+    {"type": "list", "ordered": true/false, "items": ["..."]},
+    {"type": "image_suggestion", "description": "..."},
+    {"type": "divider"}
+  ],
+  "closing": "texto",
+  "credits": [{"role": "função", "name": "nome"}],
+  "partners": [{"name": "nome", "instagram": "@perfil"}],
+  "related_videos": ["código do vídeo do YouTube ou Vimeo"],
+  "media_suggestions": [{"description": "..."}],
+  "seo": {"title": "até 70", "description": "até 170"},
+  "editorial_notes": ["lacunas e pontos a confirmar"]
+}
+
+MARCAÇÃO DENTRO DOS TEXTOS
+**negrito**  *itálico*  ++sublinhado++  ~~tachado~~  `código`  [texto](https://endereço)  @perfil
+
+REGRAS DE SEGURANÇA DO CONVERSOR
+- Todo texto é escapado. HTML não é interpretado, scripts aparecem como texto.
+- Só links https:// viram link. javascript:, data: e outros são descartados.
+- Menções só viram link se o perfil estiver cadastrado em Parceiros e você confirmar.
+- "related_videos" só vincula trabalhos que já existem no portfólio. Códigos desconhecidos são listados e ignorados.
+- O agente não informa IDs internos. Tudo é resolvido pelo cadastro.
+- Sugestão de imagem sem foto escolhida não aparece no site: vira pendência na matéria.
+- Correções automáticas: só cercas ```json, texto fora do JSON, vírgula sobrando e aspas curvas que delimitam campos.
+  Cada correção é avisada. O texto nunca é alterado.
+- Bloco de tipo desconhecido: o texto é mantido como parágrafo e há um aviso. Nada é descartado em silêncio.
+
+OUTROS FORMATOS ACEITOS
+- Markdown: # título, ## subtítulo, ### seção, listas, > citação, ---, [IMAGEM: descrição].
+- WhatsApp: *negrito*, _itálico_, ~tachado~, > citação, listas com - ou 1. A primeira linha em negrito vira título.
+- Texto com formatação colado do Word ou do Google Docs: negrito, itálico, sublinhado, listas, títulos e links são preservados. O resto é limpo.
+- Texto livre: a primeira linha curta vira título e a segunda vira subtítulo. Linhas curtas isoladas viram seções.
+  Toda dedução aparece como aviso para você confirmar.

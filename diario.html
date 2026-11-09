@@ -58,6 +58,42 @@ fbq('init','880805848416367');fbq('track','PageView');
 <a class="wpp-fab" href="https://wa.me/5583998683878?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Bourbon%20Films." target="_blank" rel="noopener" aria-label="Conversar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35M12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.16-3.48-8.41"/></svg></a>
 <script src="assets/js/site.js?v=20261109c" defer></script>
 <script type="module">
+/* ============ BEF: modelo editorial canônico do Diário (blocos + marcação inline segura) ============
+   Blocos: {t:'p'|'h2'|'h3'|'quote'|'ul'|'ol'|'img'|'hr'|'trabalhos', x?, itens?, midia?, legenda?, sugestao?, ids?}
+   Marcação inline (Markdown restrito): **negrito** *itálico* ++sublinhado++ ~~tachado~~ `código` [texto](https://…) @perfil
+   Tudo é escapado antes; só estas marcas viram HTML. Nada de HTML vindo de fora. */
+var BEF_LIM = { blocos: 400, texto: 4000, itens: 50 };
+function befEsc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function befUrl(u) { u = String(u || '').trim(); return /^https:\/\/[^\s<>"']+$/i.test(u) && !/^https:\/\/[^/]*@/.test(u) ? u : (/^diario\.html\?m=[a-z0-9-]+$/.test(u) ? u : ''); }
+function befIg(h) { h = String(h || '').replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, ''); return /^[A-Za-z0-9._]{1,30}$/.test(h) ? h : ''; }
+/* parceiros: {handle: {nome, instagram}} só os confirmados viram link */
+function befInline(txt, parceiros) {
+  var s = befEsc(String(txt || '').slice(0, BEF_LIM.texto)), cod = [];
+  s = s.replace(/`([^`\n]{1,200})`/g, function (m, c) { cod.push(c); return '\u0000' + (cod.length - 1) + '\u0000'; });
+  s = s.replace(/\[([^\]\n]{1,200})\]\(([^)\s]{1,500})\)/g, function (m, t, u) { var ok = befUrl(u.replace(/&amp;/g, '&')); return ok ? '<a href="' + befEsc(ok) + '"' + (/^https/.test(ok) ? ' target="_blank" rel="noopener"' : '') + '>' + t + '</a>' : t; });
+  s = s.replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>').replace(/\+\+([^+\n]+?)\+\+/g, '<u>$1</u>').replace(/~~([^~\n]+?)~~/g, '<s>$1</s>').replace(/(^|[^*\w])\*([^*\n]+?)\*(?!\w)/g, '$1<em>$2</em>');
+  s = s.replace(/(^|[\s(])@([A-Za-z0-9_](?:[A-Za-z0-9._]{0,28}[A-Za-z0-9_])?)/g, function (m, a, h) { var p = parceiros && parceiros[h.toLowerCase()]; return p && befIg(p.instagram) ? a + '<a class="dp-men" href="https://www.instagram.com/' + befIg(p.instagram) + '/" target="_blank" rel="noopener">@' + befEsc(befIg(p.instagram)) + '</a>' : a + '@' + h; });
+  s = s.replace(/\u0000(\d+)\u0000/g, function (m, i) { return '<code>' + cod[+i] + '</code>'; });
+  return s.replace(/\n/g, '<br>');
+}
+function befTextoPlano(blocos) { return (blocos || []).map(function (b) { return b.x || (b.itens || []).join('\n') || ''; }).filter(Boolean).join('\n\n').replace(/\*\*|\+\+|~~|`/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'); }
+function befDeTexto(texto) { return String(texto || '').split(/\n\s*\n/).map(function (t) { return t.trim(); }).filter(Boolean).map(function (t) { return { t: 'p', x: t }; }); }
+/* ctx: {parceiros, midia: {id: {arquivo, legenda, credito}}, trabalhos: {id: {titulo, url, thumb}}} */
+function befRender(blocos, ctx) {
+  ctx = ctx || {}; var h = '', primeiro = true;
+  (blocos || []).slice(0, BEF_LIM.blocos).forEach(function (b) {
+    var inl = function (x) { return befInline(x, ctx.parceiros); };
+    if (b.t === 'p' && b.x) { h += '<p' + (primeiro ? ' class="dp-abre"' : '') + '>' + inl(b.x) + '</p>'; primeiro = false; }
+    else if ((b.t === 'h2' || b.t === 'h3') && b.x) h += '<' + b.t + '>' + inl(b.x) + '</' + b.t + '>';
+    else if (b.t === 'quote' && b.x) h += '<blockquote>' + inl(b.x) + '</blockquote>';
+    else if ((b.t === 'ul' || b.t === 'ol') && b.itens && b.itens.length) h += '<' + b.t + '>' + b.itens.slice(0, BEF_LIM.itens).map(function (i) { return '<li>' + inl(i) + '</li>'; }).join('') + '</' + b.t + '>';
+    else if (b.t === 'hr') h += '<hr>';
+    else if (b.t === 'img' && b.midia && ctx.midia && ctx.midia[b.midia]) { var m = ctx.midia[b.midia]; h += '<figure class="dp-fig"><img src="' + befEsc(m.arquivo) + '" alt="' + befEsc(b.legenda || m.legenda || '') + '" loading="lazy" decoding="async">' + ((b.legenda || m.legenda || m.credito) ? '<figcaption>' + befEsc([b.legenda || m.legenda, m.credito ? 'Foto: ' + m.credito : ''].filter(Boolean).join(' · ')) + '</figcaption>' : '') + '</figure>'; }
+    else if (b.t === 'trabalhos' && b.ids && ctx.trabalhos) { var ts = b.ids.map(function (i) { return ctx.trabalhos[i]; }).filter(Boolean); if (ts.length) h += '<div class="dp-rel">' + ts.map(function (t) { return '<a class="dp-rel-i" href="' + befEsc(befUrl(t.url) || '#') + '" target="_blank" rel="noopener">' + (t.thumb ? '<img src="' + befEsc(t.thumb) + '" alt="" loading="lazy">' : '') + '<span>' + befEsc(t.titulo) + '</span></a>'; }).join('') + '</div>'; }
+  });
+  return h;
+}
+
 import { firebaseConfig } from './assets/js/firebase-config.js';
 const FBV = 'https://www.gstatic.com/firebasejs/10.14.1/';
 const [A, F] = await Promise.all([import(FBV + 'firebase-app.js'), import(FBV + 'firebase-firestore-lite.js')]);
@@ -67,7 +103,7 @@ const raiz = document.getElementById('dp-raiz');
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const imgOk = (s) => /^data:image\/(webp|png|jpeg);base64,/.test(s || '') || /^assets\/img\//.test(s || '');
 const DF = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
-const dataTxt = (d) => { const t = Date.parse(d || ''); return t ? DF.format(new Date(t + 12 * 36e5)) : ''; };
+const dataTxt = (d) => { const t = d && d.seconds ? d.seconds * 1000 : d && d.toMillis ? d.toMillis() : Date.parse(d || ''); return t ? DF.format(new Date(t)) : ''; };
 async function publicadas() {
   const col = F.collection(db, 'diario');
   const [a, b] = await Promise.all([
@@ -75,7 +111,8 @@ async function publicadas() {
     F.getDocs(F.query(col, F.where('status', '==', 'programado'), F.where('publicarEm', '<=', new Date(Date.now() - 120000)))).catch(() => null)
   ]);
   const l = []; [a, b].forEach(s => s && s.docs.forEach(d => l.push({ ...d.data(), _id: d.id })));
-  return l.sort((x, y) => String(y.data || '').localeCompare(String(x.data || '')));
+  const ms = (t) => t && t.seconds ? t.seconds * 1000 : t && t.toMillis ? t.toMillis() : 0;
+  return l.sort((x, y) => (ms(y.publicadoEm) || ms(y.atualizadoEm)) - (ms(x.publicadoEm) || ms(x.atualizadoEm)));
 }
 async function midia(ids) {
   const out = await Promise.all((ids || []).slice(0, 40).map(id => F.getDoc(F.doc(db, 'midia', id)).then(s => s.exists() ? { ...s.data(), _id: s.id } : null).catch(() => null)));
@@ -95,7 +132,7 @@ try {
     const porId = Object.fromEntries(capas.map(c => [c._id, c]));
     raiz.innerHTML = lista.length ? `<ul class="dp-lista">${lista.map(p => `<li class="dp-card reveal is-in"><a href="diario.html?m=${encodeURIComponent(p.slug)}">
       ${porId[p.capa] ? `<div class="dp-capa"><img src="${porId[p.capa].arquivo}" alt="" loading="lazy" decoding="async"></div>` : `<div class="dp-capa dp-capa--vazia"><span>${esc(p.cliente || p.titulo)}</span></div>`}
-      <h2>${esc(p.titulo)}</h2><p>${esc(p.subtitulo || '')}</p><p style="margin-top:8px">${esc([p.cliente, dataTxt(p.data)].filter(Boolean).join(' · '))}</p></a></li>`).join('')}</ul>`
+      <h2>${esc(p.titulo)}</h2><p>${esc(p.resumo || p.subtitulo || '')}</p><p style="margin-top:8px">${esc([p.cliente, dataTxt(p.publicadoEm)].filter(Boolean).join(' · '))}</p></a></li>`).join('')}</ul>`
       : '<p class="dp-vazio">As primeiras histórias de bastidores chegam em breve.</p>';
   } else {
     const p = lista.find(x => x.slug === slugQ);
@@ -103,17 +140,19 @@ try {
     else {
       document.title = p.titulo + ' | Diário de Produção | Bourbon Films';
       const md = document.querySelector('meta[name="description"]'); if (md && p.subtitulo) md.setAttribute('content', p.subtitulo);
-      const fotos = await midia([p.capa, ...(p.fotos || [])].filter(Boolean));
+      const idsBl = (p.blocos || []).filter(b => b.t === 'img' && b.midia).map(b => b.midia);
+      const fotos = await midia([p.capa, ...(p.fotos || []), ...idsBl].filter(Boolean));
+      const rel = (await Promise.all((p.trabalhosRel || (p.trabalhoId ? [p.trabalhoId] : [])).slice(0, 8).map(id => F.getDoc(F.doc(db, 'trabalhos', id)).then(s => s.exists() ? { ...s.data(), _id: s.id } : null).catch(() => null)))).filter(t => t && t.status === 'publicado' && t.videoId);
+      const ctx = { parceiros: Object.fromEntries((p.parceirosInfo || []).map(x => [x.handle, x])), midia: Object.fromEntries(fotos.map(f => [f._id, f])), trabalhos: Object.fromEntries(rel.map(t => [t._id, { titulo: t.titulo, url: t.plataforma === 'vimeo' ? 'https://vimeo.com/' + t.videoId : 'https://www.youtube.com/watch?v=' + t.videoId, thumb: t.plataforma === 'vimeo' ? '' : 'https://i.ytimg.com/vi/' + t.videoId + '/mqdefault.jpg' }])) };
       const capa = fotos.find(f => f._id === p.capa), album = (p.fotos || []).map(id => fotos.find(f => f._id === id)).filter(Boolean);
       const v = video(p.video);
-      const paras = String(p.texto || '').split(/\n\s*\n/).map(t => t.trim()).filter(Boolean);
       const cred = String(p.creditos || '').split('\n').map(l => l.split(':')).filter(x => x.length > 1 && x[0].trim());
-      document.querySelector('.dp-hero .wrap').innerHTML = `<div class="dp-art"><a class="dp-voltar" href="diario.html">← Diário de Produção</a><p class="dp-k">${esc(p.cliente || 'Bastidores')}</p><h1>${esc(p.titulo)}</h1>${p.subtitulo ? `<p class="dp-sub">${esc(p.subtitulo)}</p>` : ''}<div class="dp-meta">${p.data ? `<span>${esc(dataTxt(p.data))}</span>` : ''}${p.trabalho ? `<span>${esc(p.trabalho)}</span>` : ''}</div></div>`;
+      document.querySelector('.dp-hero .wrap').innerHTML = `<div class="dp-art"><a class="dp-voltar" href="diario.html">← Diário de Produção</a><p class="dp-k">${esc(p.cliente || 'Bastidores')}</p><h1>${esc(p.titulo)}</h1>${p.subtitulo ? `<p class="dp-sub">${esc(p.subtitulo)}</p>` : ''}<div class="dp-meta">${p.publicadoEm ? `<span>Publicado em ${esc(dataTxt(p.publicadoEm))}</span>` : ''}${p.atualizadoEm && p.publicadoEm && Math.abs((p.atualizadoEm.seconds || 0) - (p.publicadoEm.seconds || 0)) > 86400 ? `<span>Atualizado em ${esc(dataTxt(p.atualizadoEm))}</span>` : ''}${p.dataTrabalho ? `<span>Trabalho: ${esc(p.dataTrabalho)}</span>` : ''}</div></div>`;
       raiz.innerHTML = `${capa ? `<div class="dp-capa-g"><img src="${capa.arquivo}" alt="${esc(capa.legenda || '')}"></div>` : ''}
-        <div class="dp-corpo">${paras.map(t => `<p>${esc(t)}</p>`).join('')}</div>
+        <div class="dp-corpo">${befRender(p.blocos && p.blocos.length ? p.blocos : befDeTexto(p.texto), ctx)}</div>${rel.length ? `<section class="dp-rel-w"><h2 class="dp-k">Trabalhos relacionados</h2>${befRender([{ t: 'trabalhos', ids: rel.map(t => t._id) }], ctx)}</section>` : ''}
         ${v ? `<div class="dp-video"><iframe src="${v}" title="${esc(p.titulo)}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>` : ''}
         ${album.length ? `<div class="dp-album">${album.map((f, i) => `<figure class="${f.w > f.h * 1.15 ? 'is-h' : ''}${(p.destaques || []).includes(f._id) ? ' is-dest' : ''}"><button type="button" data-i="${i}" aria-label="Ampliar foto ${i + 1}${f.legenda ? ': ' + esc(f.legenda) : ''}"><img src="${f.arquivo}" alt="${esc(f.legenda || '')}" loading="lazy" decoding="async"></button>${f.legenda || f.credito ? `<figcaption>${esc([f.legenda, f.credito ? 'Foto: ' + f.credito : ''].filter(Boolean).join(' · '))}</figcaption>` : ''}</figure>`).join('')}</div>` : ''}
-        ${p.encerramento ? `<p class="dp-fim">${esc(p.encerramento)}</p>` : ''}
+        ${p.encerramento ? `<p class="dp-fim">${befInline(p.encerramento, ctx.parceiros)}</p>` : ''}
         ${cred.length ? `<dl class="dp-cred">${cred.map(([k, ...v]) => `<dt>${esc(k.trim())}</dt><dd>${esc(v.join(':').trim())}</dd>`).join('')}</dl>` : ''}`;
       if (album.length) {
         const dlg = document.createElement('dialog'); dlg.className = 'dp-luz'; dlg.innerHTML = '<div><img alt=""><p></p></div><button class="dp-x" type="button" aria-label="Fechar">×</button><button class="dp-nav dp-ant" type="button" aria-label="Anterior">‹</button><button class="dp-nav dp-prox" type="button" aria-label="Próxima">›</button>';

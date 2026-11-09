@@ -1,3 +1,51 @@
+/* campos editáveis de uma página: mesma regra no site e na Central Bourbon */
+function bfCmsCampos(doc, pagina) {
+  var out = [], raiz = [].slice.call(doc.querySelectorAll('main > section, main > header, main > article, body > footer'));
+  raiz.forEach(function (sec, si) {
+    var sid = sec.tagName === 'FOOTER' ? 'rodape' : (sec.id || ('s' + si)), n = {};
+    [].slice.call(sec.querySelectorAll('h1,h2,h3,h4,p,li,a,figcaption,dt,dd,blockquote,summary')).forEach(function (el) {
+      if (el.closest('[data-cms-ignorar],.nle,.brands,.quotes,.gal,.ig-grid,.gv,svg,template,noscript,[data-more]')) return;
+      if (!el.childNodes.length) return;
+      for (var i = 0; i < el.childNodes.length; i++) { var c = el.childNodes[i]; if (c.nodeType === 1 && c.tagName !== 'BR') return; }
+      var t = el.textContent.replace(/\s+/g, ' ').trim(); if (t.length < 2) return;
+      var tag = el.tagName.toLowerCase(); n[tag] = (n[tag] || 0) + 1;
+      out.push({ k: pagina + '/' + sid + '/' + tag + n[tag], el: el, t: t, tag: tag, sec: sid });
+    });
+  });
+  return out;
+}
+function bfCmsSecoes(doc) {
+  return [].slice.call(doc.querySelectorAll('main > section[id]')).map(function (s) {
+    var h = s.querySelector('h1,h2'); return { id: s.id, el: s, titulo: h ? h.textContent.replace(/\s+/g, ' ').trim() : s.id };
+  });
+}
+function bfCmsNorm(t) { return String(t || '').replace(/\s+/g, ' ').trim(); }
+function bfCmsAplicar(doc, pagina, textos, layout) {
+  var c = (textos && textos.campos) || {};
+  bfCmsCampos(doc, pagina).forEach(function (f) {
+    var v = c[f.k]; if (!v || typeof v.t !== 'string') return;
+    if (v.o && bfCmsNorm(v.o) !== f.t) return; /* o texto original mudou no código: não aplica para não errar o lugar */
+    var partes = v.t.split('\n'); f.el.textContent = '';
+    partes.forEach(function (p, i) { if (i) f.el.appendChild(doc.createElement('br')); f.el.appendChild(doc.createTextNode(p)); });
+  });
+  var seo = c[pagina + '/seo/title']; if (seo && seo.t) doc.title = seo.t;
+  var de = c[pagina + '/seo/description'], md = doc.querySelector('meta[name="description"]'); if (de && de.t && md) md.setAttribute('content', de.t);
+  var L = layout && layout.paginas && layout.paginas[pagina];
+  if (L) {
+    var main = doc.querySelector('main'), secs = bfCmsSecoes(doc), porId = {};
+    secs.forEach(function (s) { porId[s.id] = s.el; });
+    var ancora = secs.length ? secs[secs.length - 1].el.nextSibling : null;
+    (L.ordem || []).forEach(function (id) { if (porId[id]) main.insertBefore(porId[id], ancora); });
+    secs.forEach(function (s) {
+      var oculta = (L.ocultas || []).indexOf(s.id) >= 0;
+      if (oculta) s.el.hidden = true; else if (s.el.dataset.cmsOculta) s.el.hidden = false;
+      s.el.dataset.cmsOculta = oculta ? '1' : '';
+      var clip = doc.querySelector('.nle-clips [data-clip="' + s.id + '"]'); if (clip) clip.hidden = oculta;
+      var al = L.alinhar && L.alinhar[s.id]; s.el.classList.toggle('cms-centro', al === 'centro');
+    });
+  }
+}
+
 /* Bourbon Films · comportamento compartilhado */
 (function(){
   'use strict';
@@ -307,7 +355,7 @@
     dlg.addEventListener('close',function(){frame.innerHTML='';document.documentElement.style.overflow='';if(opener) opener.focus()});
     dlg.addEventListener('click',function(e){if(e.target===dlg) close()});
     dlg.querySelector('.player-x').addEventListener('click',close);
-    /* clique delegado: funciona também para filmes que chegam do Command Center */
+    /* clique delegado: funciona também para filmes que chegam da Central Bourbon */
     document.addEventListener('click',function(ev){
       var b=ev.target.closest&&ev.target.closest('[data-play],[data-vimeo]');
       if(!b) return;
@@ -365,7 +413,7 @@
   });
 
 
-  /* ---------- medição própria (sem cookies, sem dados pessoais) e conteúdo vivo do Command Center ---------- */
+  /* ---------- medição própria (sem cookies, sem dados pessoais) e conteúdo vivo da Central Bourbon ---------- */
   var SCRIPT_URL=(document.currentScript&&document.currentScript.src)||location.href;
   var FBV='https://www.gstatic.com/firebasejs/10.14.1/';
   var fbp=null;
@@ -374,13 +422,77 @@
       .then(function(m){var a=m[1],f=m[2];var app=a.getApps().length?a.getApp():a.initializeApp(m[0].firebaseConfig);return {f:f,db:f.getFirestore(app)}});
     return fbp;
   }
+
+  /* ---------- origem do visitante (primeira e última conhecidas), sessão e tráfego interno ---------- */
+  var ORIG_K='bf-origem-v1',RET_DIAS=365;
+  function lerLS(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+  function gravarLS(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  var Q={};try{new URLSearchParams(location.search).forEach(function(v,k){Q[k]=String(v).slice(0,80)})}catch(e){}
+  if(Q.modo==='dev'){try{localStorage.setItem('bf-interno','1')}catch(e){}}
+  if(Q.modo==='publico'){try{localStorage.setItem('bf-interno','0')}catch(e){}}
+  var flagInt=null;try{flagInt=localStorage.getItem('bf-interno')}catch(e){}
+  var interno=flagInt==='1'||(flagInt!=='0'&&/^(localhost|127\.0\.0\.1|\[::1\])$|\.test$|\.localhost$/.test(location.hostname));
+  function canalDe(q,ref){
+    var s=(q.utm_source||'').toLowerCase(),m=(q.utm_medium||'').toLowerCase();
+    if(q.gclid||(/google/.test(s)&&/cpc|ppc|paid|ads/.test(m))) return 'google-ads';
+    if(q.ref) return 'indicacao';
+    if(s){if(/insta|^ig$/.test(s))return 'instagram';if(/face|^fb$|meta/.test(s))return 'facebook';if(/youtube|^yt$/.test(s))return 'youtube';if(/whats|^wa$/.test(s))return 'whatsapp';if(/mail|newsletter/.test(s)||/e-?mail/.test(m))return 'email';if(/google/.test(s))return 'google';if(/parceir|partner/.test(s+m))return 'parceiro';return 'campanha'}
+    if(q.fbclid) return 'facebook';
+    if(!ref) return 'direto';
+    if(/(^|\.)instagram\.com$/.test(ref))return 'instagram';if(/(^|\.)google\.[a-z.]+$/.test(ref))return 'google';
+    if(/(^|\.)(facebook\.com|fb\.com|fb\.me)$/.test(ref))return 'facebook';if(/(^|\.)(youtube\.com|youtu\.be)$/.test(ref))return 'youtube';
+    if(/whatsapp|(^|\.)wa\.me$/.test(ref))return 'whatsapp';if(/mail\.|outlook|gmail/.test(ref))return 'email';
+    if(/bing\.|duckduckgo|yahoo|ecosia|search\.brave/.test(ref))return 'busca-outros';if(/linkedin/.test(ref))return 'linkedin';
+    return 'site-externo';
+  }
+  var sessao=null,canalSessao='direto',novoVisitante=false;
+  (function(){
+    try{sessao=sessionStorage.getItem('bf-s');canalSessao=sessionStorage.getItem('bf-sc')||'direto'}catch(e){}
+    if(sessao) return;
+    var a='abcdefghjkmnpqrstuvwxyz23456789',r=crypto.getRandomValues(new Uint8Array(10));sessao='';r.forEach(function(b){sessao+=a[b%a.length]});
+    var ref='';try{if(document.referrer){var h=new URL(document.referrer).hostname.replace(/^www\./,'');if(h!==location.hostname.replace(/^www\./,''))ref=h}}catch(e){}
+    var t={c:canalDe(Q,ref),f:(Q.utm_source||ref||'').slice(0,60),m:(Q.utm_medium||'').slice(0,40),cp:(Q.utm_campaign||'').slice(0,60),ct:(Q.utm_content||'').slice(0,60),tm:(Q.utm_term||'').slice(0,60),ref:(Q.ref||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,24),lp:location.pathname.slice(0,80),em:Date.now()};
+    canalSessao=t.c;
+    try{sessionStorage.setItem('bf-s',sessao);sessionStorage.setItem('bf-sc',t.c)}catch(e){}
+    try{novoVisitante=!localStorage.getItem('bf-v');if(novoVisitante)localStorage.setItem('bf-v','1')}catch(e){}
+    if(interno||navigator.doNotTrack==='1'||window.doNotTrack==='1') return;
+    var o=lerLS(ORIG_K)||{};
+    if(o.primeira&&Date.now()-o.primeira.em>RET_DIAS*864e5) o={};
+    if(!o.primeira) o.primeira=t;
+    if(t.c!=='direto'||!o.ultima) o.ultima=t;
+    gravarLS(ORIG_K,o);
+  })();
+  window.bfOrigem=function(){
+    var o=lerLS(ORIG_K);if(!o||!o.primeira) return null;
+    var limpa=function(t){return t?{canal:t.c,fonte:t.f||'',meio:t.m||'',campanha:t.cp||'',conteudo:t.ct||'',termo:t.tm||'',indicacao:t.ref||'',entrada:t.lp||'',em:new Date(t.em).toISOString().slice(0,10)}:null};
+    return {primeira:limpa(o.primeira),ultima:limpa(o.ultima||o.primeira)};
+  };
+  window.bfInterno=interno;
+  if(interno&&!document.body.dataset.portal&&!document.querySelector('.cc')){
+    var tag=document.createElement('a');tag.className='bf-dev';tag.href='?modo=publico';tag.textContent='Tráfego interno';tag.title='Suas visitas neste aparelho não entram nas estatísticas comerciais. Toque para voltar ao modo público.';
+    document.body.appendChild(tag);
+  }
+
+  /* ---------- textos e layout publicados pela Central Bourbon ---------- */
+  var PAGINA=(location.pathname.split('/').pop()||'index.html').replace(/\.html$/,'')||'index';
+  var CMS_K='bf-cms-txt-v1';
+  if(window.parent!==window&&Q.previa==='1'){
+    var origPrev=null;addEventListener('message',function(e){if(e.origin!==location.origin||!e.data||!e.data.bfPrevia) return;if(!origPrev)origPrev=bfCmsCampos(document,PAGINA);origPrev.forEach(function(f){f.el.textContent=f.t});bfCmsAplicar(document,PAGINA,e.data.bfPrevia.textos,e.data.bfPrevia.layout);document.querySelectorAll('.reveal').forEach(function(x){x.classList.add('is-in')})});
+    window.parent.postMessage({bfPreviaPronta:PAGINA},location.origin);
+  } else if(!document.body.dataset.portal&&!document.querySelector('.cc')){
+    var cc=null;try{cc=JSON.parse(sessionStorage.getItem(CMS_K)||'null')}catch(e){}
+    if(cc&&Date.now()-cc.t<3e5) bfCmsAplicar(document,PAGINA,cc.x,cc.l);
+    else fb().then(function(o){return Promise.all([o.f.getDoc(o.f.doc(o.db,'site','textos')),o.f.getDoc(o.f.doc(o.db,'site','layout'))])})
+      .then(function(r){var x=r[0].exists()?r[0].data():null,l=r[1].exists()?r[1].data():null;try{sessionStorage.setItem(CMS_K,JSON.stringify({t:Date.now(),x:x,l:l}))}catch(e){}bfCmsAplicar(document,PAGINA,x,l)}).catch(function(){});
+  }
+
   var privado=!!document.body.dataset.portal||navigator.doNotTrack==='1'||window.doNotTrack==='1';
   var fila=[];
   window.bfTrack=function(t,x){
     if(privado) return;
     var d=new Date(),p=function(n){return String(n).padStart(2,'0')};
     var r='direto';try{if(document.referrer){var h=new URL(document.referrer).hostname;r=h===location.hostname?'interno':h.replace(/^www\./,'')}}catch(e){}
-    fila.push({t:t,p:location.pathname.slice(0,80)||'/',r:r.slice(0,80),dv:innerWidth<768?'m':'d',dia:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()),x:String(x||'').slice(0,60)});
+    fila.push({t:t,p:location.pathname.slice(0,80)||'/',r:r.slice(0,80),dv:innerWidth<768?'m':'d',dia:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()),x:String(x||'').slice(0,60),c:String(canalSessao||'direto').slice(0,20),s:String(sessao||'').slice(0,12),i:!!interno,v:t==='view'&&novoVisitante});if(t==='view')novoVisitante=false;
     clearTimeout(window.__bfT);window.__bfT=setTimeout(enviarFila,800);
   };
   function enviarFila(){
@@ -399,14 +511,14 @@
 
   var gH=document.getElementById('gal-h'),gV=document.getElementById('gal-v'),brands=document.querySelector('#clientes .brands'),quotes=document.querySelector('#depoimentos .quotes'),bast=document.getElementById('bastidores');
   if(gH||brands||quotes||bast){
-    var CK='bf-cms-v1',cache=null;
+    var CK='bf-cms-v2',cache=null;
     try{cache=JSON.parse(sessionStorage.getItem(CK)||'null')}catch(e){}
     var carregar=function(){
       if(cache&&Date.now()-cache.t<6e5) return Promise.resolve(cache.d);
       return fb().then(function(o){
         var f=o.f,db=o.db,pub=function(c){return f.getDocs(f.query(f.collection(db,c),f.where('status','==','publicado'))).then(function(s){return s.docs.map(function(d){var v=d.data();v.id=d.id;return v})}).catch(function(){return null})};
-        return Promise.all([pub('trabalhos'),pub('marcas'),pub('depoimentos'),pub('instagram'),f.getDoc(f.doc(db,'site','config')).then(function(s){return s.exists()?s.data():null}).catch(function(){return null})]);
-      }).then(function(r){var d={trabalhos:r[0],marcas:r[1],depoimentos:r[2],instagram:r[3],config:r[4]};try{sessionStorage.setItem(CK,JSON.stringify({t:Date.now(),d:d}))}catch(e){}return d});
+        return Promise.all([pub('trabalhos'),pub('marcas'),pub('depoimentos'),pub('instagram'),pub('diario'),f.getDoc(f.doc(db,'site','config')).then(function(s){return s.exists()?s.data():null}).catch(function(){return null})]);
+      }).then(function(r){var d={trabalhos:r[0],marcas:r[1],depoimentos:r[2],instagram:r[3],diario:(r[4]||[]).map(function(m){return {id:m.id,slug:m.slug}}),config:r[5]};try{sessionStorage.setItem(CK,JSON.stringify({t:Date.now(),d:d}))}catch(e){}return d});
     };
     var el=function(tag,cls,txt){var e=document.createElement(tag);if(cls) e.className=cls;if(txt!=null) e.textContent=txt;return e};
     var ordem=function(a,b){return (a.ordem||0)-(b.ordem||0)};
@@ -456,7 +568,7 @@
         dp.forEach(function(q){
           var fg=el('figure','quote reveal is-in'),bq=el('blockquote',null,'“'+q.texto.replace(/^[“"]|[”"]$/g,'')+'”'),fc=el('figcaption',null,q.autor);
           var sp=el('span',null,q.legenda||[q.empresa,rotuloOrigem[q.origem]].filter(Boolean).join(', '));
-          fc.appendChild(sp);fg.append(bq,fc);quotes.appendChild(fg);
+          fc.appendChild(sp);fg.append(bq,fc);var vl=q.vinculo;var vivo=vl&&(vl.tipo==='diario'?(d.diario||[]).some(function(m){return m.id===vl.id}):vl.tipo==='trabalho'?(d.trabalhos||[]).some(function(t){return t.id===vl.id}):true);if(vivo&&vl&&vl.url&&(/^https:\/\//.test(vl.url)||/^diario\.html\?m=[a-z0-9-]+$/.test(vl.url))){var lk=el('a','quote-link',vl.rotulo||'Conheça o trabalho realizado');lk.href=vl.url;if(/^https/.test(vl.url)){lk.target='_blank';lk.rel='noopener'}lk.setAttribute('aria-label',(vl.rotulo||'Conheça o trabalho realizado')+': '+(vl.titulo||q.autor));fg.appendChild(lk)}quotes.appendChild(fg);
         });
       }
       var c=d.config;
