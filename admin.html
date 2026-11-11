@@ -559,6 +559,13 @@ body.cc{min-height:100svh;color:var(--text);-webkit-font-smoothing:antialiased}
 @media (max-width:760px){.cv-passos a{flex:1 1 calc(33% - 8px);justify-content:center;padding:10px 6px;font-size:.75rem}.cv-passos .cv-ag{margin-left:0;flex-basis:100%}.rx-bar{top:56px}}
 #dp-l .cc-row b,#dp-l .cc-row small{white-space:normal;overflow:visible;text-overflow:clip}
 
+/* projetos culturais */
+.pc-card .pc-t{margin:18px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3)}
+.pc-card .cc-actions{margin-top:12px}
+.pc-dl{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));margin-top:10px}
+.pc-card .cc-actions .btn{white-space:normal;text-align:center;max-width:100%}
+@media (max-width:620px){.pc-card .ix-h{flex-direction:column;align-items:flex-start}.pc-card .cli-pills{justify-content:flex-start;margin:0}}
+
 </style>
 </head>
 <body class="cc" data-portal="admin">
@@ -712,7 +719,7 @@ import { firebaseConfig, ADMIN_EMAILS } from './assets/js/firebase-config.js';
 const FBV = 'https://www.gstatic.com/firebasejs/10.14.1/';
 const OWNERS = (ADMIN_EMAILS || []).map(e => e.toLowerCase());
 const PAPEIS = {
-  owner: { nome: 'Proprietário', mods: ['painel', 'conteudo', 'crm', 'operacao', 'analytics', 'equipe', 'config', 'auditoria'] },
+  owner: { nome: 'Proprietário', mods: ['painel', 'conteudo', 'crm', 'operacao', 'analytics', 'equipe', 'config', 'auditoria', 'cultural'] },
   admin: { nome: 'Administrador', mods: ['painel', 'conteudo', 'crm', 'operacao', 'analytics', 'equipe', 'config', 'auditoria'] },
   editor: { nome: 'Editor', mods: ['painel', 'conteudo'] },
   comercial: { nome: 'Comercial', mods: ['painel', 'crm'] },
@@ -720,7 +727,7 @@ const PAPEIS = {
   operacional: { nome: 'Operacional', mods: ['painel', 'operacao'] },
   leitura: { nome: 'Leitura', mods: ['painel', 'analytics'] }
 };
-const MOD_NOMES = { painel: 'Painel', conteudo: 'Site e conteúdo', crm: 'Comercial', operacao: 'Projetos e entregas', analytics: 'Inteligência comercial', equipe: 'Equipe', config: 'Integrações e configurações', auditoria: 'Histórico e alterações' };
+const MOD_NOMES = { painel: 'Painel', conteudo: 'Site e conteúdo', crm: 'Comercial', operacao: 'Projetos e entregas', analytics: 'Inteligência comercial', equipe: 'Equipe', config: 'Integrações e configurações', auditoria: 'Histórico e alterações', cultural: 'Projetos culturais' };
 
 const S = { user: null, email: '', nome: '', papel: '', mods: new Set(), F: null, U: null, db: null, auth: null, cache: {}, modulos: [] };
 const $ = (s, r = document) => r.querySelector(s);
@@ -857,6 +864,7 @@ async function excluirDoc(colecao, id, rotulo) {
 /* ---------- ícones ---------- */
 const I = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const ICON = {
+  cultural: I('<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'),
   conversor: I('<path d="M4 7h11l-3-3M20 17H9l3 3"/>'),
   convites: I('<path d="M4 4h16v16H4z" opacity="0"/><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>'),
   lixeira: I('<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/>'),
@@ -889,7 +897,7 @@ const ICON = {
 /* ---------- módulos e rotas ---------- */
 const ROTAS = {};
 function modulo(def) { ROTAS[def.id] = def; S.modulos.push(def); }
-const GRUPOS = [['Visão', ['painel', 'estatisticas', 'alteracoes']], ['Comercial', ['comercial', 'propostas', 'clientes', 'indicacoes']], ['Operação', ['projetos', 'demandas', 'entregas']], ['Site', ['editor', 'diario', 'conversor', 'marcas', 'trabalhos', 'depoimentos', 'midia', 'instagram', 'site', 'saude']], ['Divulgação', ['estudio']], ['Gestão', ['lixeira', 'equipe', 'convites', 'auditoria', 'integracoes', 'dados']]];
+const GRUPOS = [['Visão', ['painel', 'estatisticas', 'alteracoes']], ['Comercial', ['comercial', 'propostas', 'clientes', 'indicacoes']], ['Operação', ['projetos', 'demandas', 'entregas']], ['Site', ['editor', 'diario', 'conversor', 'marcas', 'trabalhos', 'depoimentos', 'midia', 'instagram', 'site', 'saude']], ['Divulgação', ['estudio']], ['Projetos culturais', ['cultural']], ['Gestão', ['lixeira', 'equipe', 'convites', 'auditoria', 'integracoes', 'dados']]];
 function montarNav() {
   const nav = $('#cc-nav');
   nav.innerHTML = GRUPOS.map(([g, ids]) => {
@@ -3880,6 +3888,39 @@ modulo({
   }
 });
 
+/* ============ Projetos culturais: atalho para os painéis privados (Cabras do Sol) ============
+   Só informação de identificação e atalho. Nenhum dado financeiro, documento ou pendência do projeto
+   é copiado para o Firestore da Central: a fonte de verdade é o painel do projeto (Cloudflare D1/R2).
+   Ter este módulo NÃO dá acesso ao painel: o acesso é decidido pelo Cloudflare Access e pela lista de
+   usuários dentro do próprio painel, que o proprietário mantém lá. */
+const PROJETOS_CULTURAIS = [{
+  id: 'cabras-do-sol', nome: 'Cabras do Sol', sub: 'Metodologia audiovisual de registro e difusão da caprinocultura sertaneja',
+  mecanismo: 'Inova Cultura · subvenção SUDENE, apoio técnico MinC', instrumento: 'TOSE nº 09/2026', edital: 'Edital SUDENE/MinC nº 07/2025',
+  painel: 'https://painel.bourbonfilms.com.br',
+  publicado: false, // mudar para true só depois do deploy autorizado e testado
+  estado: 'Em execução',
+  site: [{ t: 'Banner virtual da SUDENE e do MinC no site da empresa, com link para os portais', regra: 'TOSE 7.2 "m"', feito: false }],
+}];
+modulo({
+  id: 'cultural', titulo: 'Projetos culturais', mod: 'cultural',
+  async render(v) {
+    v.innerHTML = `<div class="cc-head"><div><h2>Projetos culturais</h2><p>Projetos com recurso público. Cada um tem painel próprio, com acesso e regras separados da Central.</p></div></div>
+      ${PROJETOS_CULTURAIS.map(p => `<article class="cc-panel pc-card" data-id="${attr(p.id)}">
+        <div class="ix-h"><div><h3>${esc(p.nome)}</h3><p class="cc-note">${esc(p.sub)}</p></div><div class="cli-pills">${pill(p.estado, 'ok')}${p.publicado ? pill('Painel publicado', 'ok') : pill('Painel ainda não publicado', 'warn')}</div></div>
+        <dl class="cc-analysis pc-dl"><div><dt>Mecanismo</dt><dd>${esc(p.mecanismo)}</dd></div><div><dt>Instrumento</dt><dd>${esc(p.instrumento)}</dd></div><div><dt>Edital</dt><dd>${esc(p.edital)}</dd></div><div><dt>Endereço do painel</dt><dd>${esc(p.painel.replace('https://', ''))}</dd></div></dl>
+        <div class="cc-actions">${p.publicado ? `<a class="btn btn--primary" href="${attr(p.painel)}" target="_blank" rel="noopener">Abrir o painel do ${esc(p.nome)}</a>` : '<button class="btn btn--ghost" type="button" disabled>Abrir o painel (aguardando publicação)</button>'}</div>
+        <h4 class="pc-t">Obrigações no site institucional</h4>
+        <ul class="in-met">${p.site.map(o => `<li><b>${o.feito ? 'Feito' : 'Pendente'}:</b> ${esc(o.t)} <span class="cc-note">(${esc(o.regra)})</span></li>`).join('')}</ul>
+      </article>`).join('')}
+      <section class="cc-panel" style="margin-top:16px"><h3>Como o acesso funciona</h3><ul class="in-met">
+        <li>O painel fica em endereço próprio, protegido pelo Cloudflare Access: só abre para e-mails da lista do projeto, com código enviado ao e-mail.</li>
+        <li>Dentro do painel, cada pessoa tem um papel próprio (proprietário, administrador, financeiro, produção, documentação ou consulta), conferido pelo servidor a cada ação.</li>
+        <li>Ver esta página na Central não dá acesso ao painel. Uma permissão editorial do site não abre documentos financeiros do projeto.</li>
+        <li>Para incluir ou tirar alguém: no painel, em Configurações, Usuários e papéis, e na lista do Cloudflare Access. As duas listas precisam concordar.</li>
+        <li>Nenhum número financeiro do projeto é guardado na Central, para não haver duas versões da verdade.</li></ul></section>`;
+  }
+});
+
 /* ============ Site (números, SEO, saúde), equipe, auditoria, integrações e dados ============ */
 const PAGINAS = ['index.html', 'montar-projeto.html', 'publicidade.html', 'esportes.html', 'ativacoes-de-marca.html', 'institucional.html', 'bourbon-cultural.html', 'cabras-do-sol.html', 'de-nada-em-nada-tudo.html', 'captador-de-recursos.html', 'manual-patrocinio.html', 'trabalhe-conosco.html', 'briefing.html', 'cliente.html', 'privacidade.html', 'link.html'];
 
@@ -4000,7 +4041,7 @@ modulo({
         <div class="cc-field"><label for="eq-n">Nome</label><input id="eq-n" value="${attr(m?.nome || '')}" autocomplete="off"></div>
         <div class="cc-field"><label for="eq-tel">WhatsApp <span>para enviar o convite</span></label><input id="eq-tel" inputmode="tel" value="${attr(m?.telefone || '')}" placeholder="(83) 99999-0000" autocomplete="off"></div>
         <div class="cc-field"><label for="eq-p">Papel</label><select id="eq-p">${papeisGeriveis.map(p => `<option value="${p}" ${m?.papel === p ? 'selected' : ''}>${esc(PAPEIS[p].nome)}</option>`).join('')}</select></div>
-        <details ${mods ? 'open' : ''}><summary>Permissões específicas</summary><div class="cc-form"><p class="cc-note">Marque só se quiser fugir do padrão do papel.</p><label class="cc-check"><input type="checkbox" id="eq-custom" ${mods ? 'checked' : ''}>Usar permissões específicas</label><div class="cc-chips" id="eq-mods">${Object.entries(MOD_NOMES).filter(([k]) => souOwner || !['equipe', 'auditoria', 'config'].includes(k)).map(([k, n]) => `<label><input type="checkbox" value="${k}" ${(mods || PAPEIS[m?.papel || 'editor'].mods).includes(k) ? 'checked' : ''}><span>${esc(n)}</span></label>`).join('')}</div></div></details>
+        <details ${mods ? 'open' : ''}><summary>Permissões específicas</summary><div class="cc-form"><p class="cc-note">Marque só se quiser fugir do padrão do papel.</p><label class="cc-check"><input type="checkbox" id="eq-custom" ${mods ? 'checked' : ''}>Usar permissões específicas</label><div class="cc-chips" id="eq-mods">${Object.entries(MOD_NOMES).filter(([k]) => souOwner || !['equipe', 'auditoria', 'config', 'cultural'].includes(k)).map(([k, n]) => `<label><input type="checkbox" value="${k}" ${(mods || PAPEIS[m?.papel || 'editor'].mods).includes(k) ? 'checked' : ''}><span>${esc(n)}</span></label>`).join('')}</div></div></details>
         <p class="cc-err" id="eq-err" role="alert"></p></form>`,
         `<button class="btn btn--primary" type="button" id="eq-ok">${novo ? 'Criar convite' : 'Salvar'}</button>${!novo ? `${m.status === 'suspenso' ? '<button class="btn btn--ghost" type="button" id="eq-reat">Reativar</button>' : '<button class="btn btn--ghost" type="button" id="eq-susp">Suspender</button>'}${m.status === 'convidado' ? '<button class="btn btn--ghost" type="button" id="eq-reenv">Renovar convite</button>' : ''}${m.modulos ? '<button class="btn btn--ghost" type="button" id="eq-padrao">Restaurar permissões padrão</button>' : ''}<a class="btn btn--ghost" href="#/auditoria">Histórico</a><span class="cc-spacer"></span><button class="btn btn--danger" type="button" id="eq-rev">${m.status === 'convidado' ? 'Cancelar convite' : 'Revogar acesso'}</button>` : ''}`);
       const coletar = () => { const custom = $('#eq-custom').checked; return { nome: $('#eq-n').value.trim(), papel: $('#eq-p').value, modulos: custom ? $$('#eq-mods input:checked').map(i => i.value) : null }; };

@@ -1,47 +1,258 @@
 rules_version = '2';
+// Bourbon Films | regras do Firestore (Central Bourbon, CMS, CRM e área do cliente)
+// Tudo é negado por padrão. Permissões são conferidas aqui, no servidor do Google, a cada leitura e escrita.
 service cloud.firestore {
   match /databases/{database}/documents {
-    function logado() { return request.auth != null && request.auth.token.email_verified == true; }
-    function isAdmin() { return logado() && request.auth.token.email in ['filmbourbon@gmail.com']; }
 
-    // projetos: o cliente lê só os próprios; só a equipe escreve
+    // ---------- identidade ----------
+    // PROPRIETÁRIO: definido só aqui, por configuração. Para transferir a propriedade, troque o e-mail abaixo e publique.
+    function proprietarios() { return ['filmbourbon@gmail.com']; }
+
+    function logado() { return request.auth != null && request.auth.token.email_verified == true && request.auth.token.firebase.sign_in_provider != 'anonymous'; }
+    function email() { return request.auth.token.email.lower(); }
+    function isOwner() { return logado() && email() in proprietarios(); }
+    function ficha() { return /databases/$(database)/documents/equipe/$(email()); }
+    function ativo() { return logado() && exists(ficha()) && get(ficha()).data.status == 'ativo'; }
+    function papel() { return get(ficha()).data.papel; }
+    // módulos padrão de cada papel (a ficha pode ter uma lista própria em "modulos")
+    function padrao(p, mod) {
+      return (p == 'admin' && mod in ['painel', 'conteudo', 'crm', 'operacao', 'analytics', 'equipe', 'config', 'auditoria'])
+        || (p == 'operacional' && mod in ['painel', 'operacao'])
+        || (p == 'editor' && mod in ['painel', 'conteudo'])
+        || (p == 'comercial' && mod in ['painel', 'crm'])
+        || (p == 'marketing' && mod in ['painel', 'conteudo', 'analytics'])
+        || (p == 'leitura' && mod in ['painel', 'analytics']);
+    }
+    function temMod(mod) {
+      return (get(ficha()).data.get('modulos', null) != null && mod in get(ficha()).data.modulos)
+        || (get(ficha()).data.get('modulos', null) == null && padrao(papel(), mod));
+    }
+    // ler: ver um módulo. editar: alterar (o papel "leitura" nunca altera nada)
+    function ler(mod) { return isOwner() || (ativo() && temMod(mod)); }
+    function editar(mod) { return isOwner() || (ativo() && papel() != 'leitura' && temMod(mod)); }
+    function membro() { return isOwner() || ativo(); }
+    // exclusão definitiva: só proprietário ou administrador, e só do que já está na Lixeira
+    function podeApagar() { return isOwner() || (ativo() && papel() == 'admin'); }
+    function naLixeira() { return resource.data.get('excluido', false) == true; }
+    function agora(v) { return v == request.time; }
+    function texto(v, max) { return v is string && v.size() <= max; }
+
+    // ---------- equipe: convites, papéis e acesso ----------
+    match /equipe/{mail} {
+      function papelValido(p) { return p in ['admin', 'editor', 'comercial', 'marketing', 'operacional', 'leitura']; }
+      function podeGerir(alvoPapel) { return isOwner() || (editar('equipe') && alvoPapel != 'admin'); }
+      allow read: if (logado() && email() == mail) || ler('equipe');
+      allow create: if editar('equipe') && mail == mail.lower() && mail != email()
+        && !(mail in proprietarios())
+        && papelValido(request.resource.data.papel) && podeGerir(request.resource.data.papel)
+        && request.resource.data.status == 'convidado'
+        && request.resource.data.token is string && request.resource.data.token.size() >= 20
+        && request.resource.data.expiraEm is timestamp && request.resource.data.expiraEm > request.time
+        && request.resource.data.email == mail;
+      // quem gere: muda papel, suspende, reativa, reenvia convite. Ninguém altera a própria ficha por aqui.
+      allow update: if (editar('equipe') && mail != email()
+          && podeGerir(resource.data.papel) && podeGerir(request.resource.data.papel)
+          && papelValido(request.resource.data.papel) && request.resource.data.email == resource.data.email)
+        // o convidado aceita o convite (só uma vez, dentro do prazo)
+        || (logado() && email() == mail && resource.data.status == 'convidado' && request.time < resource.data.expiraEm
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'uid', 'aceitoEm', 'ultimoAcesso', 'tokenAceite'])
+          // convite de uso único: precisa do link mais recente (token atual)
+          && (!('token' in resource.data) || request.resource.data.get('tokenAceite', '') == resource.data.token)
+          && request.resource.data.status == 'ativo' && request.resource.data.uid == request.auth.uid
+          && agora(request.resource.data.aceitoEm))
+        // o membro ativo registra o próprio último acesso
+        || (ativo() && email() == mail
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ultimoAcesso'])
+          && agora(request.resource.data.ultimoAcesso));
+      allow delete: if editar('equipe') && mail != email() && podeGerir(resource.data.papel);
+    }
+
+    // ---------- auditoria: só se acrescenta, nunca se altera ----------
+    match /auditoria/{id} {
+      allow create: if membro()
+        && request.resource.data.keys().hasOnly(['quem', 'acao', 'alvo', 'detalhe', 'em'])
+        && request.resource.data.quem == email() && agora(request.resource.data.em)
+        && texto(request.resource.data.acao, 60) && texto(request.resource.data.alvo, 200) && texto(request.resource.data.detalhe, 500);
+      allow read: if ler('auditoria');
+    }
+
+    // ---------- histórico por alteração: ninguém edita nem apaga, nem o proprietário ----------
+    match /alteracoes/{id} {
+      allow create: if membro()
+        && request.resource.data.quem == email() && request.resource.data.uid == request.auth.uid && agora(request.resource.data.em)
+        && request.resource.data.keys().hasOnly(['quem', 'nome', 'uid', 'em', 'colecao', 'docId', 'rotulo', 'rotuloCampo', 'pagina', 'secao', 'elemento', 'tipo', 'antes', 'depois', 'antesV', 'depoisV', 'original', 'restauravel', 'inteiro'])
+        && request.resource.data.tipo in ['criou', 'editou', 'publicou', 'excluiu', 'restaurou']
+        && texto(request.resource.data.antes, 4000) && texto(request.resource.data.depois, 4000);
+      allow read: if ler('auditoria');
+    }
+
+    // ---------- conteúdo público: o site só enxerga o que está publicado ----------
+    match /trabalhos/{id} {
+      allow read: if resource.data.status == 'publicado' || ler('conteudo');
+      allow create, update: if editar('conteudo');
+      allow delete: if editar('conteudo') && naLixeira() && podeApagar();
+    }
+    match /marcas/{id} {
+      allow read: if resource.data.status == 'publicado' || ler('conteudo');
+      allow create, update: if editar('conteudo');
+      allow delete: if editar('conteudo') && naLixeira() && podeApagar();
+    }
+    match /depoimentos/{id} {
+      allow read: if resource.data.status == 'publicado' || ler('conteudo');
+      allow create, update: if editar('conteudo');
+      allow delete: if editar('conteudo') && naLixeira() && podeApagar();
+    }
+    match /instagram/{id} {
+      allow read: if resource.data.status == 'publicado' || ler('conteudo');
+      allow create, update: if editar('conteudo');
+      allow delete: if editar('conteudo') && naLixeira() && podeApagar();
+    }
+    // textos e números institucionais publicados (contadores, nota do Google, etc.)
+    match /site/{doc} {
+      allow read: if true;
+      allow write: if editar('conteudo');
+    }
+    // Diário de Produção: público só o que foi publicado ou cuja hora programada já chegou
+    match /diario/{id} {
+      allow read: if resource.data.status == 'publicado'
+        || (resource.data.status == 'programado' && resource.data.publicarEm <= request.time)
+        || ler('conteudo');
+      allow create, update: if editar('conteudo');
+      allow delete: if editar('conteudo') && naLixeira() && podeApagar();
+    }
+    // fotos: privadas até serem usadas em conteúdo publicado
+    match /midia/{id} {
+      allow read: if resource.data.status == 'publicado' || ler('conteudo');
+      allow create, update: if editar('conteudo');
+      allow delete: if editar('conteudo') && naLixeira() && podeApagar();
+    }
+    match /rascunhos/{doc} {
+      allow read: if ler('conteudo');
+      allow write: if editar('conteudo');
+    }
+    // instruções do agente editorial (prompt mestre) e parceiros citados nas matérias
+    match /editorial/{doc} {
+      allow read: if ler('conteudo');
+      allow write: if editar('conteudo');
+    }
+    match /parceiros/{id} {
+      allow read: if ler('conteudo');
+      allow create, update: if editar('conteudo');
+      allow delete: if editar('conteudo') && naLixeira() && podeApagar();
+    }
+    match /divulgacao/{id} {
+      allow read: if ler('conteudo');
+      allow write: if editar('conteudo');
+    }
+    // rascunhos e versões anteriores de qualquer conteúdo
+    match /versoes/{id} {
+      allow read: if ler('conteudo') || ler('crm') || ler('operacao');
+      allow create: if (editar('conteudo') || editar('crm') || editar('operacao')) && request.resource.data.por == email() && agora(request.resource.data.em);
+      allow delete: if isOwner();
+    }
+
+    // ---------- comercial ----------
+    match /pedidos/{id} {
+      function escolhasOk(e) {
+        return e is map && e.keys().hasOnly(['objetivo', 'formato', 'quantidade', 'producao', 'pos'])
+          && (e.objetivo == null || texto(e.objetivo, 20)) && (e.formato == null || texto(e.formato, 20))
+          && (e.quantidade == null || texto(e.quantidade, 10)) && e.pos is list && e.pos.size() <= 6
+          && (!('producao' in e) || (e.producao is list && e.producao.size() <= 8));
+      }
+      function contatoOk(c) {
+        return c is map && c.keys().hasOnly(['nome', 'empresa', 'whatsapp', 'email'])
+          && texto(c.nome, 120) && c.nome.size() > 1 && texto(c.empresa, 120)
+          && texto(c.whatsapp, 30) && texto(c.email, 160) && (c.whatsapp.size() > 0 || c.email.size() > 0);
+      }
+      function toqueOk(t) {
+        return t is map && t.keys().hasOnly(['canal', 'fonte', 'meio', 'campanha', 'conteudo', 'termo', 'indicacao', 'entrada', 'em'])
+          && texto(t.canal, 20) && texto(t.get('fonte', ''), 80) && texto(t.get('meio', ''), 80) && texto(t.get('campanha', ''), 80)
+          && texto(t.get('conteudo', ''), 80) && texto(t.get('termo', ''), 80) && texto(t.get('indicacao', ''), 30) && texto(t.get('entrada', ''), 80) && texto(t.get('em', ''), 10);
+      }
+      function atribuicaoOk(d) {
+        return !('atribuicao' in d) || (d.atribuicao is map && d.atribuicao.keys().hasOnly(['primeira', 'ultima']) && toqueOk(d.atribuicao.primeira) && toqueOk(d.atribuicao.ultima));
+      }
+      function contextoOk(x) {
+        return x is map && x.keys().hasOnly(['cidade', 'prazo', 'notas'])
+          && texto(x.cidade, 120) && texto(x.prazo, 20) && texto(x.notas, 2000);
+      }
+      function pedidoOk(d) {
+        return d.keys().hasOnly(['schema', 'id', 'versao', 'status', 'origem', 'uid', 'criadoEm', 'atualizadoEm', 'enviadoEm', 'etapaVisitante', 'escolhas', 'contexto', 'contato', 'atribuicao'])
+          && atribuicaoOk(d)
+          && d.schema == 'bf.projeto/1' && d.id == id && d.versao == 1 && d.origem == 'site/montar-projeto'
+          && d.status in ['identificado', 'novo'] && escolhasOk(d.escolhas) && contextoOk(d.contexto) && contatoOk(d.contato);
+      }
+      // visitante cria uma vez (na identificação, com login anônimo, ou direto no envio)
+      // a equipe também cadastra pedidos que chegam por outros canais (WhatsApp, indicação, Instagram)
+      allow create: if (editar('crm') && request.resource.data.id == id) || (id.matches('^BF-[0-9]{6}-[A-Z0-9]{4}$') && pedidoOk(request.resource.data)
+        && agora(request.resource.data.criadoEm)
+        && (request.resource.data.status == 'novo' || (request.auth != null && request.resource.data.uid == request.auth.uid)));
+      // visitante completa o próprio pedido enquanto ainda está montando; depois de enviado, fica travado
+      allow update: if editar('crm')
+        || (request.auth != null && resource.data.get('uid', '') == request.auth.uid && resource.data.status == 'identificado'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['escolhas', 'contexto', 'contato', 'status', 'atualizadoEm', 'enviadoEm', 'etapaVisitante'])
+          && pedidoOk(request.resource.data) && agora(request.resource.data.atualizadoEm));
+      allow read: if ler('crm');
+      allow delete: if editar('crm') && naLixeira() && podeApagar();
+    }
+    match /propostas/{id} {
+      allow read: if ler('crm');
+      allow create, update: if editar('crm');
+      allow delete: if editar('crm') && naLixeira() && podeApagar();
+    }
+    // área do cliente: o cliente lê só os próprios projetos
     match /projetos/{id} {
-      allow read: if isAdmin() || (logado() && resource.data.clienteEmail == request.auth.token.email.lower());
-      allow write: if isAdmin();
+      allow read: if ler('crm') || ler('operacao') || (logado() && resource.data.clienteEmail == email());
+      allow create, update: if editar('crm') || editar('operacao');
+      allow delete: if (editar('crm') || editar('operacao')) && naLixeira() && podeApagar();
     }
-    // clientes da casa: só a equipe
+    match /tarefas/{id} {
+      allow read: if ler('operacao');
+      allow create, update: if editar('operacao');
+      allow delete: if editar('operacao') && naLixeira() && podeApagar();
+    }
+    match /indicacoes/{id} {
+      allow read: if ler('crm');
+      allow create, update: if editar('crm');
+      allow delete: if editar('crm') && naLixeira() && podeApagar();
+    }
     match /clientes/{id} {
-      allow read, write: if isAdmin();
+      allow read: if ler('crm');
+      allow create, update: if editar('crm');
+      allow delete: if editar('crm') && naLixeira() && podeApagar();
     }
-    // perfil de quem cria conta: cada um cuida do próprio; a equipe consulta
     match /usuarios/{uid} {
-      allow read: if isAdmin() || (request.auth != null && request.auth.uid == uid);
+      allow read: if ler('crm') || (request.auth != null && request.auth.uid == uid);
       allow create, update: if request.auth != null && request.auth.uid == uid
         && request.resource.data.keys().hasOnly(['nome', 'email', 'criadoEm']);
-      allow delete: if isAdmin();
+      allow delete: if editar('crm');
     }
-    // pedidos do "Monte seu projeto": qualquer visitante cria uma vez, só a equipe lê e altera
-    match /pedidos/{id} {
-      function texto(v, max) { return v is string && v.size() <= max; }
-      function pedidoValido(d) {
-        return d.keys().hasOnly(['schema', 'id', 'versao', 'status', 'origem', 'criadoEm', 'escolhas', 'contexto', 'contato'])
-          && d.schema == 'bf.projeto/1' && d.id == id && d.versao == 1 && d.status == 'novo'
-          && d.origem == 'site/montar-projeto' && d.criadoEm == request.time
-          && d.escolhas is map && d.escolhas.keys().hasOnly(['objetivo', 'formato', 'quantidade', 'pos'])
-          && (d.escolhas.objetivo == null || texto(d.escolhas.objetivo, 20))
-          && (d.escolhas.formato == null || texto(d.escolhas.formato, 20))
-          && (d.escolhas.quantidade == null || texto(d.escolhas.quantidade, 10))
-          && d.escolhas.pos is list && d.escolhas.pos.size() <= 6
-          && d.contexto is map && d.contexto.keys().hasOnly(['cidade', 'prazo', 'notas'])
-          && texto(d.contexto.cidade, 120) && texto(d.contexto.prazo, 20) && texto(d.contexto.notas, 2000)
-          && d.contato is map && d.contato.keys().hasOnly(['nome', 'empresa', 'whatsapp', 'email'])
-          && texto(d.contato.nome, 120) && d.contato.nome.size() > 0
-          && texto(d.contato.empresa, 120) && texto(d.contato.whatsapp, 30) && texto(d.contato.email, 160)
-          && (d.contato.whatsapp.size() > 0 || d.contato.email.size() > 0);
-      }
-      allow create: if id.matches('^BF-[0-9]{6}-[A-Z0-9]{4}$') && pedidoValido(request.resource.data);
-      allow read, update, delete: if isAdmin();
+
+    // ---------- medição própria do site (sem cookies, sem dados pessoais) ----------
+    match /eventos/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['t', 'p', 'r', 'dv', 'dia', 'x', 'em', 'c', 's', 'i', 'v'])
+        && texto(request.resource.data.get('c', ''), 20) && texto(request.resource.data.get('s', ''), 12)
+        && request.resource.data.get('i', false) is bool && request.resource.data.get('v', false) is bool
+        && request.resource.data.t in ['view', 'whatsapp', 'filme', 'montar_abriu', 'identificacao', 'etapa', 'envio', 'contato']
+        && texto(request.resource.data.p, 80) && texto(request.resource.data.r, 80)
+        && request.resource.data.dv in ['m', 'd'] && texto(request.resource.data.dia, 10)
+        && texto(request.resource.data.get('x', ''), 60) && agora(request.resource.data.em);
+      allow read: if ler('analytics');
+      allow delete: if isOwner();
     }
+
+    // totais mensais de longo prazo (substituem eventos antigos apagados)
+    match /resumos/{mes} {
+      allow read: if ler('analytics');
+      allow write: if isOwner();
+    }
+
+    // ---------- integrações e configurações internas ----------
+    match /integracoes/{nome} {
+      allow read: if membro();
+      allow write: if editar('config');
+    }
+
     match /{document=**} { allow read, write: if false; }
   }
 }
