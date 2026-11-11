@@ -565,6 +565,11 @@ body.cc{min-height:100svh;color:var(--text);-webkit-font-smoothing:antialiased}
 .pc-dl{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));margin-top:10px}
 .pc-card .cc-actions .btn{white-space:normal;text-align:center;max-width:100%}
 @media (max-width:620px){.pc-card .ix-h{flex-direction:column;align-items:flex-start}.pc-card .cli-pills{justify-content:flex-start;margin:0}}
+.ag-kpis{margin-bottom:14px}.ag-kpis .cc-kpi{text-decoration:none;color:inherit}
+.ag-alerta{border-color:rgba(255,214,10,.35);margin-bottom:12px;font-size:.875rem}
+.ag-kpis .cc-kpi{cursor:pointer}.ag-kpis .cc-kpi:hover{background:var(--cc-panel-2,rgba(255,255,255,.04))}
+.ag-wrap .cc-row b,.ag-wrap .cc-row small{white-space:normal;overflow:visible;text-overflow:clip}
+.ag-wrap .cc-row{align-items:flex-start;gap:12px}
 
 </style>
 </head>
@@ -714,12 +719,12 @@ function befRender(blocos, ctx) {
 /* ============ Bourbon Central Bourbon: núcleo ============
    As permissões abaixo só organizam a interface. Quem decide o acesso de verdade
    são as regras do Firestore (firestore.rules), conferidas no servidor a cada operação. */
-import { firebaseConfig, ADMIN_EMAILS } from './assets/js/firebase-config.js';
+import { firebaseConfig, ADMIN_EMAILS, OWNER_UIDS } from './assets/js/firebase-config.js';
 
 const FBV = 'https://www.gstatic.com/firebasejs/10.14.1/';
 const OWNERS = (ADMIN_EMAILS || []).map(e => e.toLowerCase());
 const PAPEIS = {
-  owner: { nome: 'Proprietário', mods: ['painel', 'conteudo', 'crm', 'operacao', 'analytics', 'equipe', 'config', 'auditoria', 'cultural'] },
+  owner: { nome: 'Proprietário', mods: ['painel', 'conteudo', 'crm', 'operacao', 'analytics', 'equipe', 'config', 'auditoria', 'cultural', 'admgeral'] },
   admin: { nome: 'Administrador', mods: ['painel', 'conteudo', 'crm', 'operacao', 'analytics', 'equipe', 'config', 'auditoria'] },
   editor: { nome: 'Editor', mods: ['painel', 'conteudo'] },
   comercial: { nome: 'Comercial', mods: ['painel', 'crm'] },
@@ -727,7 +732,7 @@ const PAPEIS = {
   operacional: { nome: 'Operacional', mods: ['painel', 'operacao'] },
   leitura: { nome: 'Leitura', mods: ['painel', 'analytics'] }
 };
-const MOD_NOMES = { painel: 'Painel', conteudo: 'Site e conteúdo', crm: 'Comercial', operacao: 'Projetos e entregas', analytics: 'Inteligência comercial', equipe: 'Equipe', config: 'Integrações e configurações', auditoria: 'Histórico e alterações', cultural: 'Projetos culturais' };
+const MOD_NOMES = { painel: 'Painel', conteudo: 'Site e conteúdo', crm: 'Comercial', operacao: 'Projetos e entregas', analytics: 'Inteligência comercial', equipe: 'Equipe', config: 'Integrações e configurações', auditoria: 'Histórico e alterações', cultural: 'Bourbon Cultural', admgeral: 'Administração geral' };
 
 const S = { user: null, email: '', nome: '', papel: '', mods: new Set(), F: null, U: null, db: null, auth: null, cache: {}, modulos: [] };
 const $ = (s, r = document) => r.querySelector(s);
@@ -804,6 +809,7 @@ function abrirSheet(titulo, corpoHTML, rodapeHTML, aoFechar) {
 function fecharSheet() { const d = $('#cc-sheet'); if (d.open) d.close(); }
 $('#cc-sheet').addEventListener('close', () => { const f = sheetClose; sheetClose = null; if (f) f(); });
 $('#sheet-x').addEventListener('click', fecharSheet);
+$('#sheet-foot').addEventListener('click', (e) => { if (e.target.closest('[data-fechar]')) fecharSheet(); });
 $('#cc-sheet').addEventListener('click', (e) => { if (e.target.id === 'cc-sheet') fecharSheet(); });
 
 /* ---------- Firebase ---------- */
@@ -864,6 +870,7 @@ async function excluirDoc(colecao, id, rotulo) {
 /* ---------- ícones ---------- */
 const I = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const ICON = {
+  admgeral: I('<path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/>'),
   cultural: I('<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'),
   conversor: I('<path d="M4 7h11l-3-3M20 17H9l3 3"/>'),
   convites: I('<path d="M4 4h16v16H4z" opacity="0"/><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>'),
@@ -897,7 +904,7 @@ const ICON = {
 /* ---------- módulos e rotas ---------- */
 const ROTAS = {};
 function modulo(def) { ROTAS[def.id] = def; S.modulos.push(def); }
-const GRUPOS = [['Visão', ['painel', 'estatisticas', 'alteracoes']], ['Comercial', ['comercial', 'propostas', 'clientes', 'indicacoes']], ['Operação', ['projetos', 'demandas', 'entregas']], ['Site', ['editor', 'diario', 'conversor', 'marcas', 'trabalhos', 'depoimentos', 'midia', 'instagram', 'site', 'saude']], ['Divulgação', ['estudio']], ['Projetos culturais', ['cultural']], ['Gestão', ['lixeira', 'equipe', 'convites', 'auditoria', 'integracoes', 'dados']]];
+const GRUPOS = [['Visão', ['painel', 'estatisticas', 'alteracoes']], ['Comercial', ['comercial', 'propostas', 'clientes', 'indicacoes']], ['Operação', ['projetos', 'demandas', 'entregas']], ['Site', ['editor', 'diario', 'conversor', 'marcas', 'trabalhos', 'depoimentos', 'midia', 'instagram', 'site', 'saude']], ['Divulgação', ['estudio']], ['Bourbon Cultural', ['cultural']], ['Gestão', ['admgeral', 'lixeira', 'equipe', 'convites', 'auditoria', 'integracoes', 'dados']]];
 function montarNav() {
   const nav = $('#cc-nav');
   nav.innerHTML = GRUPOS.map(([g, ids]) => {
@@ -1007,7 +1014,8 @@ async function autorizar(user) {
   const email = (user.email || '').toLowerCase();
   if (!user.emailVerified || !email) return negado('Esta conta não tem e-mail verificado.');
   S.email = email; S.nome = user.displayName || email;
-  if (OWNERS.includes(email)) { S.papel = 'owner'; S.mods = new Set(PAPEIS.owner.mods); return entrar(user); }
+  // proprietário: e-mail da configuração E identificador da conta (UID), igual às regras do Firestore
+  if (OWNERS.includes(email) && (!(OWNER_UIDS || []).length || OWNER_UIDS.includes(user.uid))) { S.papel = 'owner'; S.mods = new Set(PAPEIS.owner.mods); return entrar(user); }
   let ficha = null;
   try { const s = await S.F.getDoc(docRef('equipe', email)); ficha = s.exists() ? s.data() : null; }
   catch (e) { return negado('Não foi possível conferir seu acesso agora. ' + erroTxt(e)); }
@@ -3888,36 +3896,196 @@ modulo({
   }
 });
 
-/* ============ Projetos culturais: atalho para os painéis privados (Cabras do Sol) ============
-   Só informação de identificação e atalho. Nenhum dado financeiro, documento ou pendência do projeto
-   é copiado para o Firestore da Central: a fonte de verdade é o painel do projeto (Cloudflare D1/R2).
-   Ter este módulo NÃO dá acesso ao painel: o acesso é decidido pelo Cloudflare Access e pela lista de
-   usuários dentro do próprio painel, que o proprietário mantém lá. */
-const PROJETOS_CULTURAIS = [{
-  id: 'cabras-do-sol', nome: 'Cabras do Sol', sub: 'Metodologia audiovisual de registro e difusão da caprinocultura sertaneja',
-  mecanismo: 'Inova Cultura · subvenção SUDENE, apoio técnico MinC', instrumento: 'TOSE nº 09/2026', edital: 'Edital SUDENE/MinC nº 07/2025',
-  painel: 'https://painel.bourbonfilms.com.br',
-  publicado: false, // mudar para true só depois do deploy autorizado e testado
-  estado: 'Em execução',
-  site: [{ t: 'Banner virtual da SUDENE e do MinC no site da empresa, com link para os portais', regra: 'TOSE 7.2 "m"', feito: false }],
-}];
+/* ============ BOURBON CULTURAL: projetos culturais, equipes por projeto e atalhos para painéis privados ============
+   Coleção "culturais" no Firestore. Regras (firestore.rules): o proprietário vê e cria tudo; quem tem o
+   módulo "cultural" só vê os projetos em que está em "membrosEmails"; coordenação do projeto edita só
+   situação, resumo, cronograma e pendências. Nenhum dado financeiro de projeto com painel próprio é
+   copiado para cá (o Cabras do Sol | Inova Cultura continua no painel dele, na Cloudflare). */
+const MECANISMOS_CULT = { inova: 'Inova Cultura (subvenção SUDENE, apoio MinC)', rouanet: 'Lei Rouanet', proprio: 'Recursos próprios', adefinir: 'A definir' };
+const SIT_CULT = { ideia: ['Ideia', 'mute'], desenvolvimento: ['Em desenvolvimento', 'mute'], aprovado: ['Aprovado', 'ok'], captacao: ['Em captação', 'warn'], execucao: ['Em execução', 'ok'], pausado: ['Pausado', 'warn'], concluido: ['Concluído', 'mute'], arquivado: ['Arquivado', 'mute'] };
+const PAPEIS_CULT = { coordenacao: 'Coordenação', producao: 'Produção', financeiro: 'Financeiro', documentacao: 'Documentação', editorial: 'Editorial', colaborador: 'Colaborador', consulta: 'Consulta' };
+// Só fatos já documentados. O que não se sabe fica como "a confirmar", nunca inventado.
+const CULTURAIS_CONHECIDOS = [
+  { id: 'cabras-do-sol-inova', nome: 'Cabras do Sol | Inova Cultura', categoria: 'Metodologia audiovisual e difusão educativa', mecanismo: 'inova', situacao: 'execucao',
+    instrumento: 'TOSE nº 09/2026 · Edital SUDENE/MinC nº 07/2025', painelUrl: 'https://cabras-do-sol-painel.bourbonfilms.workers.dev',
+    resumo: 'Execução financeira, documental e operacional acompanhada no painel próprio, com as regras do edital e do TOSE. Nenhum número financeiro fica nesta Central.',
+    separacao: 'Conta e registros próprios. Despesas da Lei Rouanet não entram neste projeto.' },
+  { id: 'cabras-do-sol-documentario', nome: 'Cabras do Sol | Documentário', categoria: 'Documentário', mecanismo: 'rouanet', situacao: 'aprovado',
+    instrumento: 'PRONAC 2513400', resumo: 'Projeto aprovado na Lei Rouanet. Situação de captação a confirmar.', separacao: 'Financeiramente separado do Cabras do Sol | Inova Cultura.' },
+  { id: 'som', nome: 'S/om', categoria: 'Curta-metragem de ficção', mecanismo: 'adefinir', situacao: 'desenvolvimento', instrumento: '', resumo: 'Dados do projeto a confirmar.', separacao: '' },
+  { id: 'de-nada-em-nada-tudo', nome: 'De Nada em Nada, Tudo', categoria: 'Documentário sobre poesia nordestina', mecanismo: 'rouanet', situacao: 'aprovado', instrumento: '', resumo: 'Projeto aprovado na Lei Rouanet. Número do PRONAC e situação de captação a confirmar.', separacao: '' },
+];
+async function listarCulturais() {
+  const F = S.F;
+  if (S.papel === 'owner') return (await F.getDocs(col('culturais'))).docs.map(d => ({ ...d.data(), _id: d.id }));
+  const q = F.query(col('culturais'), F.where('membrosEmails', 'array-contains', S.email));
+  return (await F.getDocs(q)).docs.map(d => ({ ...d.data(), _id: d.id }));
+}
+function cardCultural(p) {
+  const sit = SIT_CULT[p.situacao] || SIT_CULT.ideia, membros = Object.entries(p.membros || {});
+  const meu = (p.membros || {})[S.email];
+  return `<article class="cc-panel pc-card" data-id="${attr(p._id)}">
+    <div class="ix-h"><div><h3>${esc(p.nome)}</h3><p class="cc-note">${esc(p.categoria || '')}</p></div><div class="cli-pills">${pill(sit[0], sit[1])}${p.painelUrl ? pill('Painel próprio') : ''}</div></div>
+    <dl class="cc-analysis pc-dl"><div><dt>Mecanismo</dt><dd>${esc(MECANISMOS_CULT[p.mecanismo] || 'A definir')}</dd></div>${p.instrumento ? `<div><dt>Instrumento</dt><dd>${esc(p.instrumento)}</dd></div>` : ''}<div><dt>Equipe no projeto</dt><dd>${membros.length ? membros.length + ' pessoa(s)' : 'Só o proprietário'}</dd></div>${meu ? `<div><dt>Sua função</dt><dd>${esc(PAPEIS_CULT[meu] || meu)}</dd></div>` : ''}</dl>
+    ${p.resumo ? `<p class="cc-note" style="margin-top:10px">${esc(p.resumo)}</p>` : ''}${p.separacao ? `<p class="cc-note"><b>Separação financeira:</b> ${esc(p.separacao)}</p>` : ''}
+    ${(p.pendencias || []).length ? `<h4 class="pc-t">Pendências</h4><ul class="in-met">${p.pendencias.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+    <div class="cc-actions">${p.painelUrl ? `<a class="btn btn--primary btn--sm" href="${attr(safeUrl(p.painelUrl))}" target="_blank" rel="noopener">Abrir painel do projeto</a>` : ''}${S.papel === 'owner' || meu === 'coordenacao' ? `<button class="btn btn--ghost btn--sm" type="button" data-a="editar">Editar</button>` : ''}${S.papel === 'owner' ? `<button class="btn btn--ghost btn--sm" type="button" data-a="equipe">Equipe do projeto</button>` : ''}</div>
+  </article>`;
+}
+function formCultural(p, dono) {
+  const o = (obj, sel) => Object.entries(obj).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${esc(Array.isArray(v) ? v[0] : v)}</option>`).join('');
+  const dis = dono ? '' : 'disabled';
+  return `<div class="cc-form">
+    <div class="cc-field"><label for="ct-n">Nome</label><input id="ct-n" maxlength="120" value="${attr(p.nome || '')}" ${dis}></div>
+    <div class="cc-field"><label for="ct-c">Categoria</label><input id="ct-c" maxlength="120" value="${attr(p.categoria || '')}" ${dis}></div>
+    <div class="cc-field"><label for="ct-m">Mecanismo financeiro</label><select id="ct-m" ${dis}>${o(MECANISMOS_CULT, p.mecanismo || 'adefinir')}</select></div>
+    <div class="cc-field"><label for="ct-i">Instrumento, edital ou PRONAC</label><input id="ct-i" maxlength="200" value="${attr(p.instrumento || '')}" ${dis}></div>
+    <div class="cc-field"><label for="ct-s">Situação</label><select id="ct-s">${o(SIT_CULT, p.situacao || 'ideia')}</select></div>
+    <div class="cc-field"><label for="ct-r">Resumo</label><textarea id="ct-r" rows="3" maxlength="1000">${esc(p.resumo || '')}</textarea></div>
+    <div class="cc-field"><label for="ct-cr">Cronograma (um marco por linha)</label><textarea id="ct-cr" rows="3" maxlength="2000">${esc((p.cronograma || []).join('\n'))}</textarea></div>
+    <div class="cc-field"><label for="ct-p">Pendências (uma por linha)</label><textarea id="ct-p" rows="3" maxlength="2000">${esc((p.pendencias || []).join('\n'))}</textarea></div>
+    <div class="cc-field"><label for="ct-u">Endereço do painel próprio (opcional)</label><input id="ct-u" maxlength="300" value="${attr(p.painelUrl || '')}" placeholder="https://" ${dis}></div>
+    <div class="cc-field"><label for="ct-sp">Separação financeira</label><input id="ct-sp" maxlength="300" value="${attr(p.separacao || '')}" ${dis}></div>
+  </div>`;
+}
+const linhas = (v) => String(v || '').split('\n').map(s => s.trim()).filter(Boolean).slice(0, 40);
 modulo({
-  id: 'cultural', titulo: 'Projetos culturais', mod: 'cultural',
+  id: 'cultural', titulo: 'Bourbon Cultural', mod: 'cultural',
   async render(v) {
-    v.innerHTML = `<div class="cc-head"><div><h2>Projetos culturais</h2><p>Projetos com recurso público. Cada um tem painel próprio, com acesso e regras separados da Central.</p></div></div>
-      ${PROJETOS_CULTURAIS.map(p => `<article class="cc-panel pc-card" data-id="${attr(p.id)}">
-        <div class="ix-h"><div><h3>${esc(p.nome)}</h3><p class="cc-note">${esc(p.sub)}</p></div><div class="cli-pills">${pill(p.estado, 'ok')}${p.publicado ? pill('Painel publicado', 'ok') : pill('Painel ainda não publicado', 'warn')}</div></div>
-        <dl class="cc-analysis pc-dl"><div><dt>Mecanismo</dt><dd>${esc(p.mecanismo)}</dd></div><div><dt>Instrumento</dt><dd>${esc(p.instrumento)}</dd></div><div><dt>Edital</dt><dd>${esc(p.edital)}</dd></div><div><dt>Endereço do painel</dt><dd>${esc(p.painel.replace('https://', ''))}</dd></div></dl>
-        <div class="cc-actions">${p.publicado ? `<a class="btn btn--primary" href="${attr(p.painel)}" target="_blank" rel="noopener">Abrir o painel do ${esc(p.nome)}</a>` : '<button class="btn btn--ghost" type="button" disabled>Abrir o painel (aguardando publicação)</button>'}</div>
-        <h4 class="pc-t">Obrigações no site institucional</h4>
-        <ul class="in-met">${p.site.map(o => `<li><b>${o.feito ? 'Feito' : 'Pendente'}:</b> ${esc(o.t)} <span class="cc-note">(${esc(o.regra)})</span></li>`).join('')}</ul>
-      </article>`).join('')}
+    const dono = S.papel === 'owner';
+    let itens = [];
+    try { itens = (await listarCulturais()).filter(p => !p.excluido); } catch (e) { v.innerHTML = `<div class="cc-empty"><b>Não foi possível carregar os projetos.</b>${esc(erroTxt(e))}</div>`; return; }
+    itens.sort((a, b) => String(a.nome).localeCompare(String(b.nome), 'pt'));
+    const faltam = CULTURAIS_CONHECIDOS.filter(c => !itens.some(i => i._id === c.id));
+    v.innerHTML = `<div class="cc-head"><div><h2>Bourbon Cultural</h2><p>${dono ? 'Todos os projetos culturais. Cada um com equipe, situação e, quando houver, painel próprio com acesso separado.' : 'Projetos culturais em que você participa.'}</p></div>${dono ? '<div class="cc-actions"><button class="btn btn--primary" type="button" id="ct-novo">Novo projeto</button></div>' : ''}</div>
+      ${dono && faltam.length ? `<div class="cc-panel" style="margin-bottom:14px"><p class="cc-note"><b>${faltam.length} projeto(s) conhecido(s) ainda não cadastrado(s):</b> ${faltam.map(f => esc(f.nome)).join(', ')}. Entram só com o que já está documentado; o resto fica "a confirmar".</p><div class="cc-actions" style="margin-top:10px"><button class="btn btn--ghost btn--sm" type="button" id="ct-seed">Cadastrar projetos conhecidos</button></div></div>` : ''}
+      ${itens.length ? itens.map(cardCultural).join('') : `<div class="cc-empty"><b>${dono ? 'Nenhum projeto cadastrado.' : 'Você ainda não participa de nenhum projeto cultural.'}</b>${dono ? 'Use "Cadastrar projetos conhecidos" ou "Novo projeto".' : 'Peça ao proprietário para incluir você na equipe do projeto.'}</div>`}
       <section class="cc-panel" style="margin-top:16px"><h3>Como o acesso funciona</h3><ul class="in-met">
-        <li>O painel fica em endereço próprio, protegido pelo Cloudflare Access: só abre para e-mails da lista do projeto, com código enviado ao e-mail.</li>
-        <li>Dentro do painel, cada pessoa tem um papel próprio (proprietário, administrador, financeiro, produção, documentação ou consulta), conferido pelo servidor a cada ação.</li>
-        <li>Ver esta página na Central não dá acesso ao painel. Uma permissão editorial do site não abre documentos financeiros do projeto.</li>
-        <li>Para incluir ou tirar alguém: no painel, em Configurações, Usuários e papéis, e na lista do Cloudflare Access. As duas listas precisam concordar.</li>
-        <li>Nenhum número financeiro do projeto é guardado na Central, para não haver duas versões da verdade.</li></ul></section>`;
+        <li>Ver um projeto aqui exige duas coisas: o módulo Bourbon Cultural liberado pelo proprietário e o seu e-mail na equipe daquele projeto. Uma coisa sem a outra não abre nada.</li>
+        <li>Projetos com painel próprio (como o Cabras do Sol | Inova Cultura) têm acesso separado: lista da Cloudflare e papel dentro do painel. Estar na equipe aqui não abre o painel.</li>
+        <li>Nenhum valor financeiro de projeto com painel próprio é guardado nesta Central.</li></ul></section>`;
+    const salvarCultural = async (id, p, dados) => { await salvarDoc('culturais', id, dados, id ? 'editou projeto cultural' : 'criou projeto cultural', dados.nome || p.nome || id); toast('Projeto salvo.'); fecharSheet(); ir('cultural'); };
+    $('#ct-seed')?.addEventListener('click', async (e) => {
+      e.target.disabled = true;
+      try {
+        for (const c of faltam) { const { id, ...d } = c; await S.F.setDoc(docRef('culturais', id), { ...d, membros: {}, membrosEmails: [], pendencias: [], cronograma: [], criadoEm: S.F.serverTimestamp(), criadoPor: S.email, atualizadoEm: S.F.serverTimestamp(), atualizadoPor: S.email }); await auditar('cadastrou projeto cultural', 'culturais/' + id, c.nome); }
+        toast(`${faltam.length} projeto(s) cadastrado(s).`); ir('cultural');
+      } catch (er) { falha(er); e.target.disabled = false; }
+    });
+    $('#ct-novo')?.addEventListener('click', () => abrirEditor({}));
+    function abrirEditor(p) {
+      abrirSheet(p._id ? 'Editar projeto' : 'Novo projeto', formCultural(p, dono), `<button class="btn btn--ghost" type="button" data-fechar>Cancelar</button><button class="btn btn--primary" type="button" id="ct-ok">Salvar</button>`);
+      $('#ct-ok').addEventListener('click', async () => {
+        const val = (i) => ($('#' + i)?.value || '').trim();
+        const base = { situacao: val('ct-s'), resumo: val('ct-r'), cronograma: linhas(val('ct-cr')), pendencias: linhas(val('ct-p')) };
+        const dados = dono ? { ...base, nome: val('ct-n'), categoria: val('ct-c'), mecanismo: val('ct-m'), instrumento: val('ct-i'), painelUrl: safeUrl(val('ct-u')) ? val('ct-u') : '', separacao: val('ct-sp') } : base;
+        if (dono && !dados.nome) { toast('Dê um nome ao projeto.', true); return; }
+        if (!p._id) Object.assign(dados, { membros: {}, membrosEmails: [] });
+        try { await salvarCultural(p._id || null, p, dados); } catch (er) { falha(er); }
+      });
+    }
+    function abrirEquipe(p) {
+      const linha = ([e, f]) => `<div class="cc-row"><span><b>${esc(e)}</b><small>${esc(PAPEIS_CULT[f] || f)}</small></span><button class="btn btn--ghost btn--sm" type="button" data-rem="${attr(e)}">Remover</button></div>`;
+      abrirSheet('Equipe: ' + p.nome, `<p class="cc-note" style="margin-bottom:12px">A pessoa precisa também estar ativa na Equipe da Central com o módulo Bourbon Cultural. Remover daqui tira o acesso a este projeto na hora.</p>
+        <div class="cc-list" id="ct-eq">${Object.entries(p.membros || {}).map(linha).join('') || '<p class="cc-note">Ninguém além do proprietário.</p>'}</div>
+        <div class="cc-form" style="margin-top:14px"><div class="cc-field"><label for="ct-me">E-mail</label><input id="ct-me" type="email" maxlength="160" placeholder="nome@exemplo.com"></div><div class="cc-field"><label for="ct-mf">Função no projeto</label><select id="ct-mf">${Object.entries(PAPEIS_CULT).map(([k, n]) => `<option value="${k}">${esc(n)}</option>`).join('')}</select></div></div>`,
+        `<button class="btn btn--ghost" type="button" data-fechar>Fechar</button><button class="btn btn--primary" type="button" id="ct-madd">Adicionar</button>`);
+      const gravar = async (membros, acao, alvo) => {
+        const emails = Object.keys(membros);
+        await S.F.updateDoc(docRef('culturais', p._id), { membros, membrosEmails: emails, atualizadoEm: S.F.serverTimestamp(), atualizadoPor: S.email });
+        await auditar(acao, 'culturais/' + p._id, alvo); p.membros = membros; toast('Equipe atualizada.'); fecharSheet(); ir('cultural');
+      };
+      $('#ct-madd').addEventListener('click', async () => {
+        const e = ($('#ct-me').value || '').trim().toLowerCase(), f = $('#ct-mf').value;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { toast('E-mail inválido.', true); return; }
+        if (OWNERS.includes(e)) { toast('O proprietário já vê todos os projetos.', true); return; }
+        try { await gravar({ ...(p.membros || {}), [e]: f }, 'incluiu na equipe do projeto', e + ' · ' + f); } catch (er) { falha(er); }
+      });
+      $$('#ct-eq [data-rem]').forEach(b => b.addEventListener('click', async () => {
+        const e = b.dataset.rem;
+        if (!(await confirmar({ titulo: `Tirar ${e} deste projeto?`, texto: 'A pessoa deixa de ver este projeto imediatamente.', ok: 'Remover', perigo: true }))) return;
+        const m = { ...(p.membros || {}) }; delete m[e];
+        try { await gravar(m, 'removeu da equipe do projeto', e); } catch (er) { falha(er); }
+      }));
+    }
+    $$('.pc-card [data-a]').forEach(b => b.addEventListener('click', () => {
+      const p = itens.find(x => x._id === b.closest('.pc-card').dataset.id);
+      if (b.dataset.a === 'editar') abrirEditor(p); else abrirEquipe(p);
+    }));
+  }
+});
+
+/* ============ ADMINISTRAÇÃO GERAL: área exclusiva do proprietário (filmbourbon) ============
+   Visão consolidada de acessos, projetos, segurança, backups, limites gratuitos e atividade.
+   Só o proprietário vê (papel owner, definido por e-mail e identificador nas regras). Não é concedível.
+   Não guarda credencial da Cloudflare nem do Google: o que exige o painel oficial abre por link.
+   Números de uso não são inventados: onde não há leitura automática, o link leva ao painel do serviço. */
+const CF_CONTA = 'e69233a21b8c0a83e9c1fd9ff6cacbd8';
+const AUDITORIA_SEG = { data: '11/11/2026', itens: [
+  ['ok', 'Regras do Firestore no ar, com tudo negado por padrão e permissão conferida no servidor do Google.'],
+  ['ok', 'Painel Cabras do Sol protegido pelo Cloudflare Access (código por e-mail, só e-mails da lista). Testado em produção: sem login, a API não responde.'],
+  ['ok', 'Segredos: nenhuma senha ou token no código do site. As chaves do Firebase no código são públicas por natureza; quem protege os dados são as regras.'],
+  ['ok', 'GitHub: varredura de segredos e bloqueio de envio com segredo ligados no repositório do site.'],
+  ['pend', 'Proprietário preso também ao identificador da conta (UID) nas regras: pronto no pacote, falta publicar as regras novas.'],
+  ['pend', 'Central Bourbon atrás do Cloudflare Access: exige levar o domínio bourbonfilms.com.br para a Cloudflare (troca de DNS no Registro.br).'],
+  ['pend', 'Repositório do site público: exigência do GitHub Pages grátis. Fica privado depois de mover a hospedagem para a Cloudflare.'],
+  ['pend', 'Restringir as chaves do Firebase ao domínio do site no Google Cloud (credenciais da API).'],
+  ['dec', 'Proposta da CityMix com valores em página pública (proposta-citymix.html). Tirar do ar quebra o link já enviado ao cliente.'],
+  ['dec', 'Contas no login do Firebase além da Bourbon (pessoal do Raul e duas da Sara). Manter só as que precisam entrar.'],
+] };
+const LIMITES = [
+  ['Cloudflare Workers', '100 mil requisições por dia', 'Acima disso, recusa pedidos até o dia virar (não cobra no plano grátis).', `https://dash.cloudflare.com/${CF_CONTA}/workers-and-pages`],
+  ['Cloudflare D1 (banco do Cabras)', '5 GB, limite diário de leituras e escritas', 'Ao estourar, as consultas falham até 00h UTC (não cobra).', `https://dash.cloudflare.com/${CF_CONTA}/workers/d1`],
+  ['Cloudflare KV (arquivos do Cabras)', '1 GB, 1 mil gravações por dia', 'Acima disso, recusa gravações até o dia virar.', `https://dash.cloudflare.com/${CF_CONTA}/workers/kv/namespaces`],
+  ['Cloudflare Access', 'até 50 pessoas no plano Zero Trust Free', 'Acima disso exige plano pago.', `https://one.dash.cloudflare.com/${CF_CONTA}/`],
+  ['Firebase Firestore (plano Spark)', '50 mil leituras e 20 mil gravações por dia, 1 GB', 'Ao estourar, recusa até o dia virar (Spark não cobra).', 'https://console.firebase.google.com/u/1/project/bourbon-films/usage'],
+  ['GitHub Pages', 'site até 1 GB, 100 GB de tráfego por mês', 'Limite flexível; o GitHub avisa antes.', 'https://github.com/filmbourbon/bourbonfilms/settings/pages'],
+];
+const SENSIVEIS = /removeu|excluiu|apagou|revog|suspend|papel|convid|exportou|restaur|lixeira/i;
+modulo({
+  id: 'admgeral', titulo: 'Administração geral', mod: 'admgeral',
+  async render(v) {
+    if (S.papel !== 'owner') { v.innerHTML = '<div class="cc-empty"><b>Área exclusiva do proprietário.</b></div>'; return; }
+    v.innerHTML = '<div class="cc-empty"><b>Carregando…</b></div>';
+    const [equipe, culturais, aud] = await Promise.all([
+      listar('equipe', true).catch(() => []),
+      S.F.getDocs(col('culturais')).then(s => s.docs.map(d => d.data()).filter(x => !x.excluido)).catch(() => []),
+      S.F.getDocs(S.F.query(col('auditoria'), S.F.orderBy('em', 'desc'), S.F.limit(300))).then(s => s.docs.map(d => d.data())).catch(() => []),
+    ]);
+    const n = (st) => equipe.filter(p => p.status === st).length;
+    const expirados = equipe.filter(p => p.status === 'convidado' && tsMs(p.expiraEm) < Date.now());
+    const parados = equipe.filter(p => p.status === 'ativo' && tsMs(p.ultimoAcesso) && Date.now() - tsMs(p.ultimoAcesso) > 60 * 864e5);
+    const admins = equipe.filter(p => p.status === 'ativo' && p.papel === 'admin');
+    const ultBackup = aud.find(a => a.acao === 'exportou backup');
+    const diasBackup = ultBackup ? Math.floor((Date.now() - tsMs(ultBackup.em)) / 864e5) : null;
+    const ico = { ok: pill('Feito', 'ok'), pend: pill('Pendente', 'warn'), dec: pill('Decisão sua', 'warn') };
+    v.innerHTML = `<div class="cc-head"><div><h2>Administração geral</h2><p>Visão do proprietário: acessos, projetos, segurança, backups e limites gratuitos. Só você vê esta página.</p></div></div>
+      <dl class="cc-kpis ag-kpis">
+        <div class="cc-kpi" data-go="equipe" role="link" tabindex="0"><dt>Equipe ativa</dt><dd>${n('ativo')}</dd><small>${admins.length} administrador(es)</small></div>
+        <div class="cc-kpi" data-go="convites" role="link" tabindex="0"><dt>Convites em aberto</dt><dd>${n('convidado')}</dd><small>${expirados.length ? expirados.length + ' expirado(s)' : 'nenhum expirado'}</small></div>
+        <div class="cc-kpi" data-go="equipe" role="link" tabindex="0"><dt>Suspensos</dt><dd>${n('suspenso')}</dd><small>${parados.length ? parados.length + ' sem entrar há 60 dias' : 'todos ativos recentes'}</small></div>
+        <div class="cc-kpi" data-go="cultural" role="link" tabindex="0"><dt>Projetos culturais</dt><dd>${culturais.length}</dd><small>Bourbon Cultural</small></div>
+        <div class="cc-kpi" data-go="dados" role="link" tabindex="0"><dt>Último backup da Central</dt><dd>${diasBackup === null ? 'nunca' : diasBackup === 0 ? 'hoje' : diasBackup + ' dia(s)'}</dd><small>${diasBackup === null || diasBackup > 30 ? 'faça um agora' : 'em dia'}</small></div>
+      </dl>
+      ${diasBackup === null || diasBackup > 30 ? `<div class="cc-panel ag-alerta"><b>Backup atrasado.</b> Baixe o backup da Central em Gestão › Dados e backup e guarde fora do computador (Google Drive da Bourbon). No painel do Cabras do Sol: Configurações › Dados › Exportar.</div>` : ''}
+      ${parados.length ? `<div class="cc-panel ag-alerta"><b>Acessos parados:</b> ${parados.map(p => esc(p.email)).join(', ')}. Se não precisam mais, suspenda em Equipe.</div>` : ''}
+      <div class="cc-cols">
+        <section class="cc-panel"><h3>Segurança</h3><p class="cc-note" style="margin-bottom:10px">Auditoria de ${AUDITORIA_SEG.data}. Atualizada a cada revisão, não em tempo real.</p>
+          <div class="cc-list ag-wrap">${AUDITORIA_SEG.itens.map(([s, t]) => `<div class="cc-row"><span><small>${esc(t)}</small></span>${ico[s]}</div>`).join('')}</div></section>
+        <section class="cc-panel"><h3>Limites gratuitos</h3><p class="cc-note" style="margin-bottom:10px">Nenhum serviço desta lista cobra no plano atual. O uso do dia fica no painel de cada serviço.</p>
+          <div class="cc-list ag-wrap">${LIMITES.map(([s, l, a, u]) => `<div class="cc-row"><span><b>${esc(s)}</b><small>${esc(l)} · ${esc(a)}</small></span><a class="btn btn--ghost btn--sm" href="${attr(u)}" target="_blank" rel="noopener">Ver uso</a></div>`).join('')}</div></section>
+      </div>
+      <section class="cc-panel" style="margin-top:16px"><h3>Painéis oficiais</h3><p class="cc-note" style="margin-bottom:10px">Mudanças de DNS, acesso e banco ficam nos painéis oficiais, entrando com filmbourbon@gmail.com. A Central não guarda credenciais desses serviços.</p>
+        <div class="cc-actions" style="flex-wrap:wrap">
+          <a class="btn btn--ghost btn--sm" target="_blank" rel="noopener" href="https://one.dash.cloudflare.com/${CF_CONTA}/access-controls/policies">Quem entra no painel do Cabras (Cloudflare Access)</a>
+          <a class="btn btn--ghost btn--sm" target="_blank" rel="noopener" href="https://cabras-do-sol-painel.bourbonfilms.workers.dev">Painel Cabras do Sol</a>
+          <a class="btn btn--ghost btn--sm" target="_blank" rel="noopener" href="https://console.firebase.google.com/u/1/project/bourbon-films/firestore/databases/-default-/security/rules">Regras do Firestore</a>
+          <a class="btn btn--ghost btn--sm" target="_blank" rel="noopener" href="https://console.firebase.google.com/u/1/project/bourbon-films/authentication/users">Contas de login</a>
+          <a class="btn btn--ghost btn--sm" target="_blank" rel="noopener" href="https://github.com/filmbourbon/bourbonfilms/security">Segurança do GitHub</a>
+        </div></section>
+      <section class="cc-panel" style="margin-top:16px"><h3>Atividade recente</h3><p class="cc-note" style="margin-bottom:10px">Ações sensíveis (permissões, remoções, exportações) aparecem marcadas. Histórico completo em Gestão › Histórico.</p>
+        <div class="cc-list ag-wrap">${aud.slice(0, 20).map(a => `<div class="cc-row"><span><b>${esc((a.quem || '').split('@')[0])} ${esc(a.acao || '')}</b><small>${esc(a.alvo || '')}${a.detalhe ? ' · ' + esc(a.detalhe) : ''} · ${esc(quando(a.em))}</small></span>${SENSIVEIS.test(a.acao || '') ? pill('Sensível', 'warn') : ''}</div>`).join('') || '<p class="cc-note">Sem registros.</p>'}</div></section>`;
+      $$('.ag-kpis [data-go]').forEach(k => { const go = () => ir(k.dataset.go); k.addEventListener('click', go); k.addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); });
   }
 });
 
@@ -4041,7 +4209,7 @@ modulo({
         <div class="cc-field"><label for="eq-n">Nome</label><input id="eq-n" value="${attr(m?.nome || '')}" autocomplete="off"></div>
         <div class="cc-field"><label for="eq-tel">WhatsApp <span>para enviar o convite</span></label><input id="eq-tel" inputmode="tel" value="${attr(m?.telefone || '')}" placeholder="(83) 99999-0000" autocomplete="off"></div>
         <div class="cc-field"><label for="eq-p">Papel</label><select id="eq-p">${papeisGeriveis.map(p => `<option value="${p}" ${m?.papel === p ? 'selected' : ''}>${esc(PAPEIS[p].nome)}</option>`).join('')}</select></div>
-        <details ${mods ? 'open' : ''}><summary>Permissões específicas</summary><div class="cc-form"><p class="cc-note">Marque só se quiser fugir do padrão do papel.</p><label class="cc-check"><input type="checkbox" id="eq-custom" ${mods ? 'checked' : ''}>Usar permissões específicas</label><div class="cc-chips" id="eq-mods">${Object.entries(MOD_NOMES).filter(([k]) => souOwner || !['equipe', 'auditoria', 'config', 'cultural'].includes(k)).map(([k, n]) => `<label><input type="checkbox" value="${k}" ${(mods || PAPEIS[m?.papel || 'editor'].mods).includes(k) ? 'checked' : ''}><span>${esc(n)}</span></label>`).join('')}</div></div></details>
+        <details ${mods ? 'open' : ''}><summary>Permissões específicas</summary><div class="cc-form"><p class="cc-note">Marque só se quiser fugir do padrão do papel.</p><label class="cc-check"><input type="checkbox" id="eq-custom" ${mods ? 'checked' : ''}>Usar permissões específicas</label><div class="cc-chips" id="eq-mods">${Object.entries(MOD_NOMES).filter(([k]) => k !== 'admgeral' && (souOwner || !['equipe', 'auditoria', 'config', 'cultural'].includes(k))).map(([k, n]) => `<label><input type="checkbox" value="${k}" ${(mods || PAPEIS[m?.papel || 'editor'].mods).includes(k) ? 'checked' : ''}><span>${esc(n)}</span></label>`).join('')}</div></div></details>
         <p class="cc-err" id="eq-err" role="alert"></p></form>`,
         `<button class="btn btn--primary" type="button" id="eq-ok">${novo ? 'Criar convite' : 'Salvar'}</button>${!novo ? `${m.status === 'suspenso' ? '<button class="btn btn--ghost" type="button" id="eq-reat">Reativar</button>' : '<button class="btn btn--ghost" type="button" id="eq-susp">Suspender</button>'}${m.status === 'convidado' ? '<button class="btn btn--ghost" type="button" id="eq-reenv">Renovar convite</button>' : ''}${m.modulos ? '<button class="btn btn--ghost" type="button" id="eq-padrao">Restaurar permissões padrão</button>' : ''}<a class="btn btn--ghost" href="#/auditoria">Histórico</a><span class="cc-spacer"></span><button class="btn btn--danger" type="button" id="eq-rev">${m.status === 'convidado' ? 'Cancelar convite' : 'Revogar acesso'}</button>` : ''}`);
       const coletar = () => { const custom = $('#eq-custom').checked; return { nome: $('#eq-n').value.trim(), papel: $('#eq-p').value, modulos: custom ? $$('#eq-mods input:checked').map(i => i.value) : null }; };

@@ -7,10 +7,12 @@ service cloud.firestore {
     // ---------- identidade ----------
     // PROPRIETÁRIO: definido só aqui, por configuração. Para transferir a propriedade, troque o e-mail abaixo e publique.
     function proprietarios() { return ['filmbourbon@gmail.com']; }
+    // identificador da conta (UID) do proprietário no Firebase: a propriedade não depende só do texto do e-mail
+    function uidsProprietarios() { return ['znJInKtK7VR56z3k8JrShdKT7IO2']; }
 
     function logado() { return request.auth != null && request.auth.token.email_verified == true && request.auth.token.firebase.sign_in_provider != 'anonymous'; }
     function email() { return request.auth.token.email.lower(); }
-    function isOwner() { return logado() && email() in proprietarios(); }
+    function isOwner() { return logado() && email() in proprietarios() && request.auth.uid in uidsProprietarios(); }
     function ficha() { return /databases/$(database)/documents/equipe/$(email()); }
     function ativo() { return logado() && exists(ficha()) && get(ficha()).data.status == 'ativo'; }
     function papel() { return get(ficha()).data.papel; }
@@ -149,6 +151,19 @@ service cloud.firestore {
       allow read: if ler('conteudo') || ler('crm') || ler('operacao');
       allow create: if (editar('conteudo') || editar('crm') || editar('operacao')) && request.resource.data.por == email() && agora(request.resource.data.em);
       allow delete: if isOwner();
+    }
+
+    // ---------- Bourbon Cultural: projetos culturais com equipe por projeto ----------
+    // Proprietário vê e cria tudo. Quem tem o módulo "cultural" vê só os projetos em que está na equipe.
+    // Coordenação do projeto edita apenas situação, resumo, cronograma e pendências. Equipe só o proprietário muda.
+    match /culturais/{id} {
+      function naEquipe() { return ler('cultural') && email() in resource.data.get('membrosEmails', []); }
+      function coordena() { return editar('cultural') && resource.data.get('membros', {}).get(email(), '') == 'coordenacao'; }
+      allow read: if isOwner() || naEquipe();
+      allow create: if isOwner() && request.resource.data.membrosEmails is list && request.resource.data.membros is map;
+      allow update: if isOwner()
+        || (coordena() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['situacao', 'resumo', 'cronograma', 'pendencias', 'atualizadoEm', 'atualizadoPor']));
+      allow delete: if isOwner() && naLixeira();
     }
 
     // ---------- comercial ----------

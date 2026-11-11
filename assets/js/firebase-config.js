@@ -11,3 +11,6 @@ export const firebaseConfig = {
 
 /* E-mails que podem abrir o painel interno (admin.html). Use os mesmos no arquivo de regras. */
 export const ADMIN_EMAILS = ["filmbourbon@gmail.com"];
+/* Identificador (UID) da conta do proprietário no Firebase. Mesmo valor da função uidsProprietarios() nas regras.
+   Prende a propriedade à conta, não só ao texto do e-mail. */
+export const OWNER_UIDS = ["znJInKtK7VR56z3k8JrShdKT7IO2"];
